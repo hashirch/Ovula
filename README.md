@@ -42,9 +42,9 @@
 
 | Name | Registration Number | GitHub |
 |------|---------------------|--------|
-| **Muhammad Hashir** | 22P-9181 | [@hashir](https://github.com/hashir) |
-| **Laraib Shahid Abbasi** | 22P-0503 | [@laraib](https://github.com/laraib) |
-| **Arooba Gohar** | 22P-9216 | [@arooba](https://github.com/arooba) |
+| **Muhammad Hashir** | 22P-9181 | [@hashir](https://github.com/hashirch) |
+| **Laraib Shahid Abbasi** | 22P-0503 | [@laraib]() |
+| **Arooba Gohar** | 22P-9216 | [@arooba](https://github.com/uroobagh123) |
 
 ---
 
