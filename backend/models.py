@@ -25,7 +25,7 @@ class DailyLog(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    date = Column(DateTime, nullable=False)
+    log_date = Column(DateTime, nullable=False)
     
     # PCOS Tracking Fields
     period_status = Column(String(20), default="none")  # none, spotting, period
@@ -81,3 +81,65 @@ class OTPToken(Base):
     
     # Relationships
     user = relationship("User", back_populates="otps")
+
+
+class UserHealthProfile(Base):
+    __tablename__ = "user_health_profile"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, unique=True)
+    
+    # Demographics
+    age_group = Column(Integer, nullable=True)  # 1:<18, 2:18-25, 3:26-30, 4:31-35, 5:36-40, 6:41-45, 7:45+
+    
+    # Physical characteristics
+    is_overweight = Column(Integer, default=0)
+    has_weight_fluctuation = Column(Integer, default=0)
+    
+    # Menstrual history
+    has_irregular_periods = Column(Integer, default=0)
+    typical_period_length = Column(Integer, nullable=True)
+    typical_cycle_length = Column(Integer, nullable=True)
+    
+    # Fertility
+    difficulty_conceiving = Column(Integer, default=0)
+    
+    # Hair growth patterns
+    hair_chin = Column(Integer, default=0)
+    hair_cheeks = Column(Integer, default=0)
+    hair_breasts = Column(Integer, default=0)
+    hair_upper_lips = Column(Integer, default=0)
+    hair_arms = Column(Integer, default=0)
+    hair_thighs = Column(Integer, default=0)
+    
+    # Skin conditions
+    has_acne = Column(Integer, default=0)
+    has_hair_loss = Column(Integer, default=0)
+    has_dark_patches = Column(Integer, default=0)
+    
+    # General symptoms
+    always_tired = Column(Integer, default=0)
+    frequent_mood_swings = Column(Integer, default=0)
+    
+    # Lifestyle
+    exercise_per_week = Column(Integer, default=0)
+    eat_outside_per_week = Column(Integer, default=0)
+    consumes_canned_food = Column(Integer, default=0)
+    
+    # Metadata
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
+
+class PCOSPrediction(Base):
+    __tablename__ = "pcos_predictions"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    prediction = Column(String(20), nullable=False)  # "PCOS" or "No PCOS"
+    risk_score = Column(Float, nullable=False)  # 0.0 to 1.0
+    confidence = Column(Float, nullable=False)  # 0.0 to 1.0
+    model_version = Column(String(20), default="v1.0")
+    features_json = Column(Text, nullable=True)
+    notes = Column(Text, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())

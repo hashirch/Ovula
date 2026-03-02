@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { LogOut, Heart, MessageCircle, Calendar, BarChart3, Plus, History } from 'lucide-react';
+import { LogOut, Heart, MessageCircle, Calendar, BarChart3, Plus, History, Brain } from 'lucide-react';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -15,8 +15,8 @@ const Navbar = () => {
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center py-4">
             <Link to="/" className="flex items-center space-x-2">
-              <Heart className="h-8 w-8 text-primary-600" />
-              <span className="text-xl font-bold text-gray-800">PCOS Tracker</span>
+              <img src="/ovula-logo.png" alt="Ovula" className="h-10 w-10 object-contain" />
+              <span className="text-xl font-bold text-gray-800">OVULA</span>
             </Link>
             <div className="flex space-x-4">
               <Link to="/login" className="btn-secondary">Login</Link>
@@ -33,8 +33,8 @@ const Navbar = () => {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center py-4">
           <Link to="/dashboard" className="flex items-center space-x-2">
-            <Heart className="h-8 w-8 text-primary-600" />
-            <span className="text-xl font-bold text-gray-800">PCOS Tracker</span>
+            <img src="/ovula-logo.png" alt="Ovula" className="h-10 w-10 object-contain" />
+            <span className="text-xl font-bold text-gray-800">OVULA</span>
           </Link>
           
           <div className="hidden md:flex items-center space-x-1">
@@ -44,6 +44,13 @@ const Navbar = () => {
             >
               <BarChart3 className="h-4 w-4 inline mr-1" />
               Dashboard
+            </Link>
+            <Link 
+              to="/prediction" 
+              className={isActive('/prediction') ? 'nav-link-active' : 'nav-link'}
+            >
+              <Brain className="h-4 w-4 inline mr-1" />
+              Prediction
             </Link>
             <Link 
               to="/add-log" 
@@ -102,6 +109,12 @@ const Navbar = () => {
               className={`text-xs px-2 py-1 rounded ${isActive('/dashboard') ? 'bg-primary-100 text-primary-700' : 'text-gray-600'}`}
             >
               Dashboard
+            </Link>
+            <Link 
+              to="/prediction" 
+              className={`text-xs px-2 py-1 rounded ${isActive('/prediction') ? 'bg-primary-100 text-primary-700' : 'text-gray-600'}`}
+            >
+              Prediction
             </Link>
             <Link 
               to="/add-log" 

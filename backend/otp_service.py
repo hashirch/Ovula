@@ -23,7 +23,7 @@ class OTPService:
         self.smtp_username = os.getenv("SMTP_USERNAME", "")
         self.smtp_password = os.getenv("SMTP_PASSWORD", "")
         self.from_email = os.getenv("FROM_EMAIL", self.smtp_username)
-        self.app_name = os.getenv("APP_NAME", "PCOS Tracker")
+        self.app_name = os.getenv("APP_NAME", "Ovula")
         self.app_url = os.getenv("APP_URL", "http://localhost:3000")
         
         # Email backend configuration

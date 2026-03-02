@@ -122,22 +122,48 @@ class LLMService:
     
     def create_system_prompt(self, user_context: str = "") -> str:
         """Create system prompt for PCOS assistant"""
-        base_prompt = """You are a knowledgeable PCOS (Polycystic Ovary Syndrome) assistant. Your role is to:
+        base_prompt = """You are a specialized PCOS (Polycystic Ovary Syndrome) healthcare assistant.
 
-1. Provide accurate, helpful information about PCOS symptoms, management, and lifestyle
-2. Give personalized advice based on user's tracking data when available
-3. Suggest evidence-based lifestyle improvements for diet, exercise, sleep, and stress management
-4. Explain PCOS concepts clearly and compassionately
-5. NEVER prescribe specific medications or dosages
-6. Always include appropriate medical disclaimers
+ABSOLUTE RESTRICTIONS - YOU MUST FOLLOW THESE RULES:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. ONLY answer questions about PCOS, women's health, hormones, fertility, and menstrual health
+2. NEVER write code in any programming language (Python, JavaScript, Java, etc.)
+3. NEVER answer technology, computer science, or software questions
+4. NEVER answer general knowledge (geography, history, sports, politics, entertainment)
+5. NEVER solve math problems unrelated to health calculations
+6. NEVER discuss topics outside PCOS and women's reproductive health
+7. NEVER create non-medical content (stories, poems, jokes, games)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Guidelines:
-- Be supportive and understanding
-- Focus on evidence-based lifestyle interventions
-- Encourage professional medical consultation for diagnosis and treatment
-- Provide actionable, practical advice
-- Be concise but thorough
-- Use a warm, empathetic tone"""
+ALLOWED TOPICS ONLY:
+✓ PCOS symptoms, causes, diagnosis, and treatment
+✓ Menstrual cycles, periods, and irregularities
+✓ Hormones (insulin, androgens, estrogen, progesterone)
+✓ Fertility, pregnancy, and conception with PCOS
+✓ PCOS diet, nutrition, and meal planning
+✓ Exercise and physical activity for PCOS
+✓ Weight management with PCOS
+✓ Mental health, anxiety, and depression related to PCOS
+✓ PCOS medications and supplements
+✓ Women's reproductive health
+✓ Hirsutism, acne, hair loss, and skin conditions
+✓ Metabolic syndrome and insulin resistance
+✓ Lifestyle modifications for PCOS management
+
+FOR ANY OFF-TOPIC QUESTION, RESPOND EXACTLY:
+"I'm specifically designed to help with PCOS and women's health questions. I cannot assist with [topic]. Is there anything about PCOS, hormones, periods, fertility, or related health topics I can help you with?"
+
+RESPONSE GUIDELINES:
+• Be warm, supportive, and empathetic
+• Provide evidence-based information
+• Be concise but thorough (2-4 paragraphs maximum)
+• Use simple, clear language
+• Focus on actionable advice
+• NEVER prescribe specific medications or dosages
+• Always encourage professional medical consultation for diagnosis and treatment
+• Include appropriate medical disclaimers
+
+IMPORTANT: If a question is not clearly about PCOS or women's health, politely decline and redirect."""
 
         if user_context:
             base_prompt += f"\\n\\nUser's Recent Tracking Data:\\n{user_context}"
@@ -147,6 +173,108 @@ Guidelines:
     def create_medical_disclaimer(self) -> str:
         """Standard medical disclaimer"""
         return "\\n\\n⚠️ **Medical Disclaimer**: This information is for educational purposes only and is not a substitute for professional medical advice, diagnosis, or treatment. Always consult qualified healthcare providers for personalized medical guidance, especially for PCOS management."
+    
+    def is_off_topic(self, message: str) -> tuple[bool, str]:
+        """Check if message is off-topic and return appropriate response"""
+        message_lower = message.lower().strip()
+        
+        # Allow basic greetings and conversational phrases
+        greetings = [
+            'hello', 'hi', 'hey', 'good morning', 'good afternoon', 'good evening',
+            'how are you', 'thanks', 'thank you', 'bye', 'goodbye', 'ok', 'okay',
+            'yes', 'no', 'sure', 'please', 'help', 'start', 'begin'
+        ]
+        
+        # If it's just a greeting (short message), allow it
+        if any(message_lower == greeting or message_lower.startswith(greeting) for greeting in greetings):
+            if len(message.split()) <= 4:  # Short greeting
+                return False, ""
+        
+        # PCOS and women's health keywords (ALLOWED topics)
+        health_keywords = [
+            'pcos', 'polycystic', 'ovary', 'ovarian', 'period', 'menstrual', 'menstruation',
+            'cycle', 'hormone', 'hormonal', 'insulin', 'androgen', 'testosterone', 'estrogen',
+            'progesterone', 'fertility', 'infertility', 'pregnant', 'pregnancy', 'conceive',
+            'ovulation', 'irregular', 'amenorrhea', 'oligomenorrhea', 'hirsutism',
+            'acne', 'hair loss', 'hair growth', 'weight gain', 'weight loss', 'obesity',
+            'diabetes', 'metabolic', 'thyroid', 'endometriosis', 'fibroids',
+            'cramps', 'pain', 'bloating', 'mood swing', 'depression', 'anxiety',
+            'diet', 'nutrition', 'exercise', 'lifestyle', 'stress', 'sleep',
+            'supplement', 'vitamin', 'metformin', 'birth control', 'contraceptive',
+            'gynecologist', 'endocrinologist', 'doctor', 'medical', 'health',
+            'symptom', 'diagnosis', 'treatment', 'medication', 'therapy',
+            'ultrasound', 'blood test', 'lab test', 'scan'
+        ]
+        
+        # Check if message contains ANY health-related keywords
+        has_health_context = any(keyword in message_lower for keyword in health_keywords)
+        
+        # Coding/Programming keywords (BLOCKED)
+        coding_keywords = [
+            'python', 'javascript', 'java ', 'code', 'function', 'programming',
+            'algorithm', 'script', 'html', 'css', 'sql', 'database query',
+            'def ', 'class ', 'import ', 'const ', 'var ', 'let ', 'for(',
+            'array', 'loop', 'syntax', 'compile', 'debug', 'git', 'github',
+            'react', 'node', 'api endpoint', 'json', 'xml', 'backend', 'frontend',
+            'server', 'deploy', 'docker', 'kubernetes', 'aws', 'cloud',
+            'machine learning model', 'neural network', 'train model', 'dataset'
+        ]
+        
+        # General knowledge keywords (BLOCKED)
+        general_keywords = [
+            'capital of', 'president', 'prime minister', 'world cup', 'sports team',
+            'movie', 'film', 'actor', 'actress', 'singer', 'musician', 'celebrity',
+            'recipe for', 'how to cook', 'bake', 'cuisine', 'restaurant',
+            'weather in', 'climate', 'temperature', 'forecast',
+            'translate', 'translation', 'language', 'speak',
+            'math problem', 'solve equation', 'calculate', 'algebra', 'geometry',
+            'history of', 'who invented', 'when was', 'geography', 'country',
+            'physics', 'chemistry', 'biology', 'science experiment',
+            'book', 'novel', 'author', 'literature', 'poem',
+            'car', 'vehicle', 'automobile', 'engine', 'mechanic',
+            'computer', 'laptop', 'phone', 'smartphone', 'gadget', 'technology',
+            'game', 'video game', 'gaming', 'console', 'playstation', 'xbox',
+            'stock market', 'investment', 'cryptocurrency', 'bitcoin',
+            'politics', 'election', 'government', 'law', 'legal'
+        ]
+        
+        # Math/calculation patterns (BLOCKED unless health-related)
+        math_patterns = [
+            'solve', 'calculate', 'compute', 'equation', 'formula',
+            'x + ', 'x - ', 'x * ', 'x / ', '= ?', 'find x'
+        ]
+        
+        # Check for coding questions
+        if any(keyword in message_lower for keyword in coding_keywords):
+            return True, "I'm specifically designed to help with PCOS and women's health questions. I cannot assist with programming or coding. Is there anything about PCOS, hormones, periods, fertility, or related health topics I can help you with?"
+        
+        # Check for general knowledge questions
+        if any(keyword in message_lower for keyword in general_keywords):
+            return True, "I'm specifically designed to help with PCOS and women's health questions. I cannot assist with general knowledge topics. Is there anything about PCOS, hormones, periods, fertility, or related health topics I can help you with?"
+        
+        # Check for math problems (unless health-related)
+        if any(pattern in message_lower for pattern in math_patterns) and not has_health_context:
+            return True, "I'm specifically designed to help with PCOS and women's health questions. I cannot solve general math problems. Is there anything about PCOS, hormones, periods, fertility, or related health topics I can help you with?"
+        
+        # Check if message is asking for non-medical content creation
+        non_medical_patterns = [
+            'write a story', 'write a poem', 'write a song', 'write an essay',
+            'create a game', 'build a website', 'design a logo', 'make a video',
+            'tell me a joke', 'sing a song', 'write code', 'create an app'
+        ]
+        
+        if any(pattern in message_lower for pattern in non_medical_patterns):
+            return True, "I'm specifically designed to help with PCOS and women's health questions. I cannot create non-medical content. Is there anything about PCOS, hormones, periods, fertility, or related health topics I can help you with?"
+        
+        # If message has NO health context and is asking for information, likely off-topic
+        question_words = ['what', 'how', 'why', 'when', 'where', 'who', 'which', 'tell me', 'explain']
+        is_question = any(word in message_lower for word in question_words)
+        
+        if is_question and not has_health_context and len(message.split()) > 3:
+            # This is a question but has no health context - likely off-topic
+            return True, "I'm specifically designed to help with PCOS and women's health questions. Your question doesn't seem to be related to PCOS or women's health. Is there anything about PCOS, hormones, periods, fertility, or related health topics I can help you with?"
+        
+        return False, ""
     
     async def generate_response_ollama(self, prompt: str, model_name: str) -> str:
         """Generate response using Ollama API"""
@@ -315,6 +443,11 @@ Guidelines:
     async def generate_response(self, user_message: str, user_id: int, db: Session, model_override: Optional[str] = None) -> str:
         """Generate response based on configured model type"""
         try:
+            # Check if message is off-topic
+            is_off_topic, off_topic_response = self.is_off_topic(user_message)
+            if is_off_topic:
+                return off_topic_response
+            
             # Get user context for personalization
             user_context = self.get_user_context(user_id, db)
             

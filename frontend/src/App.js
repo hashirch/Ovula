@@ -12,6 +12,7 @@ import LogsHistory from './pages/LogsHistory';
 import CycleTracker from './pages/CycleTracker';
 import Insights from './pages/Insights';
 import Chat from './pages/Chat';
+import PCOSPrediction from './pages/PCOSPrediction';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -93,6 +94,11 @@ function App() {
               <Route path="/chat" element={
                 <ProtectedRoute>
                   <Chat />
+                </ProtectedRoute>
+              } />
+              <Route path="/prediction" element={
+                <ProtectedRoute>
+                  <PCOSPrediction />
                 </ProtectedRoute>
               } />
               

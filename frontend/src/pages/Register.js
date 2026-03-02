@@ -68,13 +68,13 @@ const Register = () => {
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <div className="flex justify-center">
-            <Heart className="h-12 w-12 text-primary-600" />
+            <img src="/ovula-logo.png" alt="Ovula" className="h-16 w-16 object-contain" />
           </div>
           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-            Create your account
+            Join Ovula
           </h2>
           <p className="mt-2 text-sm text-gray-600">
-            Start your PCOS tracking journey today
+            Start your PCOS tracking journey with AI-powered insights
           </p>
         </div>
         

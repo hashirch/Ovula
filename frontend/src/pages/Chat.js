@@ -131,13 +131,101 @@ const Chat = () => {
   };
 
   const formatMessage = (text) => {
-    return text
-      .split('\n')
-      .map((line, index) => (
-        <p key={index} className={line.trim() === '' ? 'mb-2' : 'mb-1'}>
-          {line}
+    const lines = text.split('\n');
+    const elements = [];
+    let listItems = [];
+    let inList = false;
+
+    lines.forEach((line, index) => {
+      const trimmedLine = line.trim();
+      
+      // Empty line - add spacing
+      if (trimmedLine === '') {
+        if (inList && listItems.length > 0) {
+          elements.push(
+            <ul key={`list-${index}`} className="list-disc list-inside space-y-2 mb-4 ml-2">
+              {listItems.map((item, i) => (
+                <li key={i} className="text-gray-800 leading-relaxed">{item}</li>
+              ))}
+            </ul>
+          );
+          listItems = [];
+          inList = false;
+        }
+        elements.push(<div key={`space-${index}`} className="mb-3"></div>);
+        return;
+      }
+
+      // Numbered list (1. 2. 3. etc.)
+      const numberedMatch = trimmedLine.match(/^(\d+)\.\s*\*\*(.*?)\*\*:?\s*(.*)/);
+      if (numberedMatch) {
+        if (!inList) inList = true;
+        const [, num, bold, rest] = numberedMatch;
+        listItems.push(
+          <span>
+            <strong className="text-gray-900 font-semibold">{bold}</strong>
+            {rest && `: ${rest}`}
+          </span>
+        );
+        return;
+      }
+
+      // Simple numbered list
+      const simpleNumberMatch = trimmedLine.match(/^(\d+)\.\s+(.*)/);
+      if (simpleNumberMatch) {
+        if (!inList) inList = true;
+        listItems.push(simpleNumberMatch[2]);
+        return;
+      }
+
+      // Bullet points
+      if (trimmedLine.startsWith('- ') || trimmedLine.startsWith('• ')) {
+        if (!inList) inList = true;
+        listItems.push(trimmedLine.substring(2));
+        return;
+      }
+
+      // If we were in a list, render it
+      if (inList && listItems.length > 0) {
+        elements.push(
+          <ul key={`list-${index}`} className="list-disc list-inside space-y-2 mb-4 ml-2">
+            {listItems.map((item, i) => (
+              <li key={i} className="text-gray-800 leading-relaxed">{item}</li>
+            ))}
+          </ul>
+        );
+        listItems = [];
+        inList = false;
+      }
+
+      // Format bold text **text**
+      const formattedLine = trimmedLine.split(/(\*\*.*?\*\*)/).map((part, i) => {
+        if (part.startsWith('**') && part.endsWith('**')) {
+          return <strong key={i} className="font-semibold text-gray-900">{part.slice(2, -2)}</strong>;
+        }
+        return part;
+      });
+
+      // Regular paragraph
+      elements.push(
+        <p key={`p-${index}`} className="mb-3 leading-relaxed text-gray-800">
+          {formattedLine}
         </p>
-      ));
+      );
+    });
+
+    // Render any remaining list items
+    if (listItems.length > 0) {
+      elements.push(
+        <ul key="list-final" className="list-disc list-inside space-y-2 mb-4 ml-2">
+          {listItems.map((item, i) => (
+            <li key={i} className="text-gray-800 leading-relaxed">{item}</li>
+          ))}
+        </ul>
+      );
+    }
+
+    return elements;
   };
 
   const getModelIcon = (modelType) => {
@@ -316,11 +404,11 @@ const Chat = () => {
                 <div key={msg.id} className="space-y-4">
                   {/* User Message */}
                   <div className="flex justify-end">
-                    <div className="flex items-start space-x-2 max-w-3xl">
-                      <div className="bg-primary-600 text-white rounded-lg px-4 py-2">
-                        <p className="text-sm">{msg.message}</p>
+                    <div className="flex items-start space-x-3 max-w-3xl">
+                      <div className="bg-gradient-to-br from-primary-500 to-primary-600 text-white rounded-2xl px-5 py-3 shadow-md">
+                        <p className="text-sm leading-relaxed">{msg.message}</p>
                       </div>
-                      <div className="flex-shrink-0">
+                      <div className="flex-shrink-0 mt-1">
                         <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
                           <User className="h-4 w-4 text-primary-600" />
                         </div>
@@ -330,17 +418,17 @@ const Chat = () => {
 
                   {/* AI Response */}
                   <div className="flex justify-start">
-                    <div className="flex items-start space-x-2 max-w-3xl">
-                      <div className="flex-shrink-0">
+                    <div className="flex items-start space-x-3 max-w-4xl w-full">
+                      <div className="flex-shrink-0 mt-1">
                         <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
                           <Bot className="h-4 w-4 text-blue-600" />
                         </div>
                       </div>
-                      <div className="bg-gray-100 rounded-lg px-4 py-2">
-                        <div className="text-sm text-gray-800">
+                      <div className="flex-1 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl px-5 py-4 shadow-sm border border-gray-200">
+                        <div className="text-sm text-gray-800 prose prose-sm max-w-none">
                           {formatMessage(msg.response)}
                         </div>
-                        <div className="flex items-center justify-between mt-2 text-xs text-gray-500">
+                        <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-200 text-xs text-gray-500">
                           <span>{new Date(msg.created_at).toLocaleString()}</span>
                           <div className="flex items-center space-x-2">
                             {msg.model_used && getModelBadge(msg.model_used)}

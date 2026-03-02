@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 from database import engine
 from models import Base
-from routers import auth, logs, insights
+from routers import auth, logs, insights, prediction
 from app.routes import chat
 from app.config import Config
 
@@ -16,15 +16,15 @@ load_dotenv()
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
-    title="PCOS Tracking System API",
-    description="A comprehensive PCOS tracking system with AI chatbot (Base + Fine-tuned models)",
+    title="Ovula API",
+    description="AI-powered PCOS tracking and management system with intelligent chatbot",
     version="2.0.0"
 )
 
-# CORS middleware
+# CORS middleware - Allow all origins for mobile app
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # React dev server
+    allow_origins=["*"],  # Allow all origins (mobile app, web, etc.)
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -35,11 +35,12 @@ app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
 app.include_router(logs.router, prefix="/logs", tags=["Logs"])
 app.include_router(chat.router, prefix="/chat", tags=["AI Chat"])
 app.include_router(insights.router, prefix="/insights", tags=["Insights"])
+app.include_router(prediction.router, prefix="/prediction", tags=["PCOS Prediction"])
 
 @app.get("/")
 async def root():
     return {
-        "message": "PCOS Tracking System API with Fine-tuned AI",
+        "message": "Ovula API - AI-Powered PCOS Management",
         "version": "2.0.0",
         "model_config": Config.get_model_config()
     }

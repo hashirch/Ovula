@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
-import { Plus, Calendar, MessageCircle, TrendingUp, Activity, Moon, Heart } from 'lucide-react';
+import { Plus, Calendar, MessageCircle, TrendingUp, Activity, Moon, Heart, Brain } from 'lucide-react';
 
 const Dashboard = () => {
   const [summaryStats, setSummaryStats] = useState(null);
@@ -50,7 +50,7 @@ const Dashboard = () => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-600">Track your PCOS journey and get insights</p>
+          <p className="text-gray-600">Track your health journey with Ovula</p>
         </div>
         <Link to="/add-log" className="btn-primary flex items-center space-x-2">
           <Plus className="h-4 w-4" />
@@ -192,7 +192,12 @@ const Dashboard = () => {
         <div className="card">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
           <div className="space-y-3">
-            <Link to="/add-log" className="w-full btn-primary flex items-center justify-center space-x-2">
+            <Link to="/prediction" className="w-full btn-primary flex items-center justify-center space-x-2">
+              <Brain className="h-4 w-4" />
+              <span>PCOS Risk Assessment</span>
+            </Link>
+            
+            <Link to="/add-log" className="w-full btn-secondary flex items-center justify-center space-x-2">
               <Plus className="h-4 w-4" />
               <span>Add Daily Log</span>
             </Link>

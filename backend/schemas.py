@@ -99,3 +99,56 @@ class InsightsResponse(BaseModel):
     avg_pain: float
     period_frequency: int
     recommendations: List[str]
+
+# Health Profile Schemas
+class HealthProfileCreate(BaseModel):
+    age_group: Optional[int] = None
+    is_overweight: int = 0
+    has_weight_fluctuation: int = 0
+    has_irregular_periods: int = 0
+    typical_period_length: Optional[int] = None
+    typical_cycle_length: Optional[int] = None
+    difficulty_conceiving: int = 0
+    hair_chin: int = 0
+    hair_cheeks: int = 0
+    hair_breasts: int = 0
+    hair_upper_lips: int = 0
+    hair_arms: int = 0
+    hair_thighs: int = 0
+    has_acne: int = 0
+    has_hair_loss: int = 0
+    has_dark_patches: int = 0
+    always_tired: int = 0
+    frequent_mood_swings: int = 0
+    exercise_per_week: int = 0
+    eat_outside_per_week: int = 0
+    consumes_canned_food: int = 0
+
+class HealthProfileResponse(HealthProfileCreate):
+    id: int
+    user_id: int
+    created_at: datetime
+    updated_at: Optional[datetime]
+    
+    class Config:
+        from_attributes = True
+
+# Prediction Schemas
+class PredictionResponse(BaseModel):
+    id: int
+    prediction: str
+    risk_score: float
+    confidence: float
+    recommendations: List[str]
+    created_at: datetime
+
+class PredictionHistoryResponse(BaseModel):
+    id: int
+    prediction: str
+    risk_score: float
+    confidence: float
+    model_version: str
+    created_at: datetime
+    
+    class Config:
+        from_attributes = True

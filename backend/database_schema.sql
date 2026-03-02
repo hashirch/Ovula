@@ -410,31 +410,3 @@ FROM otp_tokens ot
 JOIN users u ON ot.user_id = u.id
 WHERE ot.is_used = 0;
 
--- ============================================================================
--- SAMPLE QUERIES
--- ============================================================================
-
--- Get user with all their data
--- SELECT * FROM v_user_summary WHERE email = 'user@example.com';
-
--- Get recent activity for a user
--- SELECT * FROM v_recent_activity WHERE user_id = 1;
-
--- Get active OTP tokens
--- SELECT * FROM v_active_otp_tokens;
-
--- Get user's logs for last 30 days
--- SELECT * FROM daily_logs 
--- WHERE user_id = 1 
--- AND log_date >= DATE('now', '-30 days')
--- ORDER BY log_date DESC;
-
--- Get user's chat history
--- SELECT * FROM chat_messages 
--- WHERE user_id = 1 
--- ORDER BY created_at DESC 
--- LIMIT 50;
-
--- ============================================================================
--- END OF SCHEMA
--- ============================================================================
