@@ -81,18 +81,3 @@ Thumbs.db
 
 # Migration scripts (keep in repo but ignore generated backups)
 *_backup_*.db
-
-# Large model files (too big for GitHub)
-*.gguf
-*.bin
-*.safetensors
-*.pkl
-*.h5
-*.pth
-*.pt
-*.onnx
-*.tflite
-
-# ML model directories
-/ai-models/*.gguf
-/ml-models/models/saved/*.pkl

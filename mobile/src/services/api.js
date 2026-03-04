@@ -1,9 +1,13 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Constants from 'expo-constants';
 
-// Get API URL from app.json config
-const API_URL = Constants.expoConfig?.extra?.apiUrl || 'http://localhost:8000';
+// API URL - Update this to your computer's IP address when testing on physical device
+// For Android emulator: use 10.0.2.2
+// For iOS simulator: use localhost
+// For physical device: use your computer's IP (e.g., 192.168.1.100)
+const API_URL = 'http://10.0.2.2:8000'; // Android emulator
+// const API_URL = 'http://localhost:8000'; // iOS simulator
+// const API_URL = 'http://192.168.1.100:8000'; // Physical device (replace with your IP)
 
 // Create axios instance
 const api = axios.create({

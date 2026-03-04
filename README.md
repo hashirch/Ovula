@@ -1,18 +1,20 @@
 <div align="center">
 
-# 🌸 Ovula
+<img src="docs/ovula-logo.png" alt="Ovula Logo" width="150"/>
 
-### Fine-Tuned LLM for PCOS Healthcare Domain
+# Ovula
 
-*Domain-Specific Language Model Fine-Tuning with Real-World Application*
+### PCOS Tracking & AI Healthcare Assistant
+
+*A Final Year Project combining machine learning, LLM fine-tuning, and a full-stack mobile + web application for PCOS management*
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-ee4c2c.svg)](https://pytorch.org/)
-[![Transformers](https://img.shields.io/badge/🤗_Transformers-4.30+-yellow.svg)](https://huggingface.co/transformers/)
+[![React Native](https://img.shields.io/badge/React_Native-0.73+-61dafb.svg)](https://reactnative.dev/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688.svg)](https://fastapi.tiangolo.com/)
 [![Ollama](https://img.shields.io/badge/Ollama-LLM-black.svg)](https://ollama.ai/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-[Research Focus](#-research-focus) • [Fine-Tuning](#-fine-tuning-methodology) • [Evaluation](#-model-evaluation) • [Demo App](#-demonstration-application)
+[Overview](#-overview) • [Features](#-features) • [Tech Stack](#-tech-stack) • [Project Structure](#-project-structure) • [Quick Start](#-quick-start) • [Team](#-team)
 
 </div>
 
@@ -31,11 +33,11 @@
 </tr>
 <tr>
 <td><strong>📚 Project Type</strong></td>
-<td>Final Year Project (FYP) - Machine Learning & NLP</td>
+<td>Final Year Project (FYP) — Machine Learning, NLP & Mobile Development</td>
 </tr>
 <tr>
 <td><strong>🔬 Research Area</strong></td>
-<td>Domain-Specific LLM Fine-Tuning for Healthcare</td>
+<td>Domain-Specific LLM Fine-Tuning & PCOS Healthcare</td>
 </tr>
 <tr>
 <td><strong>👨‍🏫 Supervisor</strong></td>
@@ -43,393 +45,105 @@
 </tr>
 </table>
 
-### 👥 Research Team
+### 👥 Team
 
-| Name | Registration Number | GitHub |
-|------|---------------------|--------|
+| Name | Reg. No | GitHub |
+|------|---------|--------|
 | **Muhammad Hashir** | 22P-9181 | [@hashirch](https://github.com/hashirch) |
-| **Laraib Shahid Abbasi** | 22P-0503 | [@laraib]() |
+| **Laraib Shahid Abbasi** | 22P-0503 | [@Laraibshahid89](https://github.com/Laraibshahid89) |
 | **Arooba Gohar** | 22P-9216 | [@uroobagh123](https://github.com/uroobagh123) |
 
 ---
 
-## 🔬 Research Focus
+## 🌸 Overview
 
-### Problem Statement
+Ovula is a PCOS (Polycystic Ovary Syndrome) health companion built as our Final Year Project at FAST NUCES Peshawar. The project has two main angles: fine-tuning open-source LLMs to be better at answering PCOS-related questions, and building an actual app that people can use to track their symptoms, menstrual cycles, and get AI-powered health insights.
 
-General-purpose Large Language Models (LLMs) like Llama 3, GPT, and Gemma lack specialized knowledge in specific healthcare domains. When queried about PCOS (Polycystic Ovary Syndrome), these models provide generic responses that may not address the nuanced medical, lifestyle, and emotional aspects of the condition.
-
-### Research Objective
-
-**To fine-tune open-source LLMs on domain-specific PCOS data and evaluate their performance against base models in providing accurate, contextual, and empathetic healthcare guidance.**
-
-### Key Research Questions
-
-1. How does fine-tuning improve response quality for domain-specific medical queries?
-2. What is the optimal dataset size and composition for healthcare domain adaptation?
-3. Can fine-tuned models maintain general knowledge while specializing in PCOS?
-4. How do different fine-tuning techniques (LoRA, full fine-tuning) compare in this domain?
-
-### Hypothesis
-
-Fine-tuning LLMs on curated PCOS-specific datasets will significantly improve:
-- Medical accuracy in PCOS-related responses
-- Contextual understanding of symptoms and treatments
-- Empathetic and supportive communication
-- Practical lifestyle and dietary recommendations
+PCOS affects roughly 1 in 10 women globally, but general-purpose AI models tend to give pretty vague answers on the topic. We wanted to see how much better a domain-fine-tuned model could do — and package that into something usable.
 
 ---
 
-## 🎯 Project Contributions
+## ✨ Features
 
-### 1. Domain-Specific Dataset Creation
-- **7 curated JSONL datasets** with PCOS-specific Q&A pairs
-- Covers: symptoms, diagnosis, treatments, lifestyle, diet, mental health
-- Multiple dataset sizes for experimentation (concise to comprehensive)
-- Total: 50,000+ tokens of specialized medical content
+### Mobile App (React Native)
+- **Dashboard** — personalized health overview and recent activity
+- **Symptom Logging** — daily log entries for symptoms, mood, weight, and more
+- **Cycle Tracker** — menstrual cycle tracking with period prediction
+- **AI Chat** — conversational interface powered by the fine-tuned Llama model
+- **Logs History** — browse and review past health logs
+- **User Profile** — manage account and health settings
+- **Auth Flow** — register, login, and email OTP verification
 
-### 2. Multi-Model Fine-Tuning Pipeline
-- **Base Models**: Llama 3 (8B), Gemma 2, Mistral
-- **Fine-Tuning Methods**: 
-  - Full fine-tuning with Ollama
-  - LoRA (Low-Rank Adaptation) for efficient training
-  - Parameter-efficient fine-tuning (PEFT)
-- **Training Infrastructure**: Local GPU training with Ollama
+### Backend (FastAPI)
+- JWT-based authentication with email OTP verification
+- Symptom log management (create, read, history)
+- PCOS risk prediction using trained ML models
+- AI-generated health insights from logs
+- SQLite database with a clean schema
 
-### 3. RAG (Retrieval-Augmented Generation) Integration
-- Vector embeddings for PCOS knowledge base
-- Document retrieval for context-aware responses
-- Hybrid approach: Fine-tuned model + RAG
+### ML Models
+- **PCOS Risk Prediction** using KNN, Decision Tree, Logistic Regression, and Naive Bayes — best model selected for the backend prediction route
+- Trained on a curated PCOS dataset
 
-### 4. Real-World Demonstration Application
-- Full-stack web application to showcase model capabilities
-- User interaction logging for model evaluation
-- A/B testing framework for base vs fine-tuned models
-- Performance metrics collection (response time, accuracy, user satisfaction)
+### LLM Fine-Tuning (AI Models)
+- Base model: `llama-3.2-1b-instruct` (Q8_0 GGUF)
+- Fine-tuned via Ollama using custom Modelfiles
+- PCOS-specific system prompts and training configuration
+- Separate Modelfiles for base vs fine-tuned comparison
 
----
-
-## � Dataset Overview
-
-### Training Data Structure
-
-```
-data/
-├── pcos_dataset.jsonl                    # Base training set
-├── pcos_comprehensive_dataset.jsonl      # Extended training set
-├── pcos_training_complete.jsonl          # Complete training corpus
-├── concise_training_dataset.jsonl        # Concise version
-├── OnlyPCOS.json                         # PCOS-specific data
-├── allData.json                          # Complete dataset
-└── clean_data.json                       # Cleaned and validated data
-```
-
-### Dataset Statistics
-
-| Dataset | Size | Q&A Pairs | Tokens | Use Case |
-|---------|------|-----------|--------|----------|
-| Concise | 50 KB | 100+ | 10K+ | Quick experiments |
-| Base | 200 KB | 500+ | 40K+ | Standard training |
-| Comprehensive | 500 KB | 1000+ | 100K+ | Full fine-tuning |
-| Complete | 1 MB | 2000+ | 200K+ | Maximum performance |
-
-### Data Categories
-
-- **Symptoms & Diagnosis** (30%): Irregular periods, acne, weight gain, hair loss
-- **Treatment Options** (25%): Medications, hormonal therapy, supplements
-- **Lifestyle & Diet** (20%): Exercise, nutrition, weight management
-- **Mental Health** (15%): Anxiety, depression, emotional support
-- **Fertility & Pregnancy** (10%): Conception, pregnancy management
+### Web Frontend (React)
+- Admin/comparison dashboard built with React and Tailwind CSS
+- Visualizes model responses and user interaction logs
 
 ---
 
-## 🔧 Fine-Tuning Methodology
+## 🛠 Tech Stack
 
-### Approach 1: Ollama Fine-Tuning (Recommended)
-
-```bash
-# 1. Create Modelfile
-cat > Modelfile <<EOF
-FROM llama3
-PARAMETER temperature 0.7
-PARAMETER top_p 0.9
-SYSTEM You are a specialized PCOS healthcare assistant...
-EOF
-
-# 2. Train the model
-ollama create pcos-llama3 -f Modelfile
-
-# 3. Test the model
-ollama run pcos-llama3 "What are common PCOS symptoms?"
+### Mobile
+```
+React Native 0.73 (TypeScript)
+├── React Navigation    — screen navigation
+├── Axios               — API communication
+├── AsyncStorage        — local session storage
+└── React Native        — UI components
 ```
 
-### Approach 2: LoRA Fine-Tuning
+### Backend
+```
+Python / FastAPI
+├── SQLAlchemy          — ORM & database models
+├── Pydantic            — request/response validation
+├── JWT                 — authentication tokens
+├── OTP Service         — email-based verification
+└── SQLite              — local database (pcos_tracker.db)
 
-```python
-from transformers import AutoModelForCausalLM, AutoTokenizer
-from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
-
-# Load base model
-model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-3-8B")
-tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-3-8B")
-
-# Configure LoRA
-lora_config = LoraConfig(
-    r=16,
-    lora_alpha=32,
-    target_modules=["q_proj", "v_proj"],
-    lora_dropout=0.05,
-    bias="none",
-    task_type="CAUSAL_LM"
-)
-
-# Apply LoRA
-model = get_peft_model(model, lora_config)
-
-# Train on PCOS dataset
-# ... training code ...
+API Routers:
+├── /auth               — register, login, OTP
+├── /logs               — symptom log CRUD
+├── /prediction         — PCOS risk scoring
+└── /insights           — AI-generated health insights
 ```
 
-### Training Parameters
-
-| Parameter | Value | Rationale |
-|-----------|-------|-----------|
-| Learning Rate | 2e-5 | Stable convergence |
-| Batch Size | 4 | Memory constraints |
-| Epochs | 3-5 | Prevent overfitting |
-| Max Length | 512 | Context window |
-| LoRA Rank (r) | 16 | Balance efficiency/performance |
-| Temperature | 0.7 | Balanced creativity |
-
----
-
-## 📈 Model Evaluation
-
-### Evaluation Metrics
-
-1. **Perplexity**: Measure model confidence
-2. **BLEU Score**: Compare generated vs reference responses
-3. **ROUGE Score**: Evaluate response quality
-4. **Human Evaluation**: Medical accuracy, empathy, helpfulness
-5. **Response Time**: Inference speed comparison
-
-### Comparison Framework
-
-| Model | Perplexity | BLEU | ROUGE-L | Avg Response Time | Medical Accuracy |
-|-------|------------|------|---------|-------------------|------------------|
-| Llama 3 (Base) | TBD | TBD | TBD | TBD | TBD |
-| Llama 3 (Fine-tuned) | TBD | TBD | TBD | TBD | TBD |
-| Gemma 2 (Base) | TBD | TBD | TBD | TBD | TBD |
-| Gemma 2 (Fine-tuned) | TBD | TBD | TBD | TBD | TBD |
-
-*Note: Fill in metrics after training and evaluation*
-
-### Sample Comparison
-
-**Query**: "I have irregular periods and acne. Could this be PCOS?"
-
-**Base Model Response**:
-> "Irregular periods and acne can have many causes. You should consult a doctor for proper diagnosis."
-
-**Fine-Tuned Model Response**:
-> "Irregular periods and acne are indeed common PCOS symptoms. PCOS affects 1 in 10 women and often presents with hormonal imbalances. I recommend consulting an endocrinologist or gynecologist who can perform blood tests (checking androgen levels, insulin resistance) and an ultrasound. In the meantime, maintaining a balanced diet and regular exercise can help manage symptoms."
-
----
-
-## 🏗️ Technology Stack
-
-### Machine Learning & NLP
-
+### Machine Learning
 ```
-🤖 LLM Framework
-├── Ollama                  - Local LLM inference
-├── PyTorch                 - Deep learning framework
-├── Transformers (Hugging Face) - Model architecture
-├── PEFT                    - Parameter-efficient fine-tuning
-└── LangChain               - LLM application framework
-
-📊 Data Processing
-├── Pandas                  - Data manipulation
-├── NumPy                   - Numerical computing
-└── JSONL                   - Training data format
-
-🔍 RAG Components
-├── ChromaDB                - Vector database
-├── Sentence Transformers   - Embeddings
-└── FAISS                   - Similarity search
+Python / scikit-learn
+├── KNN
+├── Decision Tree
+├── Logistic Regression
+└── Naive Bayes         — all evaluated; best model deployed
 ```
 
-### Demonstration Application
-
+### LLM / AI
 ```
-Backend (FastAPI)
-├── Python 3.8+
-├── FastAPI                 - Web framework
-├── SQLAlchemy              - ORM
-├── Pydantic                - Data validation
-└── JWT                     - Authentication
-
-Frontend (React)
-├── React 18
-├── Tailwind CSS
-├── Axios
-├── Recharts                - Data visualization
-└── React Router
-
-Database
-└── SQLite                  - User data & logs
+Ollama + Llama 3.2 (1B, quantized Q8_0)
+└── Custom Modelfiles for PCOS domain fine-tuning
 ```
 
----
-
-## 🚀 Quick Start
-
-### Prerequisites
-
-- Python 3.8+
-- [Ollama](https://ollama.ai/) installed
-- CUDA-capable GPU (recommended for training)
-- 16GB+ RAM
-
-### Installation
-
-#### 1. Clone Repository
-
-```bash
-git clone https://github.com/hashirch/Ovula.git
-cd Ovula
+### Web Frontend
 ```
-
-#### 2. Install Dependencies
-
-```bash
-# Backend dependencies
-cd backend
-pip install -r requirements.txt
-
-# Frontend dependencies
-cd ../frontend
-npm install
+React 18 + Tailwind CSS
+└── Interactive dashboard for model comparison
 ```
-
-#### 3. Install Ollama Models
-
-```bash
-# Pull base models
-ollama pull llama3
-ollama pull gemma2
-ollama pull mistral
-```
-
-#### 4. Fine-Tune Your Model
-
-```bash
-# Generate training dataset
-python scripts/create_training_dataset.py
-
-# Create fine-tuned model
-./scripts/create_custom_model.sh
-```
-
-#### 5. Run the Application
-
-```bash
-# Start all services
-./scripts/run_system.sh
-
-# Or start individually:
-# Backend: python backend/main.py
-# Frontend: cd frontend && npm start
-# Ollama: ollama serve
-```
-
-### Access Points
-
-- **Frontend**: http://localhost:3000
-- **Backend API**: http://localhost:8000
-- **API Docs**: http://localhost:8000/docs
-- **Ollama**: http://localhost:11434
-
----
-
-## 🧪 Experimentation Guide
-
-### Experiment 1: Compare Base vs Fine-Tuned
-
-```bash
-# Test base model
-ollama run llama3 "What causes PCOS?"
-
-# Test fine-tuned model
-ollama run pcos-llama3 "What causes PCOS?"
-
-# Compare responses
-```
-
-### Experiment 2: Dataset Size Impact
-
-```bash
-# Train on concise dataset
-python scripts/create_training_dataset.py --dataset concise
-./scripts/create_custom_model.sh
-
-# Train on comprehensive dataset
-python scripts/create_training_dataset.py --dataset comprehensive
-./scripts/create_custom_model.sh
-
-# Compare model performance
-```
-
-### Experiment 3: LoRA vs Full Fine-Tuning
-
-```python
-# Configure in backend/.env
-MODEL_TYPE=ollama_finetuned  # Full fine-tuning
-# vs
-MODEL_TYPE=lora_pipeline     # LoRA fine-tuning
-
-# Compare training time, memory usage, and performance
-```
-
----
-
-## 📸 Demonstration Application Screenshots
-
-> The web application serves as a real-world testing platform for the fine-tuned models
-
-<div align="center">
-
-### 🏠 Dashboard
-![Dashboard](docs/screenshots/dashboard.png)
-*User dashboard for tracking PCOS symptoms and health metrics*
-
-### 💬 AI Chatbot Interface
-![AI Chat](docs/screenshots/chat.png)
-*Interactive chat with fine-tuned PCOS specialist LLM*
-
-### 📝 Symptom Logging
-![Add Log](docs/screenshots/add-log.png)
-*Daily symptom tracking for model training data collection*
-
-### � Cycle Tracker
-![Cycle Tracker](docs/screenshots/cycle-tracker.png)
-*Menstrual cycle monitoring with AI-powered predictions*
-
-### 🔐 Authentication
-<table>
-<tr>
-<td width="50%">
-<img src="docs/screenshots/login.png" alt="Login Page"/>
-<p align="center"><em>Secure user authentication</em></p>
-</td>
-<td width="50%">
-<img src="docs/screenshots/register.png" alt="Register Page"/>
-<p align="center"><em>User registration</em></p>
-</td>
-</tr>
-</table>
-
-</div>
 
 ---
 
@@ -438,227 +152,244 @@ MODEL_TYPE=lora_pipeline     # LoRA fine-tuning
 ```
 ovula/
 │
-├── 📂 data/                             # Training Datasets (PRIMARY FOCUS)
-│   ├── pcos_dataset.jsonl               # Base training data
-│   ├── pcos_comprehensive_dataset.jsonl # Extended training data
-│   ├── pcos_training_complete.jsonl     # Complete training corpus
-│   ├── concise_training_dataset.jsonl   # Concise version
-│   ├── OnlyPCOS.json                    # PCOS-specific data
-│   ├── allData.json                     # Complete dataset
-│   └── clean_data.json                  # Cleaned data
+├── 📂 mobile/                          # React Native App (main user-facing product)
+│   ├── src/
+│   │   ├── screens/                    # App screens
+│   │   │   ├── LoginScreen.js
+│   │   │   ├── RegisterScreen.js
+│   │   │   ├── VerifyEmailScreen.js
+│   │   │   ├── DashboardScreen.js
+│   │   │   ├── AddLogScreen.js
+│   │   │   ├── LogsHistoryScreen.js
+│   │   │   ├── CycleTrackerScreen.js
+│   │   │   ├── ChatScreen.js
+│   │   │   └── ProfileScreen.js
+│   │   ├── navigation/                 # Stack/tab navigator setup
+│   │   ├── contexts/                   # Auth context / state
+│   │   ├── services/                   # API service layer
+│   │   ├── components/                 # Shared components
+│   │   ├── styles/                     # Global styles
+│   │   └── utils/                      # Helper utilities
+│   └── android/ ios/                   # Native project files
 │
-├── 📂 scripts/                          # Fine-Tuning Scripts
-│   ├── create_training_dataset.py       # Dataset generation
-│   ├── create_custom_model.sh           # Ollama fine-tuning
-│   ├── generate_concise_dataset.py      # Dataset preprocessing
-│   └── run_system.sh                    # Start all services
+├── 📂 backend/                         # FastAPI Backend
+│   ├── main.py                         # App entry point
+│   ├── models.py                       # Database models
+│   ├── schemas.py                      # Pydantic schemas
+│   ├── database.py                     # DB connection
+│   ├── auth.py                         # Auth helpers
+│   ├── otp_service.py                  # Email OTP logic
+│   ├── database_schema.sql             # SQL schema reference
+│   ├── requirements.txt
+│   └── routers/
+│       ├── auth.py                     # Auth routes
+│       ├── logs.py                     # Symptom log routes
+│       ├── prediction.py               # ML prediction routes
+│       └── insights.py                 # AI insights routes
 │
-├── 📂 rag/                              # RAG Implementation
-│   ├── embeddings.py                    # Vector embeddings
-│   └── retriever.py                     # Document retrieval
+├── 📂 ml-models/                       # Classical ML for PCOS prediction
+│   ├── src/
+│   │   ├── models/
+│   │   │   ├── knnprediction.py
+│   │   │   ├── decisiontree.py
+│   │   │   ├── logisticregression.py
+│   │   │   ├── naivebayesprediction.py
+│   │   │   └── train_best_model.py     # Selects & saves best model
+│   │   └── data/                       # Feature processing scripts
+│   └── data/                           # Raw / interim / processed datasets
 │
-├── 📂 backend/                          # Demo Application Backend
-│   ├── 📂 app/
-│   │   ├── 📂 services/
-│   │   │   └── llm_service.py           # LLM integration (LoRA, Ollama)
-│   │   ├── 📂 routes/
-│   │   │   └── chat.py                  # Chat API endpoints
-│   │   └── config.py                    # Model configuration
-│   ├── main.py                          # FastAPI application
-│   ├── models.py                        # Database models
-│   └── requirements.txt                 # Python dependencies
+├── 📂 ai-models/                       # LLM Fine-Tuning
+│   ├── Modelfile                       # Primary fine-tuned Modelfile
+│   ├── Modelfile_PCOS                  # PCOS-specific tuning config
+│   ├── Modelfile_Base_PCOS             # Base model for comparison
+│   └── llama-3.2-1b-instruct.Q8_0.gguf  # Quantized base model
 │
-├── 📂 frontend/                         # Demo Application Frontend
-│   ├── 📂 src/
-│   │   ├── 📂 pages/
-│   │   │   ├── Chat.js                  # Chat interface
-│   │   │   ├── Dashboard.js             # User dashboard
-│   │   │   └── ...
-│   │   └── App.js                       # Main component
-│   └── package.json                     # Node dependencies
+├── 📂 frontend/                        # React Web Dashboard
+│   ├── src/
+│   │   ├── pages/                      # App pages (10 pages)
+│   │   ├── components/
+│   │   ├── contexts/
+│   │   └── App.js
+│   └── public/
+│       └── ovula-logo.png
 │
-├── 📂 docs/                             # Documentation
-│   ├── 📂 screenshots/                  # Application screenshots
-│   └── SCREENSHOTS_GUIDE.md             # Screenshot guide
+├── 📂 docs/                            # Documentation & screenshots
+│   ├── ovula-logo.png
+│   └── screenshots/
+│       ├── dashboard.png
+│       ├── chat.png
+│       ├── add-log.png
+│       ├── cycle-tracker.png
+│       ├── login.png
+│       └── register.png
 │
-└── README.md                            # This file
+├── start_backend.sh                    # One-shot backend startup
+├── start_frontend.sh                   # One-shot frontend startup
+└── README.md
 ```
 
 ---
 
-## � Research Methodology
+## 📸 App Screenshots
 
-### Phase 1: Data Collection & Preparation
-1. Gather PCOS-related medical information from reliable sources
-2. Create Q&A pairs covering various PCOS aspects
-3. Validate data with medical professionals (if possible)
-4. Format data in JSONL for training
+<div align="center">
 
-### Phase 2: Model Selection & Baseline
-1. Select base models (Llama 3, Gemma 2, Mistral)
-2. Establish baseline performance metrics
-3. Test base models on PCOS queries
-4. Document limitations and gaps
+### 🏠 Dashboard
+![Dashboard](docs/screenshots/dashboard.png)
+*Main screen showing health summary and recent activity*
 
-### Phase 3: Fine-Tuning
-1. Configure training parameters
-2. Fine-tune models using Ollama and LoRA
-3. Monitor training metrics (loss, perplexity)
-4. Save checkpoints and best models
+### 💬 AI Chat
+![Chat](docs/screenshots/chat.png)
+*Conversational AI powered by the fine-tuned Llama model*
 
-### Phase 4: Evaluation
-1. Quantitative evaluation (BLEU, ROUGE, perplexity)
-2. Qualitative evaluation (human assessment)
-3. A/B testing in demo application
-4. Collect user feedback
+### 📝 Symptom Log
+![Add Log](docs/screenshots/add-log.png)
+*Daily symptom and health tracking*
 
-### Phase 5: Analysis & Documentation
-1. Compare base vs fine-tuned performance
-2. Analyze strengths and limitations
-3. Document findings and insights
-4. Prepare research paper/presentation
+### 🌙 Cycle Tracker
+![Cycle Tracker](docs/screenshots/cycle-tracker.png)
+*Period tracking and prediction*
 
----
+### 🔐 Authentication
+<table>
+<tr>
+<td width="50%">
+<img src="docs/screenshots/login.png" alt="Login"/>
+<p align="center"><em>Login</em></p>
+</td>
+<td width="50%">
+<img src="docs/screenshots/register.png" alt="Register"/>
+<p align="center"><em>Register</em></p>
+</td>
+</tr>
+</table>
 
-## 📊 Expected Outcomes
-
-### Quantitative Improvements
-- **20-30% reduction** in perplexity on PCOS-specific queries
-- **15-25% improvement** in BLEU/ROUGE scores
-- **Faster response time** with LoRA (vs full fine-tuning)
-- **90%+ medical accuracy** on common PCOS questions
-
-### Qualitative Improvements
-- More empathetic and supportive responses
-- Better understanding of PCOS-specific terminology
-- Contextual awareness of symptom relationships
-- Practical, actionable advice
-
-### Research Contributions
-- Methodology for healthcare domain LLM fine-tuning
-- Curated PCOS dataset for future research
-- Comparison of fine-tuning techniques
-- Real-world application framework
+</div>
 
 ---
 
-## 🔄 Future Work
+## 🚀 Quick Start
 
-### Model Improvements
-- [ ] Expand training dataset to 500K+ tokens
-- [ ] Multi-lingual support (Urdu, Arabic)
-- [ ] Fine-tune larger models (70B parameters)
-- [ ] Implement reinforcement learning from human feedback (RLHF)
+### Prerequisites
 
-### Application Enhancements
-- [ ] Real-time model performance monitoring
-- [ ] Advanced A/B testing framework
-- [ ] Integration with wearable devices
-- [ ] Telemedicine consultation features
+- Python 3.8+
+- Node.js 18+
+- [Ollama](https://ollama.ai/) installed and running
+- Android Studio or Xcode for mobile development
 
-### Research Extensions
-- [ ] Publish research paper on findings
-- [ ] Extend to other healthcare domains
-- [ ] Federated learning for privacy
-- [ ] Edge deployment for mobile devices
+### 1. Clone the Repo
 
----
+```bash
+git clone https://github.com/hashirch/ovula.git
+cd ovula
+```
 
-## 📚 References & Resources
+### 2. Start the Backend
 
-### Research Papers
-- "LoRA: Low-Rank Adaptation of Large Language Models" (Hu et al., 2021)
-- "Fine-tuning Language Models for Healthcare" (Various)
-- "Domain-Specific LLM Applications" (Various)
+```bash
+cd backend
+pip install -r requirements.txt
+# copy .env.example to .env and fill in values
+python main.py
+```
 
-### Tools & Frameworks
-- [Ollama Documentation](https://ollama.ai/docs)
-- [Hugging Face Transformers](https://huggingface.co/docs/transformers)
-- [PEFT Library](https://github.com/huggingface/peft)
-- [LangChain](https://python.langchain.com/)
+Or use the helper script from the root:
 
-### Datasets & Models
-- [Meta Llama 3](https://huggingface.co/meta-llama/Meta-Llama-3-8B)
-- [Google Gemma](https://huggingface.co/google/gemma-2b)
-- [Mistral AI](https://huggingface.co/mistralai/Mistral-7B-v0.1)
+```bash
+./start_backend.sh
+```
 
----
+Backend runs at `http://localhost:8000` — API docs at `http://localhost:8000/docs`.
 
-## � Contributing
+### 3. Run the Mobile App
 
-We welcome contributions to improve the fine-tuning methodology, expand the dataset, or enhance the evaluation framework!
+```bash
+cd mobile
+npm install
+npx react-native run-android   # or run-ios
+```
 
-### How to Contribute
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/improvement`)
-3. Commit your changes (`git commit -m 'Add improvement'`)
-4. Push to the branch (`git push origin feature/improvement`)
-5. Open a Pull Request
+### 4. Run the Web Frontend
 
-### Areas for Contribution
-- Additional PCOS training data
-- Improved evaluation metrics
-- Alternative fine-tuning approaches
-- Documentation improvements
+```bash
+cd frontend
+npm install
+npm start
+./start_frontend.sh   # or use the root script
+```
 
----
+Frontend runs at `http://localhost:3000`.
 
-## 📄 License
+### 5. Set Up the LLM
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+```bash
+# Pull and create the fine-tuned model
+ollama create pcos-llama -f ai-models/Modelfile_PCOS
+
+# Test it
+ollama run pcos-llama "What are the early signs of PCOS?"
+```
 
 ---
 
-## 🙏 Acknowledgments
+## 🔬 LLM Fine-Tuning
 
-### Academic Support
-- **FAST NUCES Peshawar** for providing resources and infrastructure
-- **Shahzeb Khan** for supervision and guidance
-- Faculty members for technical support
+We used Ollama with a locally quantized Llama 3.2 1B model (Q8_0) as our base. Fine-tuning was done by writing custom Modelfiles with PCOS-specific system prompts, behavioral constraints, and training parameters.
 
-### Technical Resources
-- **Ollama** for local LLM inference platform
-- **Hugging Face** for model hosting and tools
-- **Meta AI** for Llama 3 model
-- **Google** for Gemma model
-- Open-source community for various tools and libraries
+Three Modelfiles exist for comparison:
+- `Modelfile_Base_PCOS` — base Llama with minimal PCOS context (baseline)
+- `Modelfile_PCOS` — PCOS-specialized system prompt
+- `Modelfile` — final tuned version used in production
 
-### Medical Expertise
-- Healthcare professionals who validated PCOS information
-- Online medical resources and research papers
+```bash
+# Create all three for comparison
+ollama create pcos-base -f ai-models/Modelfile_Base_PCOS
+ollama create pcos-v1   -f ai-models/Modelfile_PCOS
+ollama create pcos      -f ai-models/Modelfile
+```
 
 ---
 
-## 📧 Contact & Support
+## 🤖 ML Prediction Models
 
-### Research Team
+The `/prediction` backend route uses the best-performing classical ML model for PCOS risk scoring. We trained and evaluated four models:
 
-- **Muhammad Hashir**: hashir.22pwbcsf9181@student.nu.edu.pk
-- **Laraib Shahid Abbasi**: laraib.22pwbcsf0503@student.nu.edu.pk
-- **Arooba Gohar**: arooba.22pwbcsf9216@student.nu.edu.pk
+| Model | Notes |
+|-------|-------|
+| K-Nearest Neighbors | Solid baseline, good on smaller datasets |
+| Decision Tree | Interpretable, fast inference |
+| Logistic Regression | Lightweight, reliable |
+| Naive Bayes | Fast, works well with independent features |
 
-### Getting Help
-
-- 📖 Check the [Documentation](#-quick-start)
-- � Report issues via GitHub Issues
-- 💬 Contact the team via email
-- 📧 Reach out to supervisor: Shahzeb Khan
+`train_best_model.py` evaluates all four and saves the best-performing one for use in the API.
 
 ---
 
 ## ⚠️ Disclaimer
 
-**Important**: This research project is for educational and research purposes only. The fine-tuned models are **not a substitute for professional medical advice, diagnosis, or treatment**. Always consult with qualified healthcare providers regarding any medical conditions or concerns.
+Ovula is a research and educational project. The AI responses and PCOS risk scores are **not a substitute for professional medical advice**. Always consult a qualified healthcare provider for any health concerns.
 
-The models may produce inaccurate or inappropriate responses. Users should verify all medical information with healthcare professionals.
+---
+
+## 📄 License
+
+MIT License — see [LICENSE](LICENSE) for details.
+
+---
+
+## 🙏 Acknowledgments
+
+- **Shahzeb Khan** — project supervisor
+- **FAST NUCES Peshawar** — resources and infrastructure
+- **Meta AI** — Llama 3.2 model
+- **Ollama** — local LLM inference platform
+- **Hugging Face** — model tooling and ecosystem
 
 ---
 
 <div align="center">
 
-### ⭐ Star this repository if you find our research helpful!
-
-**Made with ❤️ by the Ovula Research Team at FAST NUCES Peshawar**
+**Made with ❤️ by the Ovula team at FAST NUCES Peshawar**
 
 **[⬆ Back to Top](#-ovula)**
 
