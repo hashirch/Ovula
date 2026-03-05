@@ -123,7 +123,7 @@ async def get_summary_stats(
         "logs_this_week": len(recent_logs),
         "logs_this_month": len(monthly_logs),
         "avg_mood_week": round(sum(log.mood for log in recent_logs) / len(recent_logs), 1) if recent_logs else 0,
-        "avg_sleep_week": round(sum(log.sleep_hours for log in recent_logs if log.sleep_hours) / len([log for log in recent_logs if log.sleep_hours]), 1) if recent_logs else 0,
+        "avg_sleep_week": round(sum(log.sleep_hours for log in recent_logs if log.sleep_hours) / len([log for log in recent_logs if log.sleep_hours]), 1) if any(log.sleep_hours for log in recent_logs) else 0,
         "period_days_month": len([log for log in monthly_logs if log.period_status == "period"]),
-        "last_log_date": recent_logs[0].date.strftime("%Y-%m-%d") if recent_logs else None
+        "last_log_date": recent_logs[0].log_date.strftime("%Y-%m-%d") if recent_logs else None
     }

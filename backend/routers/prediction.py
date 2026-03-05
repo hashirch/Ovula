@@ -55,7 +55,7 @@ async def create_or_update_health_profile(
     
     if existing_profile:
         # Update existing profile
-        for key, value in profile.dict().items():
+        for key, value in profile.model_dump().items():
             setattr(existing_profile, key, value)
         existing_profile.updated_at = datetime.now()
         db.commit()
@@ -65,7 +65,7 @@ async def create_or_update_health_profile(
         # Create new profile
         db_profile = UserHealthProfile(
             user_id=current_user.id,
-            **profile.dict()
+            **profile.model_dump()
         )
         db.add(db_profile)
         db.commit()

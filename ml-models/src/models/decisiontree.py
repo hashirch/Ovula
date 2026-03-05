@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-"""DecisionTree.ipynb - Local Version"""
-
 import os
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split

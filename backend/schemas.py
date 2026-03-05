@@ -15,7 +15,7 @@ class UserResponse(UserBase):
     is_active: bool
     is_verified: bool
     created_at: datetime
-    
+
     class Config:
         from_attributes = True
 
@@ -37,22 +37,11 @@ class OTPResend(BaseModel):
 
 class OTPResponse(BaseModel):
     message: str
-    email: str
-    expires_in_minutes: Optional[int] = 5
-class OTPVerify(BaseModel):
-    email: EmailStr
-    otp_code: str
-
-class OTPResend(BaseModel):
-    email: EmailStr
-
-class OTPResponse(BaseModel):
-    message: str
     email: Optional[str] = None
 
 # Daily Log Schemas
 class DailyLogBase(BaseModel):
-    date: datetime
+    log_date: datetime          # matches DailyLog.log_date column
     period_status: str = "none"
     mood: int = 3
     acne: int = 0
@@ -70,8 +59,8 @@ class DailyLogResponse(DailyLogBase):
     id: int
     user_id: int
     created_at: datetime
-    updated_at: Optional[datetime]
-    
+    updated_at: Optional[datetime] = None
+
     class Config:
         from_attributes = True
 
@@ -87,7 +76,7 @@ class ChatMessageResponse(BaseModel):
     model_used: Optional[str] = None
     response_time: Optional[float] = None
     created_at: datetime
-    
+
     class Config:
         from_attributes = True
 
@@ -128,8 +117,8 @@ class HealthProfileResponse(HealthProfileCreate):
     id: int
     user_id: int
     created_at: datetime
-    updated_at: Optional[datetime]
-    
+    updated_at: Optional[datetime] = None
+
     class Config:
         from_attributes = True
 
@@ -149,6 +138,6 @@ class PredictionHistoryResponse(BaseModel):
     confidence: float
     model_version: str
     created_at: datetime
-    
+
     class Config:
         from_attributes = True
