@@ -6,7 +6,7 @@
 
 ### PCOS Tracking & AI Healthcare Assistant
 
-*A Final Year Project combining machine learning, LLM fine-tuning, and a full-stack mobile + web application for PCOS management*
+_A Final Year Project combining machine learning, LLM fine-tuning, and a full-stack mobile + web application for PCOS management_
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![React Native](https://img.shields.io/badge/React_Native-0.73+-61dafb.svg)](https://reactnative.dev/)
@@ -47,11 +47,11 @@
 
 ### 👥 Team
 
-| Name | Reg. No | GitHub |
-|------|---------|--------|
-| **Muhammad Hashir** | 22P-9181 | [@hashirch](https://github.com/hashirch) |
+| Name                     | Reg. No  | GitHub                                               |
+| ------------------------ | -------- | ---------------------------------------------------- |
+| **Muhammad Hashir**      | 22P-9181 | [@hashirch](https://github.com/hashirch)             |
 | **Laraib Shahid Abbasi** | 22P-0503 | [@Laraibshahid89](https://github.com/Laraibshahid89) |
-| **Arooba Gohar** | 22P-9216 | [@uroobagh123](https://github.com/uroobagh123) |
+| **Arooba Gohar**         | 22P-9216 | [@uroobagh123](https://github.com/uroobagh123)       |
 
 ---
 
@@ -66,6 +66,7 @@ PCOS affects roughly 1 in 10 women globally, but general-purpose AI models tend 
 ## ✨ Features
 
 ### Mobile App (React Native)
+
 - **Dashboard** — personalized health overview and recent activity
 - **Symptom Logging** — daily log entries for symptoms, mood, weight, and more
 - **Cycle Tracker** — menstrual cycle tracking with period prediction
@@ -75,6 +76,7 @@ PCOS affects roughly 1 in 10 women globally, but general-purpose AI models tend 
 - **Auth Flow** — register, login, and email OTP verification
 
 ### Backend (FastAPI)
+
 - JWT-based authentication with email OTP verification
 - Symptom log management (create, read, history)
 - PCOS risk prediction using trained ML models
@@ -82,16 +84,19 @@ PCOS affects roughly 1 in 10 women globally, but general-purpose AI models tend 
 - SQLite database with a clean schema
 
 ### ML Models
+
 - **PCOS Risk Prediction** using KNN, Decision Tree, Logistic Regression, and Naive Bayes — best model selected for the backend prediction route
 - Trained on a curated PCOS dataset
 
 ### LLM Fine-Tuning (AI Models)
+
 - Base model: `llama-3.2-1b-instruct` (Q8_0 GGUF)
 - Fine-tuned via Ollama using custom Modelfiles
 - PCOS-specific system prompts and training configuration
 - Separate Modelfiles for base vs fine-tuned comparison
 
 ### Web Frontend (React)
+
 - Admin/comparison dashboard built with React and Tailwind CSS
 - Visualizes model responses and user interaction logs
 
@@ -100,6 +105,7 @@ PCOS affects roughly 1 in 10 women globally, but general-purpose AI models tend 
 ## 🛠 Tech Stack
 
 ### Mobile
+
 ```
 React Native 0.73 (TypeScript)
 ├── React Navigation    — screen navigation
@@ -109,6 +115,7 @@ React Native 0.73 (TypeScript)
 ```
 
 ### Backend
+
 ```
 Python / FastAPI
 ├── SQLAlchemy          — ORM & database models
@@ -125,6 +132,7 @@ API Routers:
 ```
 
 ### Machine Learning
+
 ```
 Python / scikit-learn
 ├── KNN
@@ -134,12 +142,14 @@ Python / scikit-learn
 ```
 
 ### LLM / AI
+
 ```
 Ollama + Llama 3.2 (1B, quantized Q8_0)
 └── Custom Modelfiles for PCOS domain fine-tuning
 ```
 
 ### Web Frontend
+
 ```
 React 18 + Tailwind CSS
 └── Interactive dashboard for model comparison
@@ -147,7 +157,19 @@ React 18 + Tailwind CSS
 
 ---
 
-## 📁 Project Structure
+## 🏗️ Architecture Overview
+
+The project follows a modern microservices-inspired architecture, divided into 5 main, professionally separated components:
+
+1. **`mobile/`**: The React Native cross-platform mobile app (the main user-facing interface).
+2. **`backend/`**: The FastAPI server that handles the SQLite database, core business logic, authentication, and connects the app to the machine learning components.
+3. **`ml-models/`**: The Machine Learning workspace that contains training, evaluation, and serialization pipelines for our classical ML models to predict PCOS risk.
+4. **`ai-models/`**: The LLM domain fine-tuning workspace that leverages Meta Llama 3.2 via Ollama designed specifically to provide the AI conversational chat experience.
+5. **`frontend/`**: A React-based web dashboard interface for testing or administrative model comparison.
+
+---
+
+## 📁 Project Directory Structure
 
 ```
 ovula/
@@ -235,22 +257,27 @@ ovula/
 <div align="center">
 
 ### 🏠 Dashboard
+
 ![Dashboard](docs/screenshots/dashboard.png)
-*Main screen showing health summary and recent activity*
+_Main screen showing health summary and recent activity_
 
 ### 💬 AI Chat
+
 ![Chat](docs/screenshots/chat.png)
-*Conversational AI powered by the fine-tuned Llama model*
+_Conversational AI powered by the fine-tuned Llama model_
 
 ### 📝 Symptom Log
+
 ![Add Log](docs/screenshots/add-log.png)
-*Daily symptom and health tracking*
+_Daily symptom and health tracking_
 
 ### 🌙 Cycle Tracker
+
 ![Cycle Tracker](docs/screenshots/cycle-tracker.png)
-*Period tracking and prediction*
+_Period tracking and prediction_
 
 ### 🔐 Authentication
+
 <table>
 <tr>
 <td width="50%">
@@ -337,6 +364,7 @@ ollama run pcos-llama "What are the early signs of PCOS?"
 We used Ollama with a locally quantized Llama 3.2 1B model (Q8_0) as our base. Fine-tuning was done by writing custom Modelfiles with PCOS-specific system prompts, behavioral constraints, and training parameters.
 
 Three Modelfiles exist for comparison:
+
 - `Modelfile_Base_PCOS` — base Llama with minimal PCOS context (baseline)
 - `Modelfile_PCOS` — PCOS-specialized system prompt
 - `Modelfile` — final tuned version used in production
@@ -354,12 +382,12 @@ ollama create pcos      -f ai-models/Modelfile
 
 The `/prediction` backend route uses the best-performing classical ML model for PCOS risk scoring. We trained and evaluated four models:
 
-| Model | Notes |
-|-------|-------|
-| K-Nearest Neighbors | Solid baseline, good on smaller datasets |
-| Decision Tree | Interpretable, fast inference |
-| Logistic Regression | Lightweight, reliable |
-| Naive Bayes | Fast, works well with independent features |
+| Model               | Notes                                      |
+| ------------------- | ------------------------------------------ |
+| K-Nearest Neighbors | Solid baseline, good on smaller datasets   |
+| Decision Tree       | Interpretable, fast inference              |
+| Logistic Regression | Lightweight, reliable                      |
+| Naive Bayes         | Fast, works well with independent features |
 
 `train_best_model.py` evaluates all four and saves the best-performing one for use in the API.
 
