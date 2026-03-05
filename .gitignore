@@ -81,3 +81,4 @@ Thumbs.db
 
 # Migration scripts (keep in repo but ignore generated backups)
 *_backup_*.db
+\n*.gguf\n*pcos_model.pkl
