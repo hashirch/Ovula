@@ -159,85 +159,144 @@ React 18 + Tailwind CSS
 
 ## 🏗️ Architecture Overview
 
-The project follows a modern microservices-inspired architecture, divided into 5 main, professionally separated components:
+The project follows a modern, professionally organized architecture with clear separation of concerns:
 
-1. **`mobile/`**: The React Native cross-platform mobile app (the main user-facing interface).
-2. **`backend/`**: The FastAPI server that handles the SQLite database, core business logic, authentication, and connects the app to the machine learning components.
-3. **`ml-models/`**: The Machine Learning workspace that contains training, evaluation, and serialization pipelines for our classical ML models to predict PCOS risk.
-4. **`ai-models/`**: The LLM domain fine-tuning workspace that leverages Meta Llama 3.2 via Ollama designed specifically to provide the AI conversational chat experience.
-5. **`frontend/`**: A React-based web dashboard interface for testing or administrative model comparison.
+```
+┌─────────────────────────────────────────────────────────────┐
+│                         Ovula Platform                       │
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐     │
+│  │   Frontend   │  │    Mobile    │  │   Backend    │     │
+│  │  (React.js)  │  │(React Native)│  │  (FastAPI)   │     │
+│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘     │
+│         │                  │                  │              │
+│         └──────────────────┴──────────────────┘              │
+│                            │                                 │
+│                    ┌───────▼────────┐                       │
+│                    │  REST API      │                       │
+│                    │  (FastAPI)     │                       │
+│                    └───────┬────────┘                       │
+│                            │                                 │
+│         ┌──────────────────┼──────────────────┐            │
+│         │                  │                  │             │
+│    ┌────▼─────┐     ┌─────▼──────┐    ┌─────▼──────┐     │
+│    │ SQLite   │     │  ML Models │    │ LLM (Ollama)│     │
+│    │ Database │     │  (sklearn) │    │ Llama 3.2   │     │
+│    └──────────┘     └────────────┘    └─────────────┘     │
+│                                                              │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Components
+
+1. **`src/frontend/`**: React web application with glassmorphism design, featuring 11 pages for comprehensive PCOS management
+2. **`src/backend/`**: FastAPI server handling authentication, data management, and ML/AI integration
+3. **`src/mobile/`**: React Native cross-platform mobile app (iOS & Android)
+4. **`src/ml-models/`**: Machine learning models and LLM fine-tuning workspace
+5. **`docs/`**: Documentation, diagrams, and screenshots
+6. **`scripts/`**: Utility scripts for easy startup and deployment
 
 ---
 
-## 📁 Project Directory Structure
+## 📁 Project Structure
 
 ```
 ovula/
 │
-├── 📂 mobile/                          # React Native App (main user-facing product)
-│   ├── src/
-│   │   ├── screens/                    # App screens
-│   │   │   ├── LoginScreen.js
-│   │   │   ├── RegisterScreen.js
-│   │   │   ├── VerifyEmailScreen.js
-│   │   │   ├── DashboardScreen.js
-│   │   │   ├── AddLogScreen.js
-│   │   │   ├── LogsHistoryScreen.js
-│   │   │   ├── CycleTrackerScreen.js
-│   │   │   ├── ChatScreen.js
-│   │   │   └── ProfileScreen.js
-│   │   ├── navigation/                 # Stack/tab navigator setup
-│   │   ├── contexts/                   # Auth context / state
-│   │   ├── services/                   # API service layer
-│   │   ├── components/                 # Shared components
-│   │   ├── styles/                     # Global styles
-│   │   └── utils/                      # Helper utilities
-│   └── android/ ios/                   # Native project files
+├── 📂 src/                             # Source code
+│   │
+│   ├── 📂 frontend/                    # React Web Application
+│   │   ├── public/
+│   │   │   ├── index.html
+│   │   │   └── ovula-logo.png
+│   │   ├── src/
+│   │   │   ├── components/             # Reusable components
+│   │   │   │   └── Sidebar.js
+│   │   │   ├── contexts/               # React contexts
+│   │   │   │   └── AuthContext.js
+│   │   │   ├── pages/                  # Application pages
+│   │   │   │   ├── Login.js
+│   │   │   │   ├── Register.js
+│   │   │   │   ├── VerifyEmail.js
+│   │   │   │   ├── Dashboard.js
+│   │   │   │   ├── AddLog.js
+│   │   │   │   ├── LogsHistory.js
+│   │   │   │   ├── CycleTracker.js
+│   │   │   │   ├── Chat.js
+│   │   │   │   ├── PCOSPrediction.js
+│   │   │   │   ├── Insights.js
+│   │   │   │   └── Profile.js
+│   │   │   ├── App.js
+│   │   │   ├── index.js
+│   │   │   └── index.css
+│   │   ├── package.json
+│   │   └── tailwind.config.js
+│   │
+│   ├── 📂 backend/                     # FastAPI Backend
+│   │   ├── app/
+│   │   │   ├── models/
+│   │   │   │   └── chat.py
+│   │   │   ├── routes/
+│   │   │   ├── services/
+│   │   │   │   └── llm_service.py
+│   │   │   ├── __init__.py
+│   │   │   └── config.py
+│   │   ├── routers/
+│   │   │   ├── auth.py                 # Authentication routes
+│   │   │   ├── logs.py                 # Symptom log routes
+│   │   │   ├── prediction.py           # ML prediction routes
+│   │   │   ├── insights.py             # AI insights routes
+│   │   │   └── chat.py                 # Chat routes
+│   │   ├── main.py                     # App entry point
+│   │   ├── models.py                   # Database models
+│   │   ├── schemas.py                  # Pydantic schemas
+│   │   ├── database.py                 # DB connection
+│   │   ├── auth.py                     # Auth helpers
+│   │   ├── otp_service.py              # Email OTP logic
+│   │   ├── database_schema.sql         # SQL schema reference
+│   │   ├── pcos_tracker.db             # SQLite database
+│   │   ├── .env                        # Environment variables
+│   │   └── requirements.txt
+│   │
+│   ├── 📂 mobile/                      # React Native App
+│   │   ├── src/
+│   │   │   ├── screens/                # App screens
+│   │   │   │   ├── LoginScreen.js
+│   │   │   │   ├── RegisterScreen.js
+│   │   │   │   ├── VerifyEmailScreen.js
+│   │   │   │   ├── DashboardScreen.js
+│   │   │   │   ├── AddLogScreen.js
+│   │   │   │   ├── LogsHistoryScreen.js
+│   │   │   │   ├── CycleTrackerScreen.js
+│   │   │   │   ├── ChatScreen.js
+│   │   │   │   └── ProfileScreen.js
+│   │   │   ├── navigation/             # Navigation setup
+│   │   │   ├── contexts/               # Auth context
+│   │   │   ├── services/               # API services
+│   │   │   ├── components/             # Shared components
+│   │   │   └── styles/                 # Global styles
+│   │   ├── android/                    # Android native
+│   │   ├── ios/                        # iOS native
+│   │   ├── app.json
+│   │   └── package.json
+│   │
+│   └── 📂 ml-models/                   # Machine Learning & AI
+│       ├── Modelfile                   # Primary fine-tuned Modelfile
+│       ├── Modelfile_PCOS              # PCOS-specific tuning config
+│       ├── Modelfile_Base_PCOS         # Base model for comparison
+│       ├── llama-3.2-1b-instruct.Q8_0.gguf  # Quantized base model
+│       └── finetune_pcos_model.ipynb   # Training notebook
 │
-├── 📂 backend/                         # FastAPI Backend
-│   ├── main.py                         # App entry point
-│   ├── models.py                       # Database models
-│   ├── schemas.py                      # Pydantic schemas
-│   ├── database.py                     # DB connection
-│   ├── auth.py                         # Auth helpers
-│   ├── otp_service.py                  # Email OTP logic
-│   ├── database_schema.sql             # SQL schema reference
-│   ├── requirements.txt
-│   └── routers/
-│       ├── auth.py                     # Auth routes
-│       ├── logs.py                     # Symptom log routes
-│       ├── prediction.py               # ML prediction routes
-│       └── insights.py                 # AI insights routes
-│
-├── 📂 ml-models/                       # Classical ML for PCOS prediction
-│   ├── src/
-│   │   ├── models/
-│   │   │   ├── knnprediction.py
-│   │   │   ├── decisiontree.py
-│   │   │   ├── logisticregression.py
-│   │   │   ├── naivebayesprediction.py
-│   │   │   └── train_best_model.py     # Selects & saves best model
-│   │   └── data/                       # Feature processing scripts
-│   └── data/                           # Raw / interim / processed datasets
-│
-├── 📂 ai-models/                       # LLM Fine-Tuning
-│   ├── Modelfile                       # Primary fine-tuned Modelfile
-│   ├── Modelfile_PCOS                  # PCOS-specific tuning config
-│   ├── Modelfile_Base_PCOS             # Base model for comparison
-│   └── llama-3.2-1b-instruct.Q8_0.gguf  # Quantized base model
-│
-├── 📂 frontend/                        # React Web Dashboard
-│   ├── src/
-│   │   ├── pages/                      # App pages (10 pages)
-│   │   ├── components/
-│   │   ├── contexts/
-│   │   └── App.js
-│   └── public/
-│       └── ovula-logo.png
-│
-├── 📂 docs/                            # Documentation & screenshots
+├── 📂 docs/                            # Documentation & Assets
 │   ├── ovula-logo.png
-│   └── screenshots/
+│   ├── pcos_poster.png
+│   ├── pcos_detailed_uml.png
+│   ├── pcos_er_diagram.png
+│   ├── pcos_class_diagram.png
+│   ├── llm_workflow_detailed_diagram.png
+│   ├── prediction_workflow_detailed_diagram.png
+│   └── screenshots/                    # App screenshots
 │       ├── dashboard.png
 │       ├── chat.png
 │       ├── add-log.png
@@ -245,9 +304,13 @@ ovula/
 │       ├── login.png
 │       └── register.png
 │
-├── start_backend.sh                    # One-shot backend startup
-├── start_frontend.sh                   # One-shot frontend startup
-└── README.md
+├── 📂 scripts/                         # Utility Scripts
+│   ├── start_backend.sh                # Backend startup script
+│   └── start_frontend.sh               # Frontend startup script
+│
+├── .gitignore
+├── README.md
+└── LICENSE
 ```
 
 ---
@@ -314,44 +377,51 @@ cd ovula
 ### 2. Start the Backend
 
 ```bash
-cd backend
-pip install -r requirements.txt
-# copy .env.example to .env and fill in values
-python main.py
+# Using the startup script (recommended)
+./scripts/start_backend.sh
 ```
 
-Or use the helper script from the root:
+Or manually:
 
 ```bash
-./start_backend.sh
+cd src/backend
+pip install -r requirements.txt
+# Copy .env.example to .env and fill in values
+python main.py
 ```
 
 Backend runs at `http://localhost:8000` — API docs at `http://localhost:8000/docs`.
 
-### 3. Run the Mobile App
+### 3. Run the Web Frontend
 
 ```bash
-cd mobile
-npm install
-npx react-native run-android   # or run-ios
+# Using the startup script (recommended)
+./scripts/start_frontend.sh
 ```
 
-### 4. Run the Web Frontend
+Or manually:
 
 ```bash
-cd frontend
+cd src/frontend
 npm install
 npm start
-./start_frontend.sh   # or use the root script
 ```
 
 Frontend runs at `http://localhost:3000`.
+
+### 4. Run the Mobile App
+
+```bash
+cd src/mobile
+npm install
+npx react-native run-android   # or run-ios
+```
 
 ### 5. Set Up the LLM
 
 ```bash
 # Pull and create the fine-tuned model
-ollama create pcos-llama -f ai-models/Modelfile_PCOS
+ollama create pcos-llama -f src/ml-models/Modelfile_PCOS
 
 # Test it
 ollama run pcos-llama "What are the early signs of PCOS?"
@@ -371,9 +441,9 @@ Three Modelfiles exist for comparison:
 
 ```bash
 # Create all three for comparison
-ollama create pcos-base -f ai-models/Modelfile_Base_PCOS
-ollama create pcos-v1   -f ai-models/Modelfile_PCOS
-ollama create pcos      -f ai-models/Modelfile
+ollama create pcos-base -f src/ml-models/Modelfile_Base_PCOS
+ollama create pcos-v1   -f src/ml-models/Modelfile_PCOS
+ollama create pcos      -f src/ml-models/Modelfile
 ```
 
 ---
