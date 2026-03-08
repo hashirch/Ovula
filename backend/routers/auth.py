@@ -39,6 +39,11 @@ async def register_user(user: UserCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(db_user)
     
+    # Cleanup old/expired OTPs
+    deleted = otp_service.cleanup_expired_otps(db)
+    if deleted > 0:
+        logger.info(f"Cleaned up {deleted} expired/used OTP tokens")
+    
     # Generate OTP
     otp_code = otp_service.generate_otp()
     otp_expires_at = otp_service.get_expiry_time(minutes=5)
@@ -95,9 +100,12 @@ async def login_user(user_credentials: UserLogin, db: Session = Depends(get_db))
 async def verify_otp(otp_data: OTPVerify, db: Session = Depends(get_db)):
     """Verify OTP code and activate user account"""
     
+    logger.info(f"OTP verification attempt for: {otp_data.email}")
+    
     # Find user
     user = db.query(User).filter(User.email == otp_data.email).first()
     if not user:
+        logger.warning(f"OTP verification failed: User not found - {otp_data.email}")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="User not found"
@@ -110,25 +118,26 @@ async def verify_otp(otp_data: OTPVerify, db: Session = Depends(get_db)):
     ).order_by(OTPToken.created_at.desc()).first()
     
     if not otp_token:
+        logger.warning(f"OTP verification failed: No unused OTP found for user {user.email}")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="No OTP found. Please request a new one."
         )
     
-    # Check if OTP matches
-    if otp_token.otp_code.lower() != otp_data.otp_code.lower():
-        logger.warning(f"Invalid OTP attempt for user: {user.email}")
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid OTP code"
-        )
-    
-    # Check if OTP has expired
+    # Check if OTP has expired (check this before matching for better UX)
     if otp_service.is_otp_expired(otp_token.otp_expires_at):
-        logger.warning(f"Expired OTP attempt for user: {user.email}")
+        logger.warning(f"OTP verification failed: Expired OTP for user {user.email}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="OTP has expired. Please request a new one."
+        )
+    
+    # Check if OTP matches (otp_data.otp_code is already lowercase from validator)
+    if otp_token.otp_code != otp_data.otp_code:
+        logger.warning(f"OTP verification failed: Invalid OTP for user {user.email} (expected: {otp_token.otp_code}, got: {otp_data.otp_code})")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid OTP code"
         )
     
     # Activate user account
@@ -138,7 +147,7 @@ async def verify_otp(otp_data: OTPVerify, db: Session = Depends(get_db)):
     
     db.commit()
     
-    logger.info(f"User email verified: {user.email}")
+    logger.info(f"✅ User email verified successfully: {user.email}")
     
     return OTPResponse(
         message="Email verified successfully! You can now log in.",
@@ -163,6 +172,11 @@ async def resend_otp(otp_data: OTPResend, db: Session = Depends(get_db)):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Email already verified"
         )
+    
+    # Cleanup old/expired OTPs
+    deleted = otp_service.cleanup_expired_otps(db)
+    if deleted > 0:
+        logger.info(f"Cleaned up {deleted} expired/used OTP tokens")
     
     # Generate new OTP
     otp_code = otp_service.generate_otp()

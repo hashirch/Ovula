@@ -366,6 +366,29 @@ The {self.app_name} Team
         text_content, html_content = self.create_resend_email(username, email, otp_code)
         subject = f"🔄 {self.app_name} - New Verification Code"
         return self.send_email(email, subject, text_content, html_content)
+    
+    @staticmethod
+    def cleanup_expired_otps(db_session) -> int:
+        """
+        Delete expired and used OTPs from database
+        Returns the number of deleted records
+        """
+        from models import OTPToken
+        from datetime import datetime
+        
+        # Delete OTPs that are either:
+        # 1. Expired (past otp_expires_at time)
+        # 2. Used (is_used = True)
+        # 3. Older than 24 hours (regardless of status)
+        
+        deleted_count = db_session.query(OTPToken).filter(
+            (OTPToken.otp_expires_at < datetime.utcnow()) |
+            (OTPToken.is_used == True) |
+            (OTPToken.created_at < datetime.utcnow() - timedelta(hours=24))
+        ).delete(synchronize_session=False)
+        
+        db_session.commit()
+        return deleted_count
 
 
 # Global instance

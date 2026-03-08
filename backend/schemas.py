@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, field_validator
 from datetime import datetime
 from typing import Optional, List
 
@@ -31,6 +31,20 @@ class Token(BaseModel):
 class OTPVerify(BaseModel):
     email: EmailStr
     otp_code: str
+    
+    @field_validator('otp_code')
+    @classmethod
+    def validate_otp_code(cls, v: str) -> str:
+        # Strip whitespace
+        v = v.strip()
+        # Convert to lowercase for consistent comparison
+        v = v.lower()
+        # Validate format (6 hexadecimal characters)
+        if len(v) != 6:
+            raise ValueError('OTP code must be 6 characters')
+        if not all(c in '0123456789abcdef' for c in v):
+            raise ValueError('OTP code must contain only hexadecimal characters (0-9, a-f)')
+        return v
 
 class OTPResend(BaseModel):
     email: EmailStr
