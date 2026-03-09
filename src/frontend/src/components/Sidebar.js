@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Stethoscope, MessageCircle, Calendar, User, LogOut, PlusCircle, TrendingUp, Activity } from 'lucide-react';
+import { LayoutDashboard, Stethoscope, MessageCircle, Calendar, User, LogOut, PlusCircle, TrendingUp, Activity, UtensilsCrossed } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
 const Sidebar = () => {
@@ -13,6 +13,7 @@ const Sidebar = () => {
     { name: 'PCOS Care', path: '/pcos-prediction', icon: Stethoscope },
     { name: 'AI Assistant', path: '/chat', icon: MessageCircle },
     { name: 'Cycle Tracker', path: '/cycle-tracker', icon: Calendar },
+    { name: 'Diet & Nutrition', path: '/diet-nutrition', icon: UtensilsCrossed },
     { name: 'Insights', path: '/insights', icon: TrendingUp },
     { name: 'Logs History', path: '/logs-history', icon: Activity },
     { name: 'Profile', path: '/profile', icon: User },

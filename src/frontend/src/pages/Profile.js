@@ -15,17 +15,17 @@ const Profile = () => {
 
   const fetchUserStats = async () => {
     try {
-      const [logsResponse, insightsResponse] = await Promise.all([
-        axios.get('/logs/?limit=1'),
+      const [statsResponse, insightsResponse] = await Promise.all([
+        axios.get('/logs/stats'),
         axios.get('/insights/')
       ]);
       
-      const lastLog = logsResponse.data[0];
+      const stats = statsResponse.data;
       const insights = insightsResponse.data;
       
       setUserStats({
-        lastPeriod: lastLog?.period_status === 'period' ? lastLog.date : null,
-        avgCycle: insights.avg_cycle_length || 28,
+        lastPeriod: stats.latest_log?.date || null,
+        avgCycle: 28, // Default value, can be calculated from period logs
         totalLogs: insights.total_logs || 0
       });
     } catch (error) {

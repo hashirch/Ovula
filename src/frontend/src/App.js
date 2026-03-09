@@ -14,6 +14,7 @@ import Insights from './pages/Insights';
 import Chat from './pages/Chat';
 import PCOSPrediction from './pages/PCOSPrediction';
 import Profile from './pages/Profile';
+import DietNutrition from './pages/DietNutrition';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -136,6 +137,13 @@ function App() {
               <ProtectedRoute>
                 <AppLayout>
                   <Profile />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/diet-nutrition" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <DietNutrition />
                 </AppLayout>
               </ProtectedRoute>
             } />

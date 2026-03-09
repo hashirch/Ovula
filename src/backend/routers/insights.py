@@ -59,7 +59,7 @@ async def get_insights(
     
     logs = db.query(DailyLog).filter(
         DailyLog.user_id == current_user.id,
-        DailyLog.date >= thirty_days_ago
+        DailyLog.log_date >= thirty_days_ago
     ).all()
     
     if not logs:
@@ -109,14 +109,14 @@ async def get_summary_stats(
     seven_days_ago = datetime.now() - timedelta(days=7)
     recent_logs = db.query(DailyLog).filter(
         DailyLog.user_id == current_user.id,
-        DailyLog.date >= seven_days_ago
+        DailyLog.log_date >= seven_days_ago
     ).all()
     
     # Last 30 days
     thirty_days_ago = datetime.now() - timedelta(days=30)
     monthly_logs = db.query(DailyLog).filter(
         DailyLog.user_id == current_user.id,
-        DailyLog.date >= thirty_days_ago
+        DailyLog.log_date >= thirty_days_ago
     ).all()
     
     return {

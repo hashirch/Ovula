@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { Search, Bell, Zap, Droplets, Utensils, Smile, Sparkles, ArrowRight, Activity } from 'lucide-react';
+import { Search, Bell, Zap, Droplets, Utensils, Smile, Sparkles, ArrowRight, Activity, UtensilsCrossed } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
 const Dashboard = () => {
   const { user } = useAuth();
   const [stats, setStats] = useState(null);
+  const [cycleInfo, setCycleInfo] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -15,13 +16,52 @@ const Dashboard = () => {
 
   const fetchDashboardData = async () => {
     try {
-      const response = await axios.get('/logs/stats');
-      setStats(response.data);
+      const [statsResponse, logsResponse] = await Promise.all([
+        axios.get('/logs/stats'),
+        axios.get('/logs/?limit=90') // Get last 90 days for cycle calculation
+      ]);
+      
+      setStats(statsResponse.data);
+      
+      // Calculate cycle information
+      const logs = logsResponse.data;
+      const cycleData = calculateCycleInfo(logs, statsResponse.data);
+      setCycleInfo(cycleData);
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const calculateCycleInfo = (logs, stats) => {
+    // Find the most recent period
+    const periodLogs = logs.filter(log => log.period_status === 'period');
+    
+    if (periodLogs.length === 0) {
+      return {
+        currentDay: 0,
+        daysSincePeriod: stats.days_since_period || 0,
+        hasData: false
+      };
+    }
+
+    // Sort by date
+    periodLogs.sort((a, b) => new Date(b.date) - new Date(a.date));
+    
+    const lastPeriodDate = new Date(periodLogs[0].date);
+    const today = new Date();
+    const daysSincePeriod = Math.floor((today - lastPeriodDate) / (1000 * 60 * 60 * 24));
+    
+    // Estimate cycle day (assuming 28-day cycle, but showing actual days)
+    const currentDay = daysSincePeriod + 1; // Day 1 is the first day of period
+    
+    return {
+      currentDay: currentDay > 35 ? 35 : currentDay, // Cap at 35 for display
+      daysSincePeriod,
+      hasData: true,
+      lastPeriodDate
+    };
   };
 
   const userName = user?.name?.split(' ')[0] || 'there';
@@ -61,34 +101,66 @@ const Dashboard = () => {
             <div className="absolute inset-0 bg-pink-500/5 blur-[100px] -z-10"></div>
             <h3 className="text-lg font-semibold text-slate-700 mb-6">Current Cycle Progress</h3>
             
-            {/* Progress Wheel */}
-            <div className="relative size-64 flex items-center justify-center">
-              <div className="absolute inset-0 rounded-full border-[20px] border-white shadow-inner"></div>
-              <div 
-                className="absolute inset-0 rounded-full border-[20px] border-transparent cycle-ring-thick" 
-                style={{ 
-                  maskImage: 'radial-gradient(transparent 60%, black 61%)', 
-                  WebkitMaskImage: 'radial-gradient(transparent 60%, black 61%)' 
-                }}
-              ></div>
-              
-              {/* Indicator Dot */}
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-pink-500 border-4 border-white shadow-lg z-10"></div>
-              
-              <div className="flex flex-col items-center z-10 relative">
-                <span className="font-black text-6xl text-slate-800">14</span>
-                <span className="text-pink-500 font-bold uppercase tracking-widest text-xs mt-1">Day</span>
+            {loading ? (
+              <div className="flex items-center justify-center h-64">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500"></div>
               </div>
-            </div>
-            
-            <div className="mt-8 flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/50 border border-pink-100 text-pink-600 shadow-sm">
-              <Zap className="w-4 h-4 fill-pink-600" />
-              <span className="text-xs font-bold uppercase tracking-wide">Tracking Active</span>
-            </div>
-            
-            <p className="mt-4 text-slate-500 text-sm max-w-xs leading-relaxed">
-              Keep logging your symptoms to get personalized insights and predictions.
-            </p>
+            ) : cycleInfo?.hasData ? (
+              <>
+                {/* Progress Wheel */}
+                <div className="relative size-64 flex items-center justify-center">
+                  <div className="absolute inset-0 rounded-full border-[20px] border-white shadow-inner"></div>
+                  <div 
+                    className="absolute inset-0 rounded-full border-[20px] border-transparent cycle-ring-thick" 
+                    style={{ 
+                      maskImage: 'radial-gradient(transparent 60%, black 61%)', 
+                      WebkitMaskImage: 'radial-gradient(transparent 60%, black 61%)',
+                      transform: `rotate(${(cycleInfo.currentDay / 28) * 360}deg)`
+                    }}
+                  ></div>
+                  
+                  {/* Indicator Dot */}
+                  <div 
+                    className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-pink-500 border-4 border-white shadow-lg z-10"
+                    style={{ 
+                      transform: `rotate(${(cycleInfo.currentDay / 28) * 360}deg) translateY(-8rem)`
+                    }}
+                  ></div>
+                  
+                  <div className="flex flex-col items-center z-10 relative">
+                    <span className="font-black text-6xl text-slate-800">{cycleInfo.currentDay}</span>
+                    <span className="text-pink-500 font-bold uppercase tracking-widest text-xs mt-1">Day</span>
+                  </div>
+                </div>
+                
+                <div className="mt-8 flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/50 border border-pink-100 text-pink-600 shadow-sm">
+                  <Zap className="w-4 h-4 fill-pink-600" />
+                  <span className="text-xs font-bold uppercase tracking-wide">
+                    {cycleInfo.daysSincePeriod === 0 ? 'Period Day' : `Day ${cycleInfo.daysSincePeriod + 1} of Cycle`}
+                  </span>
+                </div>
+                
+                <p className="mt-4 text-slate-500 text-sm max-w-xs leading-relaxed">
+                  {cycleInfo.lastPeriodDate && (
+                    <>Last period: {new Date(cycleInfo.lastPeriodDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</>
+                  )}
+                </p>
+              </>
+            ) : (
+              <div className="flex flex-col items-center justify-center h-64">
+                <div className="size-20 rounded-3xl bg-pink-50 flex items-center justify-center text-pink-300 mb-4">
+                  <Droplets className="w-10 h-10" />
+                </div>
+                <p className="text-slate-600 font-semibold mb-2">No cycle data yet</p>
+                <p className="text-slate-400 text-sm mb-6 max-w-xs">Start logging your periods to track your cycle</p>
+                <Link 
+                  to="/add-log"
+                  className="px-6 py-3 bg-pink-500 text-white rounded-full font-bold hover:bg-pink-600 transition-colors"
+                >
+                  Add First Log
+                </Link>
+              </div>
+            )}
           </div>
 
           {/* AI Insight Card */}
@@ -138,27 +210,57 @@ const Dashboard = () => {
           </div>
 
           {/* Stats Overview */}
-          {!loading && stats && (
+          {loading ? (
+            <div className="glass rounded-3xl p-8 flex items-center justify-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pink-500"></div>
+            </div>
+          ) : stats && stats.total_logs > 0 ? (
             <div className="glass rounded-3xl p-8">
-              <h3 className="text-lg font-bold text-slate-800 mb-6">Your Stats</h3>
+              <h3 className="text-lg font-bold text-slate-800 mb-6">Your Stats (Last 30 Days)</h3>
               <div className="grid grid-cols-2 gap-6">
                 <div className="flex flex-col">
                   <span className="text-3xl font-bold text-slate-800">{stats.total_logs || 0}</span>
                   <span className="text-sm text-slate-500 font-medium mt-1">Total Logs</span>
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-3xl font-bold text-slate-800">{stats.avg_mood?.toFixed(1) || 'N/A'}</span>
+                  <span className="text-3xl font-bold text-slate-800">
+                    {stats.avg_mood ? stats.avg_mood.toFixed(1) : 'N/A'}
+                  </span>
                   <span className="text-sm text-slate-500 font-medium mt-1">Avg Mood</span>
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-3xl font-bold text-slate-800">{stats.avg_sleep?.toFixed(1) || 'N/A'}h</span>
+                  <span className="text-3xl font-bold text-slate-800">
+                    {stats.avg_sleep ? `${stats.avg_sleep.toFixed(1)}h` : 'N/A'}
+                  </span>
                   <span className="text-sm text-slate-500 font-medium mt-1">Avg Sleep</span>
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-3xl font-bold text-slate-800">{stats.period_frequency || 0}</span>
+                  <span className="text-3xl font-bold text-slate-800">{stats.period_days || 0}</span>
                   <span className="text-sm text-slate-500 font-medium mt-1">Period Days</span>
                 </div>
               </div>
+              {stats.days_since_period !== null && (
+                <div className="mt-6 pt-6 border-t border-pink-100">
+                  <p className="text-sm text-slate-600">
+                    <span className="font-bold">Last Period:</span> {stats.days_since_period === 0 ? 'Today' : `${stats.days_since_period} days ago`}
+                  </p>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="glass rounded-3xl p-8 text-center">
+              <div className="size-16 rounded-2xl bg-pink-50 flex items-center justify-center text-pink-300 mx-auto mb-4">
+                <Activity className="w-8 h-8" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-800 mb-2">Start Your Journey</h3>
+              <p className="text-slate-500 text-sm mb-6">Log your daily symptoms to see your health stats</p>
+              <Link 
+                to="/add-log"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-pink-500 text-white rounded-full font-bold hover:bg-pink-600 transition-colors"
+              >
+                <Zap className="w-4 h-4" />
+                <span>Add Your First Log</span>
+              </Link>
             </div>
           )}
 
@@ -182,6 +284,24 @@ const Dashboard = () => {
                 <div>
                   <p className="font-bold text-slate-800 text-sm">Insights</p>
                   <p className="text-xs text-slate-500">View trends</p>
+                </div>
+              </Link>
+              <Link to="/diet-nutrition" className="flex items-center gap-3 p-4 rounded-2xl bg-white/50 hover:bg-white transition-all border border-pink-100 group">
+                <div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <UtensilsCrossed className="w-5 h-5 text-green-500" />
+                </div>
+                <div>
+                  <p className="font-bold text-slate-800 text-sm">Diet Plans</p>
+                  <p className="text-xs text-slate-500">Healthy recipes</p>
+                </div>
+              </Link>
+              <Link to="/cycle-tracker" className="flex items-center gap-3 p-4 rounded-2xl bg-white/50 hover:bg-white transition-all border border-pink-100 group">
+                <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Droplets className="w-5 h-5 text-blue-500" />
+                </div>
+                <div>
+                  <p className="font-bold text-slate-800 text-sm">Cycle Tracker</p>
+                  <p className="text-xs text-slate-500">Track periods</p>
                 </div>
               </Link>
             </div>

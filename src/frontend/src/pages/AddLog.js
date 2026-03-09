@@ -47,7 +47,7 @@ const AddLog = () => {
 
       await axios.post('/logs/', submitData);
       toast.success('Daily log saved successfully!');
-      navigate('/dashboard');
+      navigate('/');
     } catch (error) {
       const message = error.response?.data?.detail || 'Failed to save log';
       toast.error(message);
@@ -304,7 +304,7 @@ const AddLog = () => {
             
             <button
               type="button"
-              onClick={() => navigate('/dashboard')}
+              onClick={() => navigate('/')}
               className="rounded-full px-8 py-4 text-sm font-bold border border-pink-200 bg-white text-pink-600 hover:bg-pink-50 transition-all active:scale-95 flex items-center justify-center gap-2"
             >
               <X className="w-4 h-4" />
