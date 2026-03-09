@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { Search, Sparkles, Send, Mic, MicOff, Volume2, PlusCircle, MoreVertical, Trash2, Settings, Zap } from 'lucide-react';
+import { Search, Sparkles, Send, Mic, MicOff, Volume2, PlusCircle, MoreVertical, Trash2, Zap } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const Chat = () => {
@@ -11,7 +11,6 @@ const Chat = () => {
   const [availableModels, setAvailableModels] = useState([]);
   const [selectedModel, setSelectedModel] = useState('');
   const [modelStatus, setModelStatus] = useState(null);
-  const [showModelSelector, setShowModelSelector] = useState(false);
   const [translateToUrdu, setTranslateToUrdu] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -254,12 +253,15 @@ const Chat = () => {
             </div>
           </div>
           <div className="flex gap-2">
-            <button 
-              onClick={() => setShowModelSelector(!showModelSelector)}
-              className="p-2.5 rounded-xl hover:bg-slate-50 text-slate-400 hover:text-slate-600 transition-colors"
-            >
-              <Settings className="w-5 h-5" />
-            </button>
+            <label className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-slate-50 cursor-pointer transition-colors border border-slate-200">
+              <input
+                type="checkbox"
+                checked={translateToUrdu}
+                onChange={(e) => setTranslateToUrdu(e.target.checked)}
+                className="w-4 h-4 rounded border-slate-300 text-pink-500 focus:ring-pink-500"
+              />
+              <span className="text-sm font-medium text-slate-700">اردو</span>
+            </label>
             {messages.length > 0 && (
               <button 
                 onClick={clearHistory}
@@ -273,54 +275,6 @@ const Chat = () => {
             </button>
           </div>
         </div>
-
-        {/* Model Selector */}
-        {showModelSelector && (
-          <div className="px-8 py-4 bg-pink-50/50 border-b border-pink-100">
-            <h3 className="text-xs font-bold text-slate-700 mb-3 uppercase tracking-wider">Select AI Model:</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              {availableModels.map((model) => (
-                <div
-                  key={model.id}
-                  className={`p-3 border rounded-xl cursor-pointer transition-all ${
-                    selectedModel === model.type
-                      ? 'border-pink-500 bg-pink-50 shadow-sm'
-                      : model.available
-                      ? 'border-slate-200 hover:border-pink-200 bg-white'
-                      : 'border-slate-100 bg-slate-50 cursor-not-allowed opacity-50'
-                  }`}
-                  onClick={() => model.available && setSelectedModel(model.type)}
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="font-semibold text-sm text-slate-800">{model.name}</span>
-                    {model.available && (
-                      <span className="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 font-bold">
-                        Available
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-xs text-slate-600">{model.description}</p>
-                </div>
-              ))}
-            </div>
-            
-            {/* Translation Toggle */}
-            <div className="mt-4 pt-4 border-t border-pink-100">
-              <label className="flex items-center gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={translateToUrdu}
-                  onChange={(e) => setTranslateToUrdu(e.target.checked)}
-                  className="w-5 h-5 rounded border-slate-300 text-pink-500 focus:ring-pink-500"
-                />
-                <div>
-                  <span className="font-semibold text-sm text-slate-800">Translate to Urdu (اردو)</span>
-                  <p className="text-xs text-slate-600">Responses will be translated to Urdu script</p>
-                </div>
-              </label>
-            </div>
-          </div>
-        )}
 
         {/* Messages Area */}
         <div className="flex-1 overflow-y-auto p-8 space-y-8 bg-gradient-to-b from-white to-pink-50/30">
@@ -467,11 +421,6 @@ const Chat = () => {
               <Send className="w-6 h-6 ml-0.5" />
             </button>
           </form>
-          {selectedModel && (
-            <div className="mt-3 text-xs text-slate-500 text-center">
-              Using {availableModels.find(m => m.type === selectedModel)?.name || 'AI Model'}
-            </div>
-          )}
         </div>
       </div>
     </div>
