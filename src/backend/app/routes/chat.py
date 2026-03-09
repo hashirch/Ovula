@@ -34,7 +34,8 @@ async def send_chat_message(
             user_message=chat.message,
             user_id=current_user.id,
             db=db,
-            model_override=chat.model_type
+            model_override=chat.model_type,
+            translate_to_urdu=chat.translate_to_urdu or False
         )
         
         response_time = time.time() - start_time

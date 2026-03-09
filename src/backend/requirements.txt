@@ -8,3 +8,4 @@ python-dotenv>=1.0.0
 requests>=2.31.0
 pydantic[email]>=2.8.0
 alembic>=1.13.0
+googletrans==4.0.0rc1

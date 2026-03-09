@@ -7,32 +7,17 @@ import logging
 
 from app.config import Config, ModelType
 from models import DailyLog
-
-# Optional imports for LoRA support
-try:
-    import torch
-    from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
-    from peft import PeftModel
-    LORA_AVAILABLE = True
-except ImportError:
-    LORA_AVAILABLE = False
-    torch = None
+from app.services.translation_service import translation_service
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Try to import PyTorch dependencies, fallback gracefully if not available
-try:
-    import torch
-    from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
-    from peft import PeftModel
-    PYTORCH_AVAILABLE = True
-    logger.info("PyTorch dependencies available - LoRA pipeline support enabled")
-except ImportError as e:
-    PYTORCH_AVAILABLE = False
-    logger.info(f"PyTorch dependencies not available - LoRA pipeline disabled: {e}")
-    torch = None
+# Optional imports for LoRA support - disabled
+LORA_AVAILABLE = False
+PYTORCH_AVAILABLE = False
+torch = None
+logger.info("LoRA pipeline disabled - transformers not installed")
 
 class LLMService:
     def __init__(self):
@@ -163,6 +148,25 @@ RESPONSE GUIDELINES:
 • Always encourage professional medical consultation for diagnosis and treatment
 • Include appropriate medical disclaimers
 
+LANGUAGE SIMPLICITY (for better translation to everyday Urdu):
+• Use SHORT sentences (8-12 words maximum)
+• Use EVERYDAY conversational words like: help, need, good, bad, eat, drink, sleep, walk, feel
+• AVOID formal/literary words - use casual spoken language
+• Use ACTIVE voice (e.g., "Doctors say" not "It is said")
+• Use SIMPLE present tense (e.g., "This helps" not "This can be helpful")
+• NO idioms, metaphors, or cultural expressions
+• NO compound sentences - one idea per sentence
+• Break complex ideas into multiple simple sentences
+• Use direct, conversational explanations like talking to a friend
+• Replace medical jargon with everyday words:
+  - Instead of "consume" say "eat" or "drink"
+  - Instead of "beneficial" say "good" or "helps"
+  - Instead of "detrimental" say "bad" or "harms"
+  - Instead of "adequate" say "enough"
+  - Instead of "commence" say "start"
+  - Instead of "utilize" say "use"
+• When medical terms are necessary, explain them in simple everyday words
+
 IMPORTANT: If a question is not clearly about PCOS or women's health, politely decline and redirect."""
 
         if user_context:
@@ -170,9 +174,65 @@ IMPORTANT: If a question is not clearly about PCOS or women's health, politely d
         
         return base_prompt
     
+    def create_urdu_system_prompt(self, user_context: str = "") -> str:
+        """Create system prompt for PCOS assistant with simple conversational Urdu"""
+        base_prompt = """You are a specialized PCOS healthcare assistant.
+
+CRITICAL: Respond in SIMPLE, CONVERSATIONAL URDU (آسان اردو میں جواب دیں).
+Use everyday Urdu words that common people understand. Avoid difficult/formal words.
+
+Example of SIMPLE Urdu style:
+- Use: "آپ کو" instead of formal terms
+- Use: "بیماری" instead of "عارضہ"  
+- Use: "ڈاکٹر" instead of "معالج"
+- Use: "دوا" instead of "علاج"
+- Keep sentences SHORT and SIMPLE
+
+TOPICS (موضوعات):
+✓ PCOS کی علامات اور علاج
+✓ ماہواری کے مسائل
+✓ ہارمونز کی خرابی
+✓ حمل اور بچے کی پیدائش
+✓ خوراک اور ورزش
+✓ وزن کم کرنا
+✓ ذہنی صحت
+
+RESPONSE STYLE (جواب کا انداز):
+• آسان، روزمرہ کی اردو استعمال کریں
+• چھوٹے اور سادہ جملے لکھیں
+• مشکل الفاظ سے بچیں
+• دوستانہ انداز میں بات کریں
+• 2-3 پیراگراف میں جواب دیں
+
+مثال: "PCOS ایک عام بیماری ہے جو خواتین میں ہوتی ہے۔ اس میں ماہواری بے قاعدہ ہو جاتی ہے۔"
+
+IMPORTANT: Write in SIMPLE, EVERYDAY Urdu that everyone can understand easily."""
+
+        if user_context:
+            base_prompt += f"\\n\\nصارف کا ڈیٹا:\\n{user_context}"
+        
+        return base_prompt
+    
     def create_medical_disclaimer(self) -> str:
         """Standard medical disclaimer"""
-        return "\\n\\n⚠️ **Medical Disclaimer**: This information is for educational purposes only and is not a substitute for professional medical advice, diagnosis, or treatment. Always consult qualified healthcare providers for personalized medical guidance, especially for PCOS management."
+        return "\n\n⚠️ Medical Disclaimer: This information is for educational purposes only and is not a substitute for professional medical advice, diagnosis, or treatment. Always consult qualified healthcare providers for personalized medical guidance, especially for PCOS management."
+    
+    def create_urdu_medical_disclaimer(self) -> str:
+        """Medical disclaimer in Urdu"""
+        return "\n\n⚠️ طبی اعلان: یہ معلومات صرف تعلیمی مقاصد کے لیے ہیں اور پیشہ ورانہ طبی مشورے، تشخیص یا علاج کا متبادل نہیں ہیں۔ ذاتی طبی رہنمائی کے لیے ہمیشہ اہل صحت کی دیکھ بھال فراہم کرنے والوں سے مشورہ کریں، خاص طور پر PCOS کے انتظام کے لیے۔"
+    
+    def _is_english(self, text: str) -> bool:
+        """Check if text is primarily in English (not Urdu)"""
+        # Simple heuristic: if text contains mostly ASCII characters, it's likely English
+        # Urdu uses Unicode range U+0600 to U+06FF
+        ascii_count = sum(1 for char in text if ord(char) < 128)
+        total_chars = len([c for c in text if c.isalpha()])
+        
+        if total_chars == 0:
+            return True
+        
+        # If more than 80% ASCII letters, consider it English
+        return (ascii_count / total_chars) > 0.8
     
     def is_off_topic(self, message: str) -> tuple[bool, str]:
         """Check if message is off-topic and return appropriate response"""
@@ -440,47 +500,61 @@ IMPORTANT: If a question is not clearly about PCOS or women's health, politely d
             logger.error(f"Error in LoRA generation: {e}")
             return f"Error generating response: {str(e)}"
     
-    async def generate_response(self, user_message: str, user_id: int, db: Session, model_override: Optional[str] = None) -> str:
-        """Generate response based on configured model type"""
+    async def generate_response(self, user_message: str, user_id: int, db: Session, model_override: Optional[str] = None, translate_to_urdu: bool = False) -> str:
+        """Generate response based on configured model type
+        
+        Args:
+            user_message: User's input message
+            user_id: User ID for context
+            db: Database session
+            model_override: Optional model type override
+            translate_to_urdu: If True, generate response in Urdu directly
+        """
         try:
             # Check if message is off-topic
             is_off_topic, off_topic_response = self.is_off_topic(user_message)
             if is_off_topic:
-                return off_topic_response
+                response = off_topic_response
+                if translate_to_urdu:
+                    urdu_response = translation_service.translate_to_urdu(response)
+                    if urdu_response:
+                        return urdu_response
+                return response
             
             # Get user context for personalization
             user_context = self.get_user_context(user_id, db)
+            
+            # Use simple Urdu prompt if translation requested, otherwise English
+            if translate_to_urdu:
+                system_prompt = self.create_urdu_system_prompt(user_context)
+            else:
+                system_prompt = self.create_system_prompt(user_context)
             
             # Determine which model to use
             current_model_type = model_override or self.model_type
             
             if current_model_type == ModelType.OLLAMA_FINETUNED.value:
                 # Use fine-tuned Ollama model
-                system_prompt = self.create_system_prompt(user_context)
                 full_prompt = f"System: {system_prompt}\n\nUser: {user_message}\n\nAssistant:"
                 response = await self.generate_response_ollama(full_prompt, self.config.OLLAMA_FINETUNED_MODEL)
                 
             elif current_model_type == ModelType.OLLAMA_GEMMA.value:
                 # Use Gemma model
-                system_prompt = self.create_system_prompt(user_context)
                 full_prompt = f"System: {system_prompt}\n\nUser: {user_message}\n\nAssistant:"
                 response = await self.generate_response_ollama(full_prompt, self.config.OLLAMA_GEMMA_MODEL)
                 
             elif current_model_type == ModelType.OLLAMA_MISTRAL.value:
                 # Use Mistral model
-                system_prompt = self.create_system_prompt(user_context)
                 full_prompt = f"System: {system_prompt}\n\nUser: {user_message}\n\nAssistant:"
                 response = await self.generate_response_ollama(full_prompt, self.config.OLLAMA_MISTRAL_MODEL)
                 
             elif current_model_type == ModelType.OLLAMA_CODELLAMA.value:
                 # Use CodeLlama model
-                system_prompt = self.create_system_prompt(user_context)
                 full_prompt = f"System: {system_prompt}\n\nUser: {user_message}\n\nAssistant:"
                 response = await self.generate_response_ollama(full_prompt, self.config.OLLAMA_CODELLAMA_MODEL)
                 
             elif current_model_type == ModelType.OLLAMA_LLAMA2.value:
                 # Use Llama2 model
-                system_prompt = self.create_system_prompt(user_context)
                 full_prompt = f"System: {system_prompt}\n\nUser: {user_message}\n\nAssistant:"
                 response = await self.generate_response_ollama(full_prompt, self.config.OLLAMA_LLAMA2_MODEL)
                 
@@ -491,7 +565,6 @@ IMPORTANT: If a question is not clearly about PCOS or women's health, politely d
                 
             elif current_model_type == ModelType.HUGGINGFACE_API.value:
                 # Use HuggingFace API
-                system_prompt = self.create_system_prompt(user_context)
                 full_prompt = f"{system_prompt}\n\nUser: {user_message}\n\nAssistant:"
                 response = await self.generate_response_huggingface_api(full_prompt)
                 
@@ -502,12 +575,32 @@ IMPORTANT: If a question is not clearly about PCOS or women's health, politely d
                 
             else:
                 # Use base Ollama model (default)
-                system_prompt = self.create_system_prompt(user_context)
                 full_prompt = f"System: {system_prompt}\n\nUser: {user_message}\n\nAssistant:"
                 response = await self.generate_response_ollama(full_prompt, self.config.OLLAMA_BASE_MODEL)
             
-            # Add medical disclaimer
-            response += self.create_medical_disclaimer()
+            # Add medical disclaimer (in appropriate language)
+            if translate_to_urdu:
+                # Don't add English disclaimer, will add Urdu one after translation
+                pass
+            else:
+                response += self.create_medical_disclaimer()
+            
+            # For Urdu: Check if LLM generated good Urdu, otherwise translate
+            if translate_to_urdu:
+                # If response is mostly English, translate it
+                if self._is_english(response):
+                    logger.info("LLM responded in English, translating to Urdu")
+                    urdu_response = translation_service.translate_to_urdu(response)
+                    if urdu_response:
+                        # Add Urdu disclaimer
+                        return urdu_response + self.create_urdu_medical_disclaimer()
+                    else:
+                        logger.warning("Translation failed, returning original response")
+                        response += self.create_medical_disclaimer()
+                # If LLM already generated Urdu, use it (better quality)
+                else:
+                    logger.info("LLM generated Urdu response directly")
+                    response += self.create_urdu_medical_disclaimer()
             
             return response
             

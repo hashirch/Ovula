@@ -5,6 +5,7 @@ from typing import Optional, List
 class ChatMessageCreate(BaseModel):
     message: str
     model_type: Optional[str] = None  # Allow model selection per message
+    translate_to_urdu: Optional[bool] = False  # Enable Urdu translation
 
 class ChatMessageResponse(BaseModel):
     id: int

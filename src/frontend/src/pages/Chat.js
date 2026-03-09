@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { Search, Sparkles, Send, Mic, PlusCircle, MoreVertical, Trash2, Settings, Zap } from 'lucide-react';
+import { Search, Sparkles, Send, Mic, MicOff, Volume2, PlusCircle, MoreVertical, Trash2, Settings, Zap } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const Chat = () => {
@@ -12,11 +12,17 @@ const Chat = () => {
   const [selectedModel, setSelectedModel] = useState('');
   const [modelStatus, setModelStatus] = useState(null);
   const [showModelSelector, setShowModelSelector] = useState(false);
+  const [translateToUrdu, setTranslateToUrdu] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
   const messagesEndRef = useRef(null);
+  const recognitionRef = useRef(null);
+  const synthRef = useRef(window.speechSynthesis);
 
   useEffect(() => {
     fetchChatHistory();
     fetchModelStatus();
+    initializeSpeechRecognition();
   }, []);
 
   useEffect(() => {
@@ -25,6 +31,95 @@ const Chat = () => {
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  // Initialize Speech Recognition
+  const initializeSpeechRecognition = () => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    
+    if (!SpeechRecognition) {
+      console.warn('Speech Recognition not supported in this browser');
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = 'en-US';
+
+    recognition.onstart = () => {
+      setIsListening(true);
+      toast.success('Listening... Speak now');
+    };
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      setInputMessage(transcript);
+      setIsListening(false);
+    };
+
+    recognition.onerror = (event) => {
+      setIsListening(false);
+      if (event.error === 'no-speech') {
+        toast.error('No speech detected');
+      } else if (event.error === 'audio-capture') {
+        toast.error('Microphone not found');
+      } else {
+        toast.error('Speech recognition error');
+      }
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+    };
+
+    recognitionRef.current = recognition;
+  };
+
+  // Start/Stop Voice Input
+  const toggleVoiceInput = () => {
+    if (!recognitionRef.current) {
+      toast.error('Speech recognition not supported');
+      return;
+    }
+
+    if (isListening) {
+      recognitionRef.current.stop();
+    } else {
+      try {
+        recognitionRef.current.start();
+      } catch (error) {
+        toast.error('Could not start speech recognition');
+      }
+    }
+  };
+
+  // Text to Speech
+  const speakText = (text) => {
+    if (!text) return;
+
+    // Stop any ongoing speech
+    synthRef.current.cancel();
+
+    // Remove emojis and special symbols from text
+    const cleanText = text.replace(/[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F900}-\u{1F9FF}]|[\u{1FA70}-\u{1FAFF}]|[\u{FE00}-\u{FE0F}]|[\u{1F004}]|[\u{1F0CF}]|[\u{1F170}-\u{1F251}]|[✓✗✕✖✘]/gu, '');
+
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    utterance.rate = 1.0;
+    utterance.pitch = 1.0;
+    utterance.lang = translateToUrdu ? 'ur-PK' : 'en-US';
+
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
+
+    synthRef.current.speak(utterance);
+  };
+
+  // Stop Speaking
+  const stopSpeaking = () => {
+    synthRef.current.cancel();
+    setIsSpeaking(false);
   };
 
   const fetchModelStatus = async () => {
@@ -74,13 +169,16 @@ const Chat = () => {
     try {
       const response = await axios.post('/chat/', { 
         message: userMessage,
-        model_type: selectedModel || undefined
+        model_type: selectedModel || undefined,
+        translate_to_urdu: translateToUrdu
       });
       
       setMessages(prev => {
         const newMessages = prev.filter(msg => msg.id !== tempUserMessage.id);
         return [...newMessages, response.data];
       });
+
+      // Auto-speak removed - only speak when user clicks the button
     } catch (error) {
       console.error('Error sending message:', error);
       const errorMessage = error.response?.data?.detail || 'Failed to send message. Please try again.';
@@ -110,6 +208,12 @@ const Chat = () => {
     return text.split('\n').map((line, i) => (
       <p key={i} className="mb-2 last:mb-0">{line}</p>
     ));
+  };
+  
+  const isUrduText = (text) => {
+    // Check if text contains Urdu characters (Unicode range U+0600 to U+06FF)
+    const urduRegex = /[\u0600-\u06FF]/;
+    return urduRegex.test(text);
   };
 
   const suggestedQuestions = [
@@ -199,6 +303,22 @@ const Chat = () => {
                 </div>
               ))}
             </div>
+            
+            {/* Translation Toggle */}
+            <div className="mt-4 pt-4 border-t border-pink-100">
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={translateToUrdu}
+                  onChange={(e) => setTranslateToUrdu(e.target.checked)}
+                  className="w-5 h-5 rounded border-slate-300 text-pink-500 focus:ring-pink-500"
+                />
+                <div>
+                  <span className="font-semibold text-sm text-slate-800">Translate to Urdu (اردو)</span>
+                  <p className="text-xs text-slate-600">Responses will be translated to Urdu script</p>
+                </div>
+              </label>
+            </div>
           </div>
         )}
 
@@ -256,14 +376,22 @@ const Chat = () => {
                     <div className="w-10 h-10 rounded-full bg-pink-500 flex-shrink-0 flex items-center justify-center text-white shadow-lg shadow-pink-200 mt-auto">
                       <Sparkles className="w-5 h-5" />
                     </div>
-                    <div className="rounded-3xl px-6 py-4 text-[15px] leading-relaxed shadow-sm bg-pink-50 text-slate-800 rounded-bl-none border border-pink-100">
+                    <div className={`rounded-3xl px-6 py-4 text-[15px] leading-relaxed shadow-sm bg-pink-50 text-slate-800 rounded-bl-none border border-pink-100 ${isUrduText(msg.response) ? 'text-right' : ''}`} dir={isUrduText(msg.response) ? 'rtl' : 'ltr'}>
                       <div className="whitespace-pre-wrap">{formatMessage(msg.response)}</div>
-                      {msg.model_used && (
-                        <div className="mt-3 pt-3 border-t border-pink-200 flex items-center justify-between text-xs text-slate-500">
+                      <div className="mt-3 pt-3 border-t border-pink-200 flex items-center justify-between text-xs text-slate-500">
+                        <div className="flex items-center gap-2">
                           <span>{new Date(msg.created_at).toLocaleString()}</span>
                           {msg.response_time && <span>({msg.response_time}s)</span>}
                         </div>
-                      )}
+                        <button
+                          onClick={() => speakText(msg.response)}
+                          className="p-1.5 rounded-full hover:bg-pink-100 text-pink-500 transition-colors flex items-center gap-1"
+                          title="Read aloud"
+                        >
+                          <Volume2 className="w-4 h-4" />
+                          <span className="text-xs">Listen</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -295,7 +423,7 @@ const Chat = () => {
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && sendMessage(e)}
-                className="w-full bg-white border border-pink-200 rounded-full py-4 pl-14 pr-14 text-[15px] text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-pink-100 focus:border-pink-300 outline-none transition-all shadow-sm" 
+                className="w-full bg-white border border-pink-200 rounded-full py-4 pl-14 pr-28 text-[15px] text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-pink-100 focus:border-pink-300 outline-none transition-all shadow-sm" 
                 placeholder="Ask Ovula anything..." 
                 type="text"
                 disabled={loading}
@@ -306,12 +434,30 @@ const Chat = () => {
               >
                 <PlusCircle className="w-6 h-6" />
               </button>
-              <button 
-                type="button"
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-pink-500 transition-colors"
-              >
-                <Mic className="w-5 h-5" />
-              </button>
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 flex gap-2">
+                <button 
+                  type="button"
+                  onClick={toggleVoiceInput}
+                  className={`p-2 rounded-full transition-all ${
+                    isListening 
+                      ? 'bg-red-500 text-white animate-pulse' 
+                      : 'text-slate-400 hover:text-pink-500 hover:bg-pink-50'
+                  }`}
+                  title={isListening ? "Stop listening" : "Start voice input"}
+                >
+                  {isListening ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+                </button>
+                {isSpeaking && (
+                  <button 
+                    type="button"
+                    onClick={stopSpeaking}
+                    className="p-2 rounded-full text-pink-500 hover:bg-pink-50 transition-all animate-pulse"
+                    title="Stop speaking"
+                  >
+                    <Volume2 className="w-5 h-5" />
+                  </button>
+                )}
+              </div>
             </div>
             <button 
               type="submit"
