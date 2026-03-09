@@ -71,6 +71,9 @@ PCOS affects roughly 1 in 10 women globally, but general-purpose AI models tend 
 - **Symptom Logging** — daily log entries for symptoms, mood, weight, and more
 - **Cycle Tracker** — menstrual cycle tracking with period prediction
 - **AI Chat** — conversational interface powered by the fine-tuned Llama model
+  - 🌐 **Urdu Translation** — toggle to translate AI responses to Urdu using Google Translate
+  - 🎤 **Voice Input** — speak your questions using speech recognition
+  - 🔊 **Text-to-Speech** — listen to AI responses in English or Urdu
 - **Logs History** — browse and review past health logs
 - **User Profile** — manage account and health settings
 - **Auth Flow** — register, login, and email OTP verification
@@ -81,6 +84,7 @@ PCOS affects roughly 1 in 10 women globally, but general-purpose AI models tend 
 - Symptom log management (create, read, history)
 - PCOS risk prediction using trained ML models
 - AI-generated health insights from logs
+- **Urdu Translation Service** — Google Translate integration for Urdu responses
 - SQLite database with a clean schema
 
 ### ML Models
@@ -122,12 +126,14 @@ Python / FastAPI
 ├── Pydantic            — request/response validation
 ├── JWT                 — authentication tokens
 ├── OTP Service         — email-based verification
+├── Google Translate    — Urdu translation service
 └── SQLite              — local database (pcos_tracker.db)
 
 API Routers:
 ├── /auth               — register, login, OTP
 ├── /logs               — symptom log CRUD
 ├── /prediction         — PCOS risk scoring
+├── /chat               — AI chat with Urdu translation support
 └── /insights           — AI-generated health insights
 ```
 
@@ -196,6 +202,285 @@ The project follows a modern, professionally organized architecture with clear s
 4. **`src/ml-models/`**: Machine learning models and LLM fine-tuning workspace
 5. **`docs/`**: Documentation, diagrams, and screenshots
 6. **`scripts/`**: Utility scripts for easy startup and deployment
+
+---
+
+## 🔄 Complete System Pipeline
+
+### End-to-End Data Flow
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           USER INTERACTION LAYER                             │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│  ┌──────────────────┐              ┌──────────────────┐                    │
+│  │  Web Frontend    │              │  Mobile App      │                    │
+│  │  (React.js)      │              │  (React Native)  │                    │
+│  │                  │              │                  │                    │
+│  │  • Dashboard     │              │  • Dashboard     │                    │
+│  │  • Chat UI       │              │  • Chat Screen   │                    │
+│  │  • Logs          │              │  • Logs          │                    │
+│  │  • Cycle Tracker │              │  • Cycle Tracker │                    │
+│  │  • Prediction    │              │  • Profile       │                    │
+│  │  • Profile       │              │  • Auth Screens  │                    │
+│  └────────┬─────────┘              └────────┬─────────┘                    │
+│           │                                  │                               │
+│           └──────────────┬───────────────────┘                               │
+│                          │                                                   │
+│                          │ HTTP/REST API                                     │
+│                          │ (JSON)                                            │
+│                          ▼                                                   │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                          API GATEWAY LAYER                                   │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│                    ┌──────────────────────────┐                             │
+│                    │   FastAPI Application    │                             │
+│                    │   (main.py)              │                             │
+│                    │                          │                             │
+│                    │   • CORS Middleware      │                             │
+│                    │   • JWT Authentication   │                             │
+│                    │   • Request Validation   │                             │
+│                    │   • Error Handling       │                             │
+│                    └────────────┬─────────────┘                             │
+│                                 │                                            │
+│                                 │ Route to Handlers                          │
+│                                 ▼                                            │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                          ROUTING LAYER                                       │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  │
+│  │ /auth        │  │ /logs        │  │ /chat        │  │ /prediction  │  │
+│  │ (auth.py)    │  │ (logs.py)    │  │ (chat.py)    │  │(prediction.py)│  │
+│  │              │  │              │  │              │  │              │  │
+│  │ • register   │  │ • create_log │  │ • send_msg   │  │ • predict    │  │
+│  │ • login      │  │ • get_logs   │  │ • history    │  │ • risk_score │  │
+│  │ • verify_otp │  │ • get_by_id  │  │ • models     │  │              │  │
+│  │ • refresh    │  │ • delete     │  │ • clear      │  │              │  │
+│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘  │
+│         │                  │                  │                  │           │
+│         ▼                  ▼                  ▼                  ▼           │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                          SERVICE LAYER                                       │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐         │
+│  │ Auth Service     │  │ LLM Service      │  │ Translation      │         │
+│  │ (auth.py)        │  │ (llm_service.py) │  │ Service          │         │
+│  │                  │  │                  │  │(translation_     │         │
+│  │ • JWT tokens     │  │ • Model mgmt     │  │ service.py)      │         │
+│  │ • Password hash  │  │ • Prompt eng     │  │                  │         │
+│  │ • User validation│  │ • Context build  │  │ • Google         │         │
+│  └────────┬─────────┘  │ • Response gen   │  │   Translate      │         │
+│           │            │ • Off-topic det  │  │ • Preserve terms │         │
+│           │            └────────┬─────────┘  │ • Clean output   │         │
+│           │                     │            └────────┬─────────┘         │
+│           │                     │                     │                    │
+│           │                     │                     │                    │
+│  ┌────────▼─────────┐  ┌────────▼─────────┐  ┌──────▼──────────┐         │
+│  │ OTP Service      │  │ Model Selector   │  │ Text Processing │         │
+│  │ (otp_service.py) │  │                  │  │                  │         │
+│  │                  │  │ • Ollama Base    │  │ • Emoji removal  │         │
+│  │ • Email sending  │  │ • Fine-tuned     │  │ • RTL detection  │         │
+│  │ • Code generation│  │ • Gemma          │  │ • Formatting     │         │
+│  │ • Verification   │  │ • Mistral        │  │                  │         │
+│  └──────────────────┘  │ • Llama2         │  └──────────────────┘         │
+│                        └──────────────────┘                                 │
+│                                                                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                          DATA & MODEL LAYER                                  │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐         │
+│  │ Database Layer   │  │ ML Models        │  │ LLM Engine       │         │
+│  │ (database.py)    │  │ (sklearn)        │  │ (Ollama)         │         │
+│  │                  │  │                  │  │                  │         │
+│  │ ┌──────────────┐ │  │ ┌──────────────┐ │  │ ┌──────────────┐ │         │
+│  │ │ SQLAlchemy   │ │  │ │ KNN          │ │  │ │ Llama 3.2    │ │         │
+│  │ │ ORM          │ │  │ │ Decision Tree│ │  │ │ 1B Instruct  │ │         │
+│  │ └──────────────┘ │  │ │ Logistic Reg │ │  │ │ (Q8_0 GGUF)  │ │         │
+│  │                  │  │ │ Naive Bayes  │ │  │ └──────────────┘ │         │
+│  │ ┌──────────────┐ │  │ └──────────────┘ │  │                  │         │
+│  │ │ Models       │ │  │                  │  │ ┌──────────────┐ │         │
+│  │ │ (models.py)  │ │  │ ┌──────────────┐ │  │ │ Fine-tuned   │ │         │
+│  │ │              │ │  │ │ Saved Model  │ │  │ │ PCOS Model   │ │         │
+│  │ │ • User       │ │  │ │ (pcos_model  │ │  │ │ (Modelfile)  │ │         │
+│  │ │ • DailyLog   │ │  │ │  .pkl)       │ │  │ └──────────────┘ │         │
+│  │ │ • ChatMsg    │ │  │ └──────────────┘ │  │                  │         │
+│  │ │ • OTPCode    │ │  │                  │  │ ┌──────────────┐ │         │
+│  │ └──────────────┘ │  │ ┌──────────────┐ │  │ │ System       │ │         │
+│  │                  │  │ │ Training     │ │  │ │ Prompts      │ │         │
+│  │ ┌──────────────┐ │  │ │ Pipeline     │ │  │ │              │ │         │
+│  │ │ SQLite DB    │ │  │ │              │ │  │ │ • English    │ │         │
+│  │ │ (pcos_       │ │  │ │ • Data clean │ │  │ │ • Urdu       │ │         │
+│  │ │  tracker.db) │ │  │ │ • Feature eng│ │  │ │ • Medical    │ │         │
+│  │ └──────────────┘ │  │ │ • Model eval │ │  │ │   disclaimers│ │         │
+│  │                  │  │ └──────────────┘ │  │ └──────────────┘ │         │
+│  └──────────────────┘  └──────────────────┘  └──────────────────┘         │
+│                                                                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                          EXTERNAL SERVICES                                   │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐         │
+│  │ Google Translate │  │ Email Service    │  │ Web Speech API   │         │
+│  │ API              │  │ (SMTP)           │  │ (Browser)        │         │
+│  │                  │  │                  │  │                  │         │
+│  │ • English→Urdu   │  │ • OTP delivery   │  │ • Speech-to-Text │         │
+│  │ • Term preserve  │  │ • Verification   │  │ • Text-to-Speech │         │
+│  │ • googletrans    │  │ • Notifications  │  │ • Voice input    │         │
+│  └──────────────────┘  └──────────────────┘  └──────────────────┘         │
+│                                                                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 📊 Module Interaction Flow
+
+### 1. User Authentication Flow
+```
+User Input → /auth/register → Auth Service → Password Hash → Database
+                                    ↓
+                              OTP Service → Email → User Verification
+                                    ↓
+                              /auth/verify → JWT Token → Client Storage
+```
+
+### 2. Symptom Logging Flow
+```
+User Input → /logs/create → Validation (schemas.py) → Database (DailyLog)
+                                    ↓
+                              Response → Frontend Update → Dashboard Refresh
+```
+
+### 3. AI Chat Flow (with Urdu Translation)
+```
+User Message → /chat/ → LLM Service
+                            ↓
+                    ┌───────┴────────┐
+                    │                │
+            Off-topic Check    User Context
+                    │          (from DB)
+                    ↓                ↓
+            System Prompt Generation
+                    ↓
+            Model Selection (Ollama)
+                    ↓
+            Response Generation
+                    ↓
+            ┌───────┴────────┐
+            │                │
+    translate_to_urdu?   English Response
+            │                │
+            ↓                │
+    Translation Service      │
+    (Google Translate)       │
+            │                │
+            └────────┬───────┘
+                     ↓
+            Medical Disclaimer
+                     ↓
+            Response → Client
+                     ↓
+            ┌────────┴────────┐
+            │                 │
+    Voice Output      Display (RTL if Urdu)
+    (Text-to-Speech)
+```
+
+### 4. PCOS Prediction Flow
+```
+User Symptoms → /prediction/predict → Feature Extraction
+                                            ↓
+                                    Load ML Model (pcos_model.pkl)
+                                            ↓
+                                    Model Inference
+                                            ↓
+                                    Risk Score Calculation
+                                            ↓
+                                    Response with Recommendations
+```
+
+### 5. Voice Interaction Flow
+```
+User Clicks Mic → Web Speech API → Speech Recognition
+                                            ↓
+                                    Transcript → Input Field
+                                            ↓
+                                    User Sends → Chat Flow
+                                            ↓
+                                    Response Received
+                                            ↓
+                                    User Clicks Listen
+                                            ↓
+                                    Text-to-Speech (Urdu/English)
+                                            ↓
+                                    Audio Output (Emoji-filtered)
+```
+
+---
+
+## 🗂️ Module Dependencies
+
+### Frontend Dependencies
+```
+React Application
+├── react-router-dom     → Navigation
+├── axios                → API calls
+├── tailwindcss          → Styling
+├── lucide-react         → Icons
+└── react-hot-toast      → Notifications
+```
+
+### Backend Dependencies
+```
+FastAPI Application
+├── fastapi              → Web framework
+├── sqlalchemy           → ORM
+├── pydantic             → Validation
+├── python-jose          → JWT
+├── passlib              → Password hashing
+├── googletrans          → Translation
+├── scikit-learn         → ML models
+├── requests             → HTTP client (Ollama)
+└── python-multipart     → File uploads
+```
+
+### Mobile Dependencies
+```
+React Native Application
+├── @react-navigation    → Navigation
+├── axios                → API calls
+├── @react-native-async-storage → Local storage
+└── react-native-vector-icons → Icons
+```
+
+### ML/AI Dependencies
+```
+Machine Learning Pipeline
+├── pandas               → Data processing
+├── numpy                → Numerical operations
+├── scikit-learn         → ML algorithms
+├── matplotlib           → Visualization
+└── jupyter              → Notebooks
+
+LLM Pipeline
+├── ollama               → LLM inference
+└── llama-3.2-1b         → Base model (GGUF)
+```
 
 ---
 
@@ -319,40 +604,57 @@ ovula/
 
 <div align="center">
 
-### 🏠 Dashboard
-
-![Dashboard](docs/screenshots/dashboard.png)
-_Main screen showing health summary and recent activity_
-
-### 💬 AI Chat
-
-![Chat](docs/screenshots/chat.png)
-_Conversational AI powered by the fine-tuned Llama model_
-
-### 📝 Symptom Log
-
-![Add Log](docs/screenshots/add-log.png)
-_Daily symptom and health tracking_
-
-### 🌙 Cycle Tracker
-
-![Cycle Tracker](docs/screenshots/cycle-tracker.png)
-_Period tracking and prediction_
-
-### 🔐 Authentication
+### 🔐 Onboarding & Authentication
+_Secure and seamless user onboarding flow_
 
 <table>
-<tr>
-<td width="50%">
-<img src="docs/screenshots/login.png" alt="Login"/>
-<p align="center"><em>Login</em></p>
-</td>
-<td width="50%">
-<img src="docs/screenshots/register.png" alt="Register"/>
-<p align="center"><em>Register</em></p>
-</td>
-</tr>
+  <tr>
+    <td width="33%"><img src="docs/screenshots/login.png" alt="Login"/><br/><p align="center"><b>Login</b></p></td>
+    <td width="33%"><img src="docs/screenshots/signup.png" alt="Register"/><br/><p align="center"><b>Sign Up</b></p></td>
+    <td width="33%"><img src="docs/screenshots/verify_email.png" alt="Verify Email"/><br/><p align="center"><b>OTP Verification</b></p></td>
+  </tr>
 </table>
+
+### 🏠 Dashboard & Health Overview
+_Personalized insights and quick actions at a glance_
+
+<img src="docs/screenshots/dashboard.png" alt="Dashboard" width="100%"/>
+<p align="center"><em>Main Dashboard showing cycle progress, quick stats, and AI insights</em></p>
+
+### 🌸 PCOS Care & Management
+_In-depth tracking and specialized care tools_
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/pcos_care_1.png" alt="Hormonal Summary"/><br/><p align="center"><b>Hormonal Summary</b></p></td>
+    <td width="50%"><img src="docs/screenshots/pcos_care_2.png" alt="Symptom Trends"/><br/><p align="center"><b>Symptom Trends</b></p></td>
+  </tr>
+  <tr>
+    <td colspan="2"><img src="docs/screenshots/pcos_care_3.png" alt="Health Resources"/><br/><p align="center"><b>Specialized Health Resources</b></p></td>
+  </tr>
+</table>
+
+### 💬 AI Assistant (Multi-lingual)
+_Conversational healthcare support in English and Urdu_
+
+<img src="docs/screenshots/ai_assistant_urdu.png" alt="AI Assistant Urdu" width="100%"/>
+<p align="center"><em>AI Assistant providing localized support with Urdu translation</em></p>
+
+### 📅 Cycle Tracker & Insights
+_Detailed menstrual health tracking and predictions_
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/calendar.png" alt="Cycle Calendar"/><br/><p align="center"><b>Cycle Calendar</b></p></td>
+    <td width="50%"><img src="docs/screenshots/calendar_insights.png" alt="Cycle Insights"/><br/><p align="center"><b>Health Insights</b></p></td>
+  </tr>
+</table>
+
+### 👤 User Profile & Settings
+_Manage your health profile and app preferences_
+
+<img src="docs/screenshots/profile.png" alt="Profile" width="100%"/>
+<p align="center"><em>Comprehensive user profile with health goals and privacy settings</em></p>
 
 </div>
 
@@ -391,6 +693,8 @@ python main.py
 ```
 
 Backend runs at `http://localhost:8000` — API docs at `http://localhost:8000/docs`.
+
+**Note:** The backend includes Urdu translation support using Google Translate (`googletrans==4.0.0rc1`).
 
 ### 3. Run the Web Frontend
 
