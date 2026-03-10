@@ -93,26 +93,59 @@ const Chat = () => {
     }
   };
 
-  // Text to Speech
-  const speakText = (text) => {
+  // Text to Speech using ElevenLabs
+  const speakText = async (text) => {
     if (!text) return;
 
-    // Stop any ongoing speech
-    synthRef.current.cancel();
+    try {
+      // Stop any ongoing speech
+      synthRef.current.cancel();
+      setIsSpeaking(true);
 
-    // Remove emojis and special symbols from text
-    const cleanText = text.replace(/[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F900}-\u{1F9FF}]|[\u{1FA70}-\u{1FAFF}]|[\u{FE00}-\u{FE0F}]|[\u{1F004}]|[\u{1F0CF}]|[\u{1F170}-\u{1F251}]|[✓✗✕✖✘]/gu, '');
+      // Use ElevenLabs for Urdu, browser TTS for English
+      if (translateToUrdu || isUrduText(text)) {
+        // Call backend ElevenLabs TTS endpoint
+        const response = await axios.post('/speech/tts', 
+          { text },
+          { responseType: 'blob' }
+        );
+        
+        const audioBlob = response.data;
+        const audioUrl = URL.createObjectURL(audioBlob);
+        const audio = new Audio(audioUrl);
+        
+        audio.onended = () => {
+          setIsSpeaking(false);
+          URL.revokeObjectURL(audioUrl);
+        };
+        
+        audio.onerror = () => {
+          setIsSpeaking(false);
+          URL.revokeObjectURL(audioUrl);
+          toast.error('Failed to play audio');
+        };
+        
+        await audio.play();
+      } else {
+        // Use browser's built-in TTS for English
+        const cleanText = text.replace(/[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F900}-\u{1F9FF}]|[\u{1FA70}-\u{1FAFF}]|[\u{FE00}-\u{FE0F}]|[\u{1F004}]|[\u{1F0CF}]|[\u{1F170}-\u{1F251}]|[✓✗✕✖✘]/gu, '');
 
-    const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.rate = 1.0;
-    utterance.pitch = 1.0;
-    utterance.lang = translateToUrdu ? 'ur-PK' : 'en-US';
+        const utterance = new SpeechSynthesisUtterance(cleanText);
+        utterance.rate = 1.0;
+        utterance.pitch = 1.0;
+        utterance.lang = 'en-US';
 
-    utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = () => setIsSpeaking(false);
+        utterance.onstart = () => setIsSpeaking(true);
+        utterance.onend = () => setIsSpeaking(false);
+        utterance.onerror = () => setIsSpeaking(false);
 
-    synthRef.current.speak(utterance);
+        synthRef.current.speak(utterance);
+      }
+    } catch (error) {
+      console.error('TTS error:', error);
+      setIsSpeaking(false);
+      toast.error('Failed to generate speech');
+    }
   };
 
   // Stop Speaking

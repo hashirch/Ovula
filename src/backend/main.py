@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from database import engine
 from models import Base
 from routers import auth, logs, insights, prediction
-from app.routes import chat
+from app.routes import chat, speech
 from app.config import Config
 
 # Load environment variables
@@ -34,6 +34,7 @@ app.add_middleware(
 app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
 app.include_router(logs.router, prefix="/logs", tags=["Logs"])
 app.include_router(chat.router, prefix="/chat", tags=["AI Chat"])
+app.include_router(speech.router, prefix="/speech", tags=["Speech"])
 app.include_router(insights.router, prefix="/insights", tags=["Insights"])
 app.include_router(prediction.router, prefix="/prediction", tags=["PCOS Prediction"])
 

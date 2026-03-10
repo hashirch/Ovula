@@ -52,6 +52,11 @@ class Config:
     MAX_CHAT_HISTORY = int(os.getenv("MAX_CHAT_HISTORY", "10"))
     MAX_RESPONSE_LENGTH = int(os.getenv("MAX_RESPONSE_LENGTH", "512"))
     
+    # ElevenLabs configuration for Urdu TTS/STT
+    ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY", "")
+    ELEVENLABS_VOICE_ID = os.getenv("ELEVENLABS_VOICE_ID", "")  # Urdu voice ID
+    ELEVENLABS_MODEL_ID = os.getenv("ELEVENLABS_MODEL_ID", "eleven_multilingual_v2")
+    
     @classmethod
     def get_model_config(cls):
         """Get current model configuration"""
