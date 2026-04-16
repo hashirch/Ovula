@@ -39,6 +39,8 @@ class Config:
     HUGGINGFACE_MODEL = os.getenv("HUGGINGFACE_MODEL", "microsoft/DialoGPT-medium")
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
     OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-3.5-turbo")
+    # Groq API (OpenAI-compatible, free tier) — set GROQ_BASE_URL to use Groq instead of OpenAI
+    GROQ_BASE_URL = os.getenv("GROQ_BASE_URL", "")  # e.g. https://api.groq.com/openai/v1
     
     # Database
     DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./pcos_tracker.db")
