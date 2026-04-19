@@ -1,0 +1,78 @@
+databases:
+  - name: ovula-db
+    databaseName: ovula
+    user: ovula
+    plan: free
+
+services:
+  - type: web
+    name: ovula-backend
+    runtime: python
+    rootDir: src/backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: ovula-db
+          property: connectionString
+
+      # Auth
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALGORITHM
+        value: HS256
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: 30
+
+      # AI — Using Groq (OpenAI-compatible, free)
+      - key: MODEL_TYPE
+        value: openai_api
+      - key: OPENAI_MODEL
+        value: llama3-8b-8192
+      - key: GROQ_BASE_URL
+        value: https://api.groq.com/openai/v1
+      # Set OPENAI_API_KEY to your Groq key in the Render dashboard
+      - key: OPENAI_API_KEY
+        sync: false
+
+      # Chat
+      - key: MAX_CHAT_HISTORY
+        value: 50
+      - key: MAX_RESPONSE_LENGTH
+        value: 512
+
+      # Email / OTP
+      - key: OTP_ENABLED
+        value: "true"
+      - key: EMAIL_BACKEND
+        value: smtp
+      - key: SMTP_SERVER
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: "587"
+      - key: APP_NAME
+        value: Ovula
+      # Set these in the Render dashboard (sensitive):
+      - key: SMTP_USERNAME
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
+      - key: FROM_EMAIL
+        sync: false
+      - key: APP_URL
+        sync: false
+
+      # ElevenLabs TTS (optional)
+      - key: ELEVENLABS_API_KEY
+        sync: false
+      - key: ELEVENLABS_VOICE_ID
+        value: pNInz6obpgDQGcFmaJgB
+      - key: ELEVENLABS_MODEL_ID
+        value: eleven_multilingual_v2
+
+      # Python
+      - key: PYTHON_VERSION
+        value: "3.11"

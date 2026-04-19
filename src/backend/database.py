@@ -8,7 +8,7 @@ load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./pcos_tracker.db")
 
-# Fix for Railway PostgreSQL URL format (postgres:// -> postgresql://)
+# Fix for PostgreSQL URL format (postgres:// -> postgresql://)
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 

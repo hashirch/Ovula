@@ -441,16 +441,19 @@ IMPORTANT: Write in SIMPLE, EVERYDAY Urdu that everyone can understand easily.""
             return f"Error: {str(e)}"
     
     async def generate_response_openai_api(self, prompt: str) -> str:
-        """Generate response using OpenAI API"""
+        """Generate response using OpenAI API or Groq (OpenAI-compatible, free)"""
         try:
             if not self.config.OPENAI_API_KEY:
-                return "OpenAI API key not configured. Please set OPENAI_API_KEY in environment variables."
-            
+                return "OpenAI/Groq API key not configured. Please set OPENAI_API_KEY in environment variables."
+
+            # Use Groq base URL if configured, otherwise fall back to OpenAI
+            base_url = self.config.GROQ_BASE_URL or "https://api.openai.com/v1"
+
             headers = {
                 "Authorization": f"Bearer {self.config.OPENAI_API_KEY}",
                 "Content-Type": "application/json"
             }
-            
+
             payload = {
                 "model": self.config.OPENAI_MODEL,
                 "messages": [
@@ -460,23 +463,24 @@ IMPORTANT: Write in SIMPLE, EVERYDAY Urdu that everyone can understand easily.""
                 "max_tokens": self.config.MAX_RESPONSE_LENGTH,
                 "temperature": 0.7
             }
-            
+
             response = requests.post(
-                "https://api.openai.com/v1/chat/completions",
+                f"{base_url}/chat/completions",
                 headers=headers,
                 json=payload,
                 timeout=30
             )
-            
+
             if response.status_code == 200:
                 result = response.json()
                 return result["choices"][0]["message"]["content"]
             else:
-                return f"OpenAI API error: {response.status_code}"
-                
+                return f"API error: {response.status_code} — {response.text[:200]}"
+
         except Exception as e:
-            logger.error(f"OpenAI API error: {e}")
+            logger.error(f"OpenAI/Groq API error: {e}")
             return f"Error: {str(e)}"
+
     
     async def generate_response_groq(self, messages: List[Dict[str, str]]) -> str:
         """Generate response using Groq API"""
