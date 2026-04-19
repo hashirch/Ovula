@@ -5,7 +5,7 @@ import {
   Download, Search, Bell, Edit, ChevronRight, ChevronLeft, 
   AlertCircle, Info, Clipboard, Heart, Shield, Apple
 } from 'lucide-react';
-import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, Cell, AreaChart, Area } from 'recharts';
 import toast from 'react-hot-toast';
 
 const PCOSPrediction = () => {
@@ -42,6 +42,7 @@ const PCOSPrediction = () => {
   useEffect(() => {
     fetchLogs();
     fetchHealthProfile();
+    fetchLatestPrediction();
   }, []);
 
   const fetchLogs = async () => {
@@ -62,6 +63,15 @@ const PCOSPrediction = () => {
       if (error.response?.status === 404) {
         setShowProfileForm(true);
       }
+    }
+  };
+
+  const fetchLatestPrediction = async () => {
+    try {
+      const response = await axios.get('/prediction/predictions/latest');
+      setPrediction(response.data);
+    } catch (error) {
+      console.log('No previous prediction found');
     }
   };
 
@@ -109,7 +119,7 @@ const PCOSPrediction = () => {
   }));
 
   return (
-    <div className="p-8 pb-24 bg-[#FFF9FA] min-h-screen">
+    <div className="p-8 pb-24 bg-[#FFF9FA] min-h-screen animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Multi-Step Profile Form Modal */}
       {showProfileForm && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto">
@@ -283,21 +293,23 @@ const PCOSPrediction = () => {
             <div className="absolute -top-20 -right-20 h-64 w-64 bg-pink-50 rounded-full blur-3xl opacity-50 group-hover:opacity-80 transition-opacity" />
             
             <div className="flex flex-col md:flex-row items-center gap-12 relative z-10">
-              <div className="relative h-56 w-56 shrink-0">
-                <svg className="h-full w-full -rotate-90" viewBox="0 0 100 100">
-                  <circle className="stroke-slate-100" strokeWidth="8" fill="transparent" r="40" cx="50" cy="50" />
-                  <circle 
+              <div className="relative h-48 w-56 shrink-0 flex items-end justify-center">
+                <svg className="absolute w-full h-full" viewBox="0 0 100 50" preserveAspectRatio="xMidYMax meet">
+                  <path d="M 10 50 A 40 40 0 0 1 90 50" stroke="#f1f5f9" strokeWidth="8" fill="transparent" strokeLinecap="round" />
+                  <path 
                     className="transition-all duration-1000 ease-out" 
-                    stroke={prediction?.risk_color || '#FBCFE8'} 
+                    d="M 10 50 A 40 40 0 0 1 90 50"
+                    stroke={prediction?.risk_color || '#10b981'} 
                     strokeWidth="8" 
-                    strokeDasharray={`${(prediction?.risk_score || 0) * 2.51} 251`} 
+                    strokeDasharray="125.6" 
+                    strokeDashoffset={prediction ? `${125.6 * (1 - prediction.risk_score / 100)}` : '100'}
                     strokeLinecap="round" 
-                    fill="transparent" r="40" cx="50" cy="50" 
+                    fill="transparent" 
                   />
                 </svg>
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className="text-5xl font-black text-slate-800">{prediction ? Math.round(prediction.risk_score) : '--'}</span>
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Risk Percentage</span>
+                <div className="relative flex flex-col items-center justify-end pb-2">
+                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Risk Assessment</span>
+                  <span className="text-5xl font-black text-slate-800">{prediction ? `${Math.round(prediction.risk_score)}%` : '--'}</span>
                 </div>
               </div>
 
@@ -366,13 +378,17 @@ const PCOSPrediction = () => {
               <div className="h-40 w-full">
                 {chartData.length > 0 ? (
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={chartData}>
-                      <Bar dataKey="value" radius={[10, 10, 10, 10]} barSize={25}>
-                        {chartData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.value > 80 ? '#EC4899' : '#F1F5F9'} />
-                        ))}
-                      </Bar>
-                    </BarChart>
+                    <AreaChart data={chartData}>
+                      <defs>
+                        <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#94a3b8" stopOpacity={0.3}/>
+                          <stop offset="95%" stopColor="#94a3b8" stopOpacity={0}/>
+                        </linearGradient>
+                      </defs>
+                      <XAxis dataKey="name" hide />
+                      <Tooltip />
+                      <Area type="monotone" dataKey="value" stroke="#a2a9b3" fillOpacity={1} fill="url(#colorValue)" strokeWidth={2} dot={{ r: 4, fill: "white", stroke: "#a2a9b3", strokeWidth: 2 }} />
+                    </AreaChart>
                   </ResponsiveContainer>
                 ) : (
                   <div className="h-full flex items-center justify-center text-slate-300 text-xs font-bold uppercase tracking-widest">No Log Data</div>

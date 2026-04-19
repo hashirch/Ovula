@@ -97,7 +97,7 @@ const LogsHistory = () => {
   }
 
   return (
-    <div className="p-8 pb-20">
+    <div className="p-8 pb-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
         <div className="flex items-center gap-3">
@@ -107,8 +107,7 @@ const LogsHistory = () => {
           <h1 className="text-3xl font-bold text-slate-800">Logs History</h1>
         </div>
         <Link to="/add-log" className="rounded-full bg-pink-500 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-pink-500/20 hover:bg-pink-600 hover:shadow-pink-500/30 transition-all active:scale-95 flex items-center gap-2">
-          <Plus className="w-4 h-4" />
-          <span>Add New Log</span>
+          <span>Log Symptoms</span>
         </Link>
       </div>
 
@@ -183,15 +182,14 @@ const LogsHistory = () => {
         </div>
 
         {logs.length === 0 ? (
-          <div className="text-center py-16">
-            <div className="size-20 rounded-3xl bg-pink-50 flex items-center justify-center text-pink-300 mx-auto mb-4">
-              <History className="w-10 h-10" />
+          <div className="text-center py-20">
+            <div className="size-32 rounded-[2.5rem] bg-pink-50/80 flex items-center justify-center text-pink-300 mx-auto mb-8 shadow-inner border border-white">
+              <History className="w-16 h-16" />
             </div>
-            <p className="text-slate-600 text-lg font-semibold mb-2">No logs found</p>
-            <p className="text-slate-400 mb-6">Start tracking your symptoms to see your history here</p>
-            <Link to="/add-log" className="rounded-full bg-pink-500 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-pink-500/20 hover:bg-pink-600 hover:shadow-pink-500/30 transition-all active:scale-95 inline-flex items-center gap-2">
-              <Plus className="w-4 h-4" />
-              <span>Add Your First Log</span>
+            <h2 className="text-3xl font-bold text-slate-800 mb-3 tracking-tight">No logs found</h2>
+            <p className="text-slate-500 mb-8 text-lg">Start tracking your symptoms to see your history here</p>
+            <Link to="/add-log" className="rounded-full bg-pink-500 px-8 py-4 text-base font-bold text-white shadow-xl shadow-pink-500/20 hover:bg-pink-600 hover:shadow-pink-500/30 hover:-translate-y-1 transition-all active:scale-95 inline-flex items-center">
+              Add First Log
             </Link>
           </div>
         ) : (

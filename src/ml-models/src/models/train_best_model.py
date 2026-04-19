@@ -3,12 +3,13 @@
 
 import pickle
 import os
-import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, f1_score, classification_report
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.utils import resample
 import numpy as np
 import pandas as pd
+import shutil
 
 # Get the directory of this script
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -49,8 +50,19 @@ print(f"\nPCOS_label distribution: {data['PCOS_label'].value_counts().to_dict()}
 PCOS_check = dict(zip(data.PCOS_label.unique(), data.PCOS.unique()))
 print(f"PCOS mapping: {PCOS_check}")
 
-X = data.drop(['PCOS_label', 'PCOS'], axis=1)
-y = data.PCOS_label
+# Oversample the minority class
+df_majority = data[data.PCOS_label==0]
+df_minority = data[data.PCOS_label==1]
+
+df_minority_upsampled = resample(df_minority, 
+                                 replace=True,
+                                 n_samples=len(df_majority),
+                                 random_state=42)
+
+data_upsampled = pd.concat([df_majority, df_minority_upsampled])
+
+X = data_upsampled.drop(['PCOS_label', 'PCOS'], axis=1)
+y = data_upsampled.PCOS_label
 
 # Use stratified split to ensure both classes are in train and test sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=42, stratify=y)
@@ -59,7 +71,7 @@ print(f"Training set size: {len(X_train)}, Test set size: {len(X_test)}")
 print(f"Training set class distribution: {y_train.value_counts().to_dict()}")
 print(f"Test set class distribution: {y_test.value_counts().to_dict()}")
 
-clf = DecisionTreeClassifier(max_depth=6).fit(X_train, y_train)
+clf = RandomForestClassifier(n_estimators=150, max_depth=12, random_state=42, class_weight='balanced').fit(X_train, y_train)
 
 tree_predicted = clf.predict(X_test)
 confusion = confusion_matrix(y_test, tree_predicted)
@@ -92,6 +104,12 @@ print(f"Sample 2 prediction: {PCOS_check[pcos2[0]]}")
 model_filename = os.path.join(project_root, 'models', 'saved', 'pcos_model.pkl')
 pickle.dump(clf, open(model_filename, 'wb'))
 print(f"Model saved to {model_filename}")
+
+# Also copy to backend
+backend_model_path = os.path.join(project_root, '..', 'backend', 'models', 'pcos_model.pkl')
+os.makedirs(os.path.dirname(backend_model_path), exist_ok=True)
+shutil.copy2(model_filename, backend_model_path)
+print(f"Model copied to {backend_model_path}")
 
 # Load and test the model
 loaded_model = pickle.load(open(model_filename, 'rb'))

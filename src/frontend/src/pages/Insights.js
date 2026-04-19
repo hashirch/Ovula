@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
-import { TrendingUp, Lightbulb, Activity, AlertTriangle } from 'lucide-react';
+import { TrendingUp, Lightbulb, Activity, AlertTriangle, Brain } from 'lucide-react';
 
 const Insights = () => {
   const [insights, setInsights] = useState(null);
@@ -71,14 +71,32 @@ const Insights = () => {
 
   if (!insights || insights.total_logs === 0) {
     return (
-      <div className="p-8 pb-20">
-        <div className="glass-card p-16 rounded-3xl bg-white/60 border border-white/60 text-center">
-          <div className="size-20 rounded-3xl bg-pink-50 flex items-center justify-center text-pink-300 mx-auto mb-4">
-            <TrendingUp className="w-10 h-10" />
+      <div className="p-8 pb-20 animate-in fade-in slide-in-from-bottom-4 duration-700 min-h-[80vh] flex items-center justify-center">
+        <div className="w-full max-w-2xl text-center">
+          <div className="relative mb-16 flex items-center justify-center">
+            <div className="absolute inset-0 bg-gradient-to-tr from-pink-200 to-blue-200 blur-[100px] opacity-60 rounded-full w-80 h-80 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+            <div className="relative z-10 w-64 h-64 flex items-center justify-center">
+              <svg viewBox="0 0 100 100" className="absolute w-full h-full opacity-60 mix-blend-multiply">
+                <path d="M10,50 Q30,10 50,50 T90,50 M20,60 Q50,20 80,60 M30,70 Q50,40 70,70" stroke="url(#lineGrad)" strokeWidth="0.5" fill="none" className="opacity-50" />
+                <circle cx="20" cy="50" r="1.5" fill="#f472b6" />
+                <circle cx="80" cy="50" r="1.5" fill="#60a5fa" />
+                <circle cx="40" cy="30" r="1.5" fill="#a78bfa" />
+                <circle cx="60" cy="70" r="1.5" fill="#f472b6" />
+                <defs>
+                  <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stopColor="#f472b6" />
+                    <stop offset="100%" stopColor="#60a5fa" />
+                  </linearGradient>
+                </defs>
+              </svg>
+              <Brain className="w-32 h-32 text-pink-400 drop-shadow-2xl relative z-10" strokeWidth={1} />
+            </div>
           </div>
-          <h2 className="text-2xl font-bold text-slate-800 mb-2">No Insights Available</h2>
-          <p className="text-slate-600 mb-6">Start logging your daily symptoms to get personalized insights</p>
-          <a href="/add-log" className="rounded-full bg-pink-500 px-8 py-3 text-sm font-bold text-white shadow-lg shadow-pink-500/20 hover:bg-pink-600 hover:shadow-pink-500/30 transition-all active:scale-95 inline-block">
+          <h2 className="text-4xl font-black text-slate-800 mb-4 tracking-tight">Your Personalized Insights Await.</h2>
+          <p className="text-slate-600 mb-10 text-base leading-relaxed max-w-xl mx-auto">
+            Start logging your daily symptoms, cycle data, and wellness factors. Ovula's advanced AI will analyze your unique patterns to unlock personalized health trends and actionable recommendations.
+          </p>
+          <a href="/add-log" className="rounded-full bg-gradient-to-r from-pink-500 to-purple-500 px-10 py-4 text-base font-bold text-white shadow-xl shadow-pink-500/20 hover:shadow-2xl hover:-translate-y-1 transition-all active:scale-95 inline-block">
             Add Your First Log
           </a>
         </div>
@@ -94,7 +112,7 @@ const Insights = () => {
   const painInsight = getInsightLevel(insights.avg_pain, { high: 1, medium: 3 });
 
   return (
-    <div className="p-8 pb-20">
+    <div className="p-8 pb-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Header */}
       <div className="flex items-center gap-3 mb-8">
         <div className="size-12 rounded-2xl bg-pink-100 flex items-center justify-center text-pink-500">

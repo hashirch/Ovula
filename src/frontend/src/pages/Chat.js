@@ -292,7 +292,7 @@ const Chat = () => {
   }
 
   return (
-    <div className="flex h-full p-6 gap-6">
+    <div className="flex h-full p-6 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Chat Container */}
       <div className="flex-1 flex flex-col bg-white rounded-[2rem] shadow-xl overflow-hidden border border-pink-100 h-[calc(100vh-3rem)]">
         

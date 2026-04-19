@@ -283,7 +283,7 @@ const DietNutrition = () => {
     : currentRecipes.filter(r => r.category === selectedCategory);
 
   return (
-    <div className="p-8 pb-20">
+    <div className="p-8 pb-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-3">

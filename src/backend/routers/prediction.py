@@ -104,6 +104,9 @@ async def predict_pcos(
 ):
     """Predict PCOS risk based on user's health profile"""
     
+    # Reload the model dynamically to pick up any newly trained model
+    pcos_model = load_model()
+    
     if not pcos_model:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

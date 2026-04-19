@@ -57,7 +57,7 @@ const AddLog = () => {
   };
 
   return (
-    <div className="p-8 pb-20 max-w-4xl mx-auto">
+    <div className="p-8 pb-20 max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="glass-card p-8 rounded-3xl bg-white/60 border border-white/60">
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
