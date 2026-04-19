@@ -14,6 +14,7 @@ class ModelType(Enum):
     OLLAMA_LLAMA2 = "ollama_llama2"
     HUGGINGFACE_API = "huggingface_api"
     OPENAI_API = "openai_api"
+    GROQ_API = "groq_api"
 
 class Config:
     # Model configuration
@@ -39,6 +40,8 @@ class Config:
     HUGGINGFACE_MODEL = os.getenv("HUGGINGFACE_MODEL", "microsoft/DialoGPT-medium")
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
     OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-3.5-turbo")
+    GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
+    GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.1-70b-versatile")
     
     # Database
     DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./pcos_tracker.db")
@@ -72,5 +75,6 @@ class Config:
             "lora_base": cls.LORA_BASE_MODEL,
             "lora_adapter": cls.LORA_ADAPTER_PATH,
             "huggingface_model": cls.HUGGINGFACE_MODEL,
-            "openai_model": cls.OPENAI_MODEL
+            "openai_model": cls.OPENAI_MODEL,
+            "groq_model": cls.GROQ_MODEL
         }

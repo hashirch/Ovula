@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="@drawable/bg_gradient">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="24dp">
+
+        <!-- Logo Container -->
+        <FrameLayout
+            android:id="@+id/logoContainer"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginTop="32dp"
+            android:background="@drawable/bg_glass_card"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+            
+            <ImageView
+                android:id="@+id/logo"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_gravity="center"
+                android:src="@mipmap/ic_launcher"
+                android:contentDescription="@string/app_name" />
+        </FrameLayout>
+
+        <!-- Glass Card -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/glassCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:padding="32dp"
+            android:background="@drawable/bg_glass_card"
+            android:elevation="8dp"
+            app:layout_constraintTop_toBottomOf="@id/logoContainer"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Create Account"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="@color/slate_900"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <TextView
+                android:id="@+id/subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Join the Ovula community"
+                android:textSize="14sp"
+                android:textColor="@color/slate_500"
+                app:layout_constraintTop_toBottomOf="@id/title"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- Name Input Group -->
+            <FrameLayout
+                android:id="@+id/nameLayout"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/bg_rounded_input"
+                app:layout_constraintTop_toBottomOf="@id/subtitle">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical|start"
+                    android:layout_marginStart="20dp"
+                    android:src="@drawable/ic_user" />
+
+                <EditText
+                    android:id="@+id/etName"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@null"
+                    android:paddingStart="56dp"
+                    android:paddingEnd="24dp"
+                    android:hint="Full Name"
+                    android:textColorHint="@color/slate_400"
+                    android:textColor="@color/slate_800"
+                    android:textSize="16sp"
+                    android:inputType="textPersonName" />
+            </FrameLayout>
+
+            <!-- Email Input Group -->
+            <FrameLayout
+                android:id="@+id/emailLayout"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_rounded_input"
+                app:layout_constraintTop_toBottomOf="@id/nameLayout">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical|start"
+                    android:layout_marginStart="20dp"
+                    android:src="@drawable/ic_mail" />
+
+                <EditText
+                    android:id="@+id/etEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@null"
+                    android:paddingStart="56dp"
+                    android:paddingEnd="24dp"
+                    android:hint="Email Address"
+                    android:textColorHint="@color/slate_400"
+                    android:textColor="@color/slate_800"
+                    android:textSize="16sp"
+                    android:inputType="textEmailAddress" />
+            </FrameLayout>
+
+            <!-- Password Input Group -->
+            <FrameLayout
+                android:id="@+id/passwordLayout"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_rounded_input"
+                app:layout_constraintTop_toBottomOf="@id/emailLayout">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical|start"
+                    android:layout_marginStart="20dp"
+                    android:src="@drawable/ic_lock" />
+
+                <EditText
+                    android:id="@+id/etPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@null"
+                    android:paddingStart="56dp"
+                    android:paddingEnd="56dp"
+                    android:hint="Password"
+                    android:textColorHint="@color/slate_400"
+                    android:textColor="@color/slate_800"
+                    android:textSize="16sp"
+                    android:inputType="textPassword" />
+            </FrameLayout>
+
+            <!-- Confirm Password Input Group -->
+            <FrameLayout
+                android:id="@+id/confirmPasswordLayout"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_rounded_input"
+                app:layout_constraintTop_toBottomOf="@id/passwordLayout">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical|start"
+                    android:layout_marginStart="20dp"
+                    android:src="@drawable/ic_lock" />
+
+                <EditText
+                    android:id="@+id/etConfirmPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@null"
+                    android:paddingStart="56dp"
+                    android:paddingEnd="56dp"
+                    android:hint="Confirm Password"
+                    android:textColorHint="@color/slate_400"
+                    android:textColor="@color/slate_800"
+                    android:textSize="16sp"
+                    android:inputType="textPassword" />
+            </FrameLayout>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnRegister"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/bg_gradient_button"
+                android:text="Sign Up"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textAllCaps="false"
+                app:layout_constraintTop_toBottomOf="@id/confirmPasswordLayout" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:visibility="gone"
+                android:elevation="2dp"
+                android:indeterminateTint="@color/white"
+                app:layout_constraintTop_toTopOf="@id/btnRegister"
+                app:layout_constraintBottom_toBottomOf="@id/btnRegister"
+                app:layout_constraintStart_toStartOf="@id/btnRegister"
+                app:layout_constraintEnd_toEndOf="@id/btnRegister" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Login Link -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="32dp"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/glassCard"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Already have an account? "
+                android:textColor="@color/slate_500"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tvLogin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Log In"
+                android:textStyle="bold"
+                android:textColor="@color/pink_500"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

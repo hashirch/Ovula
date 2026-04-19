@@ -1,18 +1,60 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { Mail, Shield, RefreshCw, ArrowLeft } from 'lucide-react';
+import { Mail, Shield, RefreshCw, ArrowLeft, Clock, AlertTriangle } from 'lucide-react';
+
+const OTP_DURATION = 5 * 60; // 5 minutes in seconds
 
 const VerifyEmail = () => {
   const [otpCode, setOtpCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [resending, setResending] = useState(false);
+  const [secondsLeft, setSecondsLeft] = useState(OTP_DURATION);
+  const [isExpired, setIsExpired] = useState(false);
+  const timerRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
   
   const email = location.state?.email || '';
   const fromLogin = location.state?.fromLogin || false;
+
+  // Countdown timer
+  useEffect(() => {
+    timerRef.current = setInterval(() => {
+      setSecondsLeft(prev => {
+        if (prev <= 1) {
+          clearInterval(timerRef.current);
+          setIsExpired(true);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timerRef.current);
+  }, []);
+
+  const resetTimer = () => {
+    clearInterval(timerRef.current);
+    setSecondsLeft(OTP_DURATION);
+    setIsExpired(false);
+    timerRef.current = setInterval(() => {
+      setSecondsLeft(prev => {
+        if (prev <= 1) {
+          clearInterval(timerRef.current);
+          setIsExpired(true);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  const formatTime = (s) => {
+    const m = Math.floor(s / 60);
+    const sec = s % 60;
+    return `${m}:${sec.toString().padStart(2, '0')}`;
+  };
 
   const handleVerify = async (e) => {
     e.preventDefault();
@@ -59,11 +101,10 @@ const VerifyEmail = () => {
 
       toast.success(response.data.message || 'New code sent to your email!', {
         duration: 8000,
-        style: {
-          maxWidth: '500px'
-        }
+        style: { maxWidth: '500px' }
       });
       setOtpCode('');
+      resetTimer(); // Restart the 5-minute countdown
       
     } catch (error) {
       const errorMessage = error.response?.data?.detail || 'Failed to resend code. Please try again.';
@@ -110,8 +151,29 @@ const VerifyEmail = () => {
           </div>
 
           <form onSubmit={handleVerify} className="space-y-6">
+            {/* Expired Banner */}
+            {isExpired && (
+              <div className="flex items-center gap-3 p-3 bg-red-50 border border-red-200 rounded-2xl">
+                <AlertTriangle className="w-5 h-5 text-red-500 shrink-0" />
+                <p className="text-sm text-red-700 font-medium">Your code has expired. Please request a new one below.</p>
+              </div>
+            )}
+
             <div className="space-y-2">
-              <label className="text-[10px] font-bold text-slate-500 ml-4 uppercase tracking-[0.15em]">Verification Code</label>
+              <div className="flex items-center justify-between px-1">
+                <label className="text-[10px] font-bold text-slate-500 ml-4 uppercase tracking-[0.15em]">Verification Code</label>
+                {/* Live countdown */}
+                <div className={`flex items-center gap-1 text-xs font-bold px-2 py-1 rounded-full ${
+                  isExpired
+                    ? 'bg-red-100 text-red-600'
+                    : secondsLeft < 60
+                    ? 'bg-orange-100 text-orange-600'
+                    : 'bg-pink-50 text-pink-500'
+                }`}>
+                  <Clock className="w-3 h-3" />
+                  <span>{isExpired ? 'Expired' : formatTime(secondsLeft)}</span>
+                </div>
+              </div>
               <div className="relative group">
                 <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-pink-500 transition-colors w-5 h-5" />
                 <input
@@ -120,7 +182,12 @@ const VerifyEmail = () => {
                   value={otpCode}
                   onChange={handleOtpChange}
                   maxLength={6}
-                  className="w-full pl-14 pr-6 py-4 rounded-2xl bg-white/50 border border-white focus:bg-white outline-none text-slate-800 placeholder:text-slate-400 focus:ring-4 focus:ring-pink-100 transition-all shadow-sm font-mono text-2xl tracking-widest uppercase text-center font-bold"
+                  disabled={isExpired}
+                  className={`w-full pl-14 pr-6 py-4 rounded-2xl border outline-none text-slate-800 placeholder:text-slate-400 focus:ring-4 focus:ring-pink-100 transition-all shadow-sm font-mono text-2xl tracking-widest uppercase text-center font-bold ${
+                    isExpired
+                      ? 'bg-gray-100 border-gray-200 opacity-50 cursor-not-allowed'
+                      : 'bg-white/50 border-white focus:bg-white'
+                  }`}
                   placeholder="000000"
                   autoComplete="off"
                 />
@@ -132,7 +199,7 @@ const VerifyEmail = () => {
 
             <button
               type="submit"
-              disabled={loading || otpCode.length !== 6}
+              disabled={loading || otpCode.length !== 6 || isExpired}
               className="w-full py-4 rounded-2xl font-bold text-lg text-white shadow-xl shadow-pink-500/30 active:scale-[0.98] transition-all bg-gradient-to-r from-pink-500 to-pink-400 hover:to-pink-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (

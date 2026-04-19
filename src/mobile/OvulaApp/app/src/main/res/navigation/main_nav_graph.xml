@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_nav_graph"
+    app:startDestination="@id/dashboardFragment">
+
+    <fragment
+        android:id="@+id/dashboardFragment"
+        android:name="com.ovula.app.ui.main.DashboardFragment"
+        android:label="Dashboard">
+        <action
+            android:id="@+id/action_dashboard_to_addLog"
+            app:destination="@id/addLogFragment" />
+        <action
+            android:id="@+id/action_dashboard_to_chat"
+            app:destination="@id/chatFragment" />
+        <action
+            android:id="@+id/action_dashboard_to_insights"
+            app:destination="@id/insightsFragment" />
+        <action
+            android:id="@+id/action_dashboard_to_diet"
+            app:destination="@id/dietNutritionFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/logsHistoryFragment"
+        android:name="com.ovula.app.ui.main.LogsHistoryFragment"
+        android:label="Logs History" />
+
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.ovula.app.ui.main.ChatFragment"
+        android:label="AI Chat" />
+
+    <fragment
+        android:id="@+id/insightsFragment"
+        android:name="com.ovula.app.ui.main.InsightsFragment"
+        android:label="Insights" />
+
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.ovula.app.ui.main.ProfileFragment"
+        android:label="Profile" />
+
+    <fragment
+        android:id="@+id/addLogFragment"
+        android:name="com.ovula.app.ui.main.AddLogFragment"
+        android:label="Add Log" />
+
+    <fragment
+        android:id="@+id/dietNutritionFragment"
+        android:name="com.ovula.app.ui.main.DietNutritionFragment"
+        android:label="Diet &amp; Nutrition" />
+
+    <fragment
+        android:id="@+id/pcosFragment"
+        android:name="com.ovula.app.ui.main.PCOSPredictionFragment"
+        android:label="PCOS Prediction" />
+
+</navigation>

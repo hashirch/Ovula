@@ -182,26 +182,6 @@ const Register = () => {
             </p>
           </div>
         </div>
-
-        {/* Social Login */}
-        <div className="w-full mt-8">
-          <div className="relative flex items-center justify-center mb-6">
-            <div className="flex-grow border-t border-pink-200/60"></div>
-            <span className="mx-4 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Quick Access</span>
-            <div className="flex-grow border-t border-pink-200/60"></div>
-          </div>
-          
-          <div className="grid grid-cols-2 gap-4">
-            <button className="flex items-center justify-center gap-2 py-4 rounded-2xl bg-white/40 hover:bg-white/60 border border-white/60 transition-all shadow-sm active:scale-95">
-              <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="w-5 h-5" alt="Google" />
-              <span className="text-sm font-bold text-slate-700">Google</span>
-            </button>
-            <button className="flex items-center justify-center gap-2 py-4 rounded-2xl bg-white/40 hover:bg-white/60 border border-white/60 transition-all shadow-sm active:scale-95">
-              <img src="https://www.svgrepo.com/show/511330/apple-173.svg" className="w-5 h-5" alt="Apple" />
-              <span className="text-sm font-bold text-slate-700">Apple</span>
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   );

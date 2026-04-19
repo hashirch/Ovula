@@ -664,10 +664,20 @@ _Manage your health profile and app preferences_
 
 ### Prerequisites
 
+**For Local Development:**
 - Python 3.8+
 - Node.js 18+
-- [Ollama](https://ollama.ai/) installed and running
+- [Ollama](https://ollama.ai/) installed and running (or use Groq API)
 - Android Studio or Xcode for mobile development
+
+**For Cloud Deployment (FREE):**
+- GitHub account
+- Railway account (backend hosting)
+- Vercel account (frontend hosting)
+- Groq API key (free LLM API)
+- Gmail account (for OTP emails)
+
+📚 **See [QUICK_DEPLOY.md](QUICK_DEPLOY.md) for 5-minute cloud deployment guide!**
 
 ### 1. Clone the Repo
 
@@ -767,6 +777,56 @@ The `/prediction` backend route uses the best-performing classical ML model for 
 
 ---
 
+## 🚀 Cloud Deployment (FREE)
+
+Deploy your Ovula app to production in minutes using free cloud services!
+
+### Quick Deploy (5 minutes)
+
+1. **Get API Keys**
+   - Groq API: https://console.groq.com/ (free LLM API)
+   - Gmail App Password: Google Account → Security → App Passwords
+
+2. **Deploy Backend to Railway**
+   - Push code to GitHub
+   - Go to Railway.app → New Project → Deploy from GitHub
+   - Add PostgreSQL database
+   - Configure environment variables (see `.env.example`)
+
+3. **Deploy Frontend to Vercel**
+   - Go to Vercel.com → New Project → Import from GitHub
+   - Set root directory: `src/frontend`
+   - Add environment variable: `REACT_APP_API_URL`
+
+4. **Test Your Deployment**
+   - Visit your Vercel URL
+   - Register, verify email, and test features
+
+### 📚 Deployment Documentation
+
+- **[QUICK_DEPLOY.md](QUICK_DEPLOY.md)** - 5-minute quick start guide
+- **[DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md)** - Comprehensive deployment guide
+- **[DEPLOY_CHECKLIST.md](DEPLOY_CHECKLIST.md)** - Step-by-step checklist
+- **[DEPLOYMENT_SUMMARY.md](DEPLOYMENT_SUMMARY.md)** - Overview and architecture
+- **[.env.example](.env.example)** - Environment variables template
+
+### 💰 Cost: $0/month
+
+All services used are free:
+- Railway: $5 credit/month (backend + database)
+- Vercel: Unlimited (frontend hosting)
+- Groq: 30 req/min (LLM API)
+- Gmail: Unlimited (OTP emails)
+
+### 🏗️ Deployment Architecture
+
+```
+Frontend (Vercel) → Backend (Railway) → PostgreSQL (Railway)
+                                      → Groq LLM API
+```
+
+---
+
 ## ⚠️ Disclaimer
 
 Ovula is a research and educational project. The AI responses and PCOS risk scores are **not a substitute for professional medical advice**. Always consult a qualified healthcare provider for any health concerns.
@@ -785,6 +845,7 @@ MIT License — see [LICENSE](LICENSE) for details.
 - **FAST NUCES Peshawar** — resources and infrastructure
 - **Meta AI** — Llama 3.2 model
 - **Ollama** — local LLM inference platform
+- **Groq** — cloud LLM API for deployment
 - **Hugging Face** — model tooling and ecosystem
 
 ---

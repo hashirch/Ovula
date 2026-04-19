@@ -4,10 +4,20 @@ from typing import Optional, List, Dict, Any
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
 import logging
+import os
 
 from app.config import Config, ModelType
 from models import DailyLog
 from app.services.translation_service import translation_service
+
+# Try to import Groq
+try:
+    from groq import Groq
+    GROQ_AVAILABLE = True
+except ImportError:
+    GROQ_AVAILABLE = False
+    logger = logging.getLogger(__name__)
+    logger.warning("Groq not installed. Install with: pip install groq")
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -26,6 +36,15 @@ class LLMService:
         self.lora_tokenizer = None
         self.lora_pipeline = None
         self.model_type = self.config.MODEL_TYPE
+        self.groq_client = None
+        
+        # Initialize Groq client if API key is available
+        if GROQ_AVAILABLE and os.getenv("GROQ_API_KEY"):
+            try:
+                self.groq_client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+                logger.info("Groq client initialized successfully")
+            except Exception as e:
+                logger.error(f"Failed to initialize Groq client: {e}")
         
         # Initialize LoRA model if needed
         if self.model_type == ModelType.LORA_PIPELINE.value:
@@ -459,6 +478,30 @@ IMPORTANT: Write in SIMPLE, EVERYDAY Urdu that everyone can understand easily.""
             logger.error(f"OpenAI API error: {e}")
             return f"Error: {str(e)}"
     
+    async def generate_response_groq(self, messages: List[Dict[str, str]]) -> str:
+        """Generate response using Groq API"""
+        try:
+            if not GROQ_AVAILABLE:
+                return "Groq not installed. Please install with: pip install groq"
+            
+            if not self.groq_client:
+                return "Groq API key not configured. Please set GROQ_API_KEY in environment variables."
+            
+            groq_model = os.getenv("GROQ_MODEL", "llama-3.1-70b-versatile")
+            
+            chat_completion = self.groq_client.chat.completions.create(
+                messages=messages,
+                model=groq_model,
+                max_tokens=self.config.MAX_RESPONSE_LENGTH,
+                temperature=0.7,
+            )
+            
+            return chat_completion.choices[0].message.content
+                
+        except Exception as e:
+            logger.error(f"Groq API error: {e}")
+            return f"Error connecting to Groq API: {str(e)}"
+    
     def generate_response_lora(self, prompt: str) -> str:
         """Generate response using LoRA pipeline"""
         if not LORA_AVAILABLE:
@@ -533,7 +576,15 @@ IMPORTANT: Write in SIMPLE, EVERYDAY Urdu that everyone can understand easily.""
             # Determine which model to use
             current_model_type = model_override or self.model_type
             
-            if current_model_type == ModelType.OLLAMA_FINETUNED.value:
+            if current_model_type == "groq_api" or current_model_type == ModelType.GROQ_API.value:
+                # Use Groq API (for deployment)
+                messages = [
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_message}
+                ]
+                response = await self.generate_response_groq(messages)
+                
+            elif current_model_type == ModelType.OLLAMA_FINETUNED.value:
                 # Use fine-tuned Ollama model
                 full_prompt = f"System: {system_prompt}\n\nUser: {user_message}\n\nAssistant:"
                 response = await self.generate_response_ollama(full_prompt, self.config.OLLAMA_FINETUNED_MODEL)

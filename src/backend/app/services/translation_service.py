@@ -8,12 +8,12 @@ logger = logging.getLogger(__name__)
 
 # Try to import translation dependencies
 try:
-    from googletrans import Translator
+    from deep_translator import GoogleTranslator
     TRANSLATION_AVAILABLE = True
-    logger.info("Google Translate available")
+    logger.info("Deep-translator (Google) available")
 except ImportError:
     TRANSLATION_AVAILABLE = False
-    logger.warning("Google Translate not available. Install googletrans==4.0.0rc1")
+    logger.warning("Deep-translator not available. Install deep-translator>=1.11.4")
 
 class TranslationService:
     def __init__(self):
@@ -23,18 +23,19 @@ class TranslationService:
             self._initialize_translator()
     
     def _initialize_translator(self):
-        """Initialize the Google Translator"""
+        """Initialize the Google Translator via deep-translator"""
         try:
-            logger.info("Initializing Google Translator")
-            self.translator = Translator()
-            logger.info("Google Translator initialized successfully")
+            logger.info("Initializing Deep-translator")
+            # We'll initialize the translator object when needed or keep a base settings one
+            self.translator = GoogleTranslator(source='en', target='ur')
+            logger.info("Deep-translator initialized successfully")
         except Exception as e:
             logger.error(f"Error initializing translator: {e}")
             self.translator = None
     
     def translate_to_urdu(self, text: str) -> Optional[str]:
         """
-        Translate English text to Urdu using Google Translate
+        Translate English text to Urdu using Deep-translator (Google)
         Preserves only PCOS term in English, translates everything else
         
         Args:
@@ -44,7 +45,7 @@ class TranslationService:
             Translated Urdu text or None if translation fails
         """
         if not TRANSLATION_AVAILABLE:
-            logger.warning("Translation not available - googletrans not installed")
+            logger.warning("Translation not available - deep-translator not installed")
             return None
         
         if not self.translator:
@@ -59,12 +60,10 @@ class TranslationService:
             # Everything else should be translated to Urdu
             modified_text = text.replace('PCOS', '___PCOS___')
             
-            # Translate to Urdu with explicit language codes
-            result = self.translator.translate(modified_text, src='en', dest='ur')
+            # Translate to Urdu
+            translated_text = self.translator.translate(modified_text)
             
-            if result and result.text:
-                translated_text = result.text
-                
+            if translated_text:
                 # Restore PCOS
                 translated_text = translated_text.replace('___PCOS___', 'PCOS')
                 
@@ -90,11 +89,6 @@ class TranslationService:
             
         except Exception as e:
             logger.error(f"Error during translation: {e}")
-            # Reinitialize translator on error
-            try:
-                self.translator = Translator()
-            except:
-                pass
             return None
     
     def is_available(self) -> bool:

@@ -10,6 +10,15 @@ echo ""
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROJECT_ROOT="$( cd "$SCRIPT_DIR/.." && pwd )"
 
+# Kill existing process on port 8000
+echo "Checking for existing backend processes on port 8000..."
+EXISTING_PID=$(lsof -t -i :8000)
+if [ ! -z "$EXISTING_PID" ]; then
+    echo "Stopping existing backend process (PID: $EXISTING_PID)..."
+    kill -9 $EXISTING_PID
+    sleep 1
+fi
+
 # Check if Ollama is running
 echo "Checking Ollama status..."
 if curl -s http://localhost:11434/api/tags > /dev/null 2>&1; then
@@ -36,11 +45,11 @@ fi
 cd "$PROJECT_ROOT/src/backend"
 
 # Check if virtual environment exists
-if [ -d "venv" ]; then
-    echo ""
-    echo "Activating virtual environment..."
-    source venv/bin/activate
-fi
+# if [ -d "venv" ]; then
+#     echo ""
+#     echo "Activating virtual environment..."
+#     source venv/bin/activate
+# fi
 
 # Install dependencies if needed
 if [ ! -f ".dependencies_installed" ]; then

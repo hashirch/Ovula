@@ -44,13 +44,13 @@ async def text_to_speech(
 @router.get("/voices")
 async def get_voices(current_user: User = Depends(get_current_user)):
     """
-    Get available ElevenLabs voices
+    Get available ElevenLabs voices. Returns empty list if voices cannot be fetched.
     """
     try:
         service = ElevenLabsService()
         voices = service.get_available_voices()
         return voices
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to fetch voices: {str(e)}")
+    except Exception:
+        # Return empty list gracefully — TTS may still work with default voice
+        return []
+
