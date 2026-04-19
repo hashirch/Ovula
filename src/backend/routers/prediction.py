@@ -23,8 +23,12 @@ from schemas import (
 
 router = APIRouter()
 
-# Load the trained model
-MODEL_PATH = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'ml-models', 'models', 'saved', 'pcos_model.pkl')
+# Load the trained model — check multiple paths for local dev vs deployment
+_backend_dir = os.path.dirname(os.path.dirname(__file__))  # src/backend
+_local_path = os.path.join(_backend_dir, '..', 'ml-models', 'models', 'saved', 'pcos_model.pkl')
+_deploy_path = os.path.join(_backend_dir, 'models', 'pcos_model.pkl')
+MODEL_PATH = _local_path if os.path.exists(_local_path) else _deploy_path
+
 
 def load_model():
     """Load the trained PCOS prediction model"""

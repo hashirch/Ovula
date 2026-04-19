@@ -50,7 +50,11 @@ class ChatViewModel : ViewModel() {
                     currentMessages.add(response.body()!!)
                     _messages.value = currentMessages
                 } else {
-                    _error.value = "Failed to send message"
+                    if (response.code() == 401) {
+                        _error.value = "Session expired. Please log out and back in."
+                    } else {
+                        _error.value = "Failed to send message: ${response.code()}"
+                    }
                 }
             } catch (e: Exception) {
                 _error.value = e.message ?: "Network error"

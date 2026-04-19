@@ -51,6 +51,16 @@ object RetrofitClient {
 
             val client = OkHttpClient.Builder()
                 .addInterceptor(authInterceptor)
+                .addInterceptor { chain ->
+                    val response = chain.proceed(chain.request())
+                    if (response.code == 401) {
+                        // Clear token and potentially notify the UI
+                        tokenManager.clearToken()
+                        // Since we're in an interceptor, we can't easily navigate
+                        // but clearing the token will force the user to login next time
+                    }
+                    response
+                }
                 .addInterceptor(loggingInterceptor)
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(60, TimeUnit.SECONDS)
