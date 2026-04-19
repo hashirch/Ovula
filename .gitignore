@@ -86,13 +86,25 @@ Thumbs.db
 *.pkl
 src/ml-models/llama-3.2-1b-instruct.Q8_0.gguf
 
-# Mobile
+# Android / Gradle build artifacts
+.gradle/
+**/build/
+*.apk
+*.aab
+*.dex
+*.class
+local.properties
+**/gradle-8.7/
+**/.gradle/
+**/captures/
+*.hprof
+
+# Mobile (React Native leftovers)
 src/mobile/android/
 src/mobile/ios/
-src/mobile/node_modules/
-**/android/
-**/ios/
+
+# Node
 **/node_modules/
 
-# Frontend
-src/frontend/node_modules/
+# Frontend build
+src/frontend/build/
