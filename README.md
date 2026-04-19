@@ -6,12 +6,12 @@
 
 ### PCOS Tracking & AI Healthcare Assistant
 
-_A Final Year Project combining machine learning, LLM fine-tuning, and a full-stack mobile + web application for PCOS management_
+_A Final Year Project combining machine learning, LLM fine-tuning, and a full-stack native mobile + modern web application for PCOS management_
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![React Native](https://img.shields.io/badge/React_Native-0.73+-61dafb.svg)](https://reactnative.dev/)
+[![Kotlin](https://img.shields.io/badge/Kotlin-1.9+-7f52ff.svg)](https://kotlinlang.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688.svg)](https://fastapi.tiangolo.com/)
-[![Ollama](https://img.shields.io/badge/Ollama-LLM-black.svg)](https://ollama.ai/)
+[![React](https://img.shields.io/badge/React-18+-61dafb.svg)](https://reactjs.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 [Overview](#-overview) • [Features](#-features) • [Tech Stack](#-tech-stack) • [Project Structure](#-project-structure) • [Quick Start](#-quick-start) • [Team](#-team)
@@ -22,28 +22,13 @@ _A Final Year Project combining machine learning, LLM fine-tuning, and a full-st
 
 ## 🎓 Academic Research Project
 
-<table>
-<tr>
-<td><strong>🏛️ University</strong></td>
-<td>FAST National University of Computer and Emerging Sciences</td>
-</tr>
-<tr>
-<td><strong>📍 Campus</strong></td>
-<td>Peshawar</td>
-</tr>
-<tr>
-<td><strong>📚 Project Type</strong></td>
-<td>Final Year Project (FYP) — Machine Learning, NLP & Mobile Development</td>
-</tr>
-<tr>
-<td><strong>🔬 Research Area</strong></td>
-<td>Domain-Specific LLM Fine-Tuning & PCOS Healthcare</td>
-</tr>
-<tr>
-<td><strong>👨‍🏫 Supervisor</strong></td>
-<td>Shahzeb Khan</td>
-</tr>
-</table>
+| Category | Details |
+| :--- | :--- |
+| **🏛️ University** | FAST National University of Computer and Emerging Sciences |
+| **📍 Campus** | Peshawar |
+| **📚 Project Type** | Final Year Project (FYP) — Machine Learning, NLP & Native Mobile Development |
+| **🔬 Research Area** | Domain-Specific LLM Fine-Tuning & PCOS Healthcare |
+| **👨‍🏫 Supervisor** | Shahzeb Khan |
 
 ### 👥 Team
 
@@ -57,108 +42,73 @@ _A Final Year Project combining machine learning, LLM fine-tuning, and a full-st
 
 ## 🌸 Overview
 
-Ovula is a PCOS (Polycystic Ovary Syndrome) health companion built as our Final Year Project at FAST NUCES Peshawar. The project has two main angles: fine-tuning open-source LLMs to be better at answering PCOS-related questions, and building an actual app that people can use to track their symptoms, menstrual cycles, and get AI-powered health insights.
+Ovula is a PCOS (Polycystic Ovary Syndrome) health companion built as our Final Year Project at FAST NUCES Peshawar. The project integrates **fine-tuned LLMs** for specialized healthcare assistance with a **native Android application** and a **modernized web dashboard** for comprehensive symptom tracking, menstrual cycle management, and AI-powered risk assessment.
 
-PCOS affects roughly 1 in 10 women globally, but general-purpose AI models tend to give pretty vague answers on the topic. We wanted to see how much better a domain-fine-tuned model could do — and package that into something usable.
+PCOS affects roughly 1 in 10 women globally. Ovula bridges the gap between general AI and specialized medical knowledge by providing a domain-fine-tuned assistant and a high-fidelity tracking system designed for long-term health management.
 
 ---
 
 ## ✨ Features
 
-### Mobile App (React Native)
+### 📱 Native Android App (Kotlin)
+- **High-Performance Dashboard** — Real-time cycle progress tracking and health stats.
+- **Symptom Logging** — Comprehensive daily logging (mood, sleep, weight, acne, pain levels).
+- **AI Chat Assistant** — Domain-specific chat with Urdu translation support.
+- **Insights & Analytics** — Trend analysis for mood, sleep, and physical symptoms.
+- **Diet & Nutrition** — Curated Western and Desi recipe plans for PCOS management.
+- **Secure Auth** — JWT-based authentication with EncryptedSharedPreferences.
 
-- **Dashboard** — personalized health overview and recent activity
-- **Symptom Logging** — daily log entries for symptoms, mood, weight, and more
-- **Cycle Tracker** — menstrual cycle tracking with period prediction
-- **AI Chat** — conversational interface powered by the fine-tuned Llama model
-  - 🌐 **Urdu Translation** — toggle to translate AI responses to Urdu using Google Translate
-  - 🎤 **Voice Input** — speak your questions using speech recognition
-  - 🔊 **Text-to-Speech** — listen to AI responses in English or Urdu
-- **Logs History** — browse and review past health logs
-- **User Profile** — manage account and health settings
-- **Auth Flow** — register, login, and email OTP verification
+### 💻 Modern Web Frontend (React 18)
+- **Glassmorphism UI** — Premium, high-fidelity design with smooth animations.
+- **Predictive Dashboard** — Multi-step PCOS risk assessment with detailed scoring.
+- **Actionable Insights** — AI-generated health recommendations based on historical data.
+- **Dietary Resources** — Interactive nutrition guides and recipe repositories.
+- **Comparison Tool** — Admin view for evaluating base vs. fine-tuned LLM responses.
 
-### Backend (FastAPI)
-
-- JWT-based authentication with email OTP verification
-- Symptom log management (create, read, history)
-- PCOS risk prediction using trained ML models
-- AI-generated health insights from logs
-- **Urdu Translation Service** — Google Translate integration for Urdu responses
-- SQLite database with a clean schema
-
-### ML Models
-
-- **PCOS Risk Prediction** using KNN, Decision Tree, Logistic Regression, and Naive Bayes — best model selected for the backend prediction route
-- Trained on a curated PCOS dataset
-
-### LLM Fine-Tuning (AI Models)
-
-- Base model: `llama-3.2-1b-instruct` (Q8_0 GGUF)
-- Fine-tuned via Ollama using custom Modelfiles
-- PCOS-specific system prompts and training configuration
-- Separate Modelfiles for base vs fine-tuned comparison
-
-### Web Frontend (React)
-
-- Admin/comparison dashboard built with React and Tailwind CSS
-- Visualizes model responses and user interaction logs
+### ⚙️ Backend & AI (FastAPI)
+- **Enhanced Prediction** — PCOS risk scoring (Low to Very High) with 21 contributing factors.
+- **Categorized Recommendations** — Medical, lifestyle, and dietary advice generated per user profile.
+- **LLM Integration** — Fine-tuned Llama 3.2 1B model specialized for PCOS domain.
+- **Multi-lingual Support** — Google Translate integration for seamless Urdu/English support.
+- **Production Ready** — Optimized for deployment on Render (Backend) and Vercel (Frontend).
 
 ---
 
 ## 🛠 Tech Stack
 
-### Mobile
-
+### Mobile (Native)
 ```
-React Native 0.73 (TypeScript)
-├── React Navigation    — screen navigation
-├── Axios               — API communication
-├── AsyncStorage        — local session storage
-└── React Native        — UI components
-```
-
-### Backend
-
-```
-Python / FastAPI
-├── SQLAlchemy          — ORM & database models
-├── Pydantic            — request/response validation
-├── JWT                 — authentication tokens
-├── OTP Service         — email-based verification
-├── Google Translate    — Urdu translation service
-└── SQLite              — local database (pcos_tracker.db)
-
-API Routers:
-├── /auth               — register, login, OTP
-├── /logs               — symptom log CRUD
-├── /prediction         — PCOS risk scoring
-├── /chat               — AI chat with Urdu translation support
-└── /insights           — AI-generated health insights
+Kotlin / Android SDK
+├── MVVM Architecture   — clean separation of logic
+├── Retrofit / OkHttp   — robust API communication
+├── Material Design 3   — modern UI components
+└── Coroutines          — asynchronous processing
 ```
 
-### Machine Learning
-
+### Backend (Python)
 ```
-Python / scikit-learn
-├── KNN
-├── Decision Tree
-├── Logistic Regression
-└── Naive Bayes         — all evaluated; best model deployed
-```
-
-### LLM / AI
-
-```
-Ollama + Llama 3.2 (1B, quantized Q8_0)
-└── Custom Modelfiles for PCOS domain fine-tuning
+FastAPI / SQLAlchemy
+├── Pydantic V2         — high-performance validation
+├── JWT / Passlib       — secure authentication
+├── Google Translate    — multi-lingual services
+└── SQLite / PostgreSQL — flexible data storage
 ```
 
-### Web Frontend
-
+### Web Frontend (React)
 ```
-React 18 + Tailwind CSS
-└── Interactive dashboard for model comparison
+React 18 / Vite
+├── Tailwind CSS        — utility-first styling
+├── Framer Motion       — premium UI animations
+├── Lucide React        — modern iconography
+└── React Router        — seamless navigation
+```
+
+### Machine Learning & AI
+```
+scikit-learn / Ollama
+├── PCOS Prediction     — KNN, Decision Tree, Logistic Reg, Naive Bayes
+├── LLM Fine-Tuning     — Llama 3.2 1B (Quantized Q8_0 GGUF)
+└── Domain Expertise    — PCOS-specific system prompts & datasets
 ```
 
 ---
@@ -173,8 +123,8 @@ The project follows a modern, professionally organized architecture with clear s
 ├─────────────────────────────────────────────────────────────┤
 │                                                              │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐     │
-│  │   Frontend   │  │    Mobile    │  │   Backend    │     │
-│  │  (React.js)  │  │(React Native)│  │  (FastAPI)   │     │
+│  │   Web App    │  │  Native App  │  │   Backend    │     │
+│  │ (React/Vite) │  │   (Kotlin)   │  │  (FastAPI)   │     │
 │  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘     │
 │         │                  │                  │              │
 │         └──────────────────┴──────────────────┘              │
@@ -187,21 +137,22 @@ The project follows a modern, professionally organized architecture with clear s
 │         ┌──────────────────┼──────────────────┐            │
 │         │                  │                  │             │
 │    ┌────▼─────┐     ┌─────▼──────┐    ┌─────▼──────┐     │
-│    │ SQLite   │     │  ML Models │    │ LLM (Ollama)│     │
-│    │ Database │     │  (sklearn) │    │ Llama 3.2   │     │
+│    │ Database │     │  ML Models │    │ LLM (Ollama)│     │
+│    │ (SQL)    │     │  (sklearn) │    │ Fine-tuned  │     │
 │    └──────────┘     └────────────┘    └─────────────┘     │
 │                                                              │
 └─────────────────────────────────────────────────────────────┘
 ```
 
+
 ### Components
 
-1. **`src/frontend/`**: React web application with glassmorphism design, featuring 11 pages for comprehensive PCOS management
-2. **`src/backend/`**: FastAPI server handling authentication, data management, and ML/AI integration
-3. **`src/mobile/`**: React Native cross-platform mobile app (iOS & Android)
-4. **`src/ml-models/`**: Machine learning models and LLM fine-tuning workspace
-5. **`docs/`**: Documentation, diagrams, and screenshots
-6. **`scripts/`**: Utility scripts for easy startup and deployment
+1. **`src/frontend/`**: React web application with modernized glassmorphism design and interactive health tools.
+2. **`src/backend/`**: FastAPI server handling authentication, multi-lingual AI chat, and ML prediction logic.
+3. **`src/mobile/OvulaApp/`**: Native Android application (Kotlin) with Material 3 UI and high-performance tracking.
+4. **`src/ml-models/`**: Domain-specific LLM fine-tuning workspace and classical ML training pipeline.
+5. **`docs/`**: Technical documentation, UML diagrams, and high-fidelity screenshots.
+6. **`scripts/`**: Automation scripts for development, testing, and production deployment.
 
 ---
 
@@ -215,8 +166,8 @@ The project follows a modern, professionally organized architecture with clear s
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                              │
 │  ┌──────────────────┐              ┌──────────────────┐                    │
-│  │  Web Frontend    │              │  Mobile App      │                    │
-│  │  (React.js)      │              │  (React Native)  │                    │
+│  │  Web Frontend    │              │  Native App      │                    │
+│  │  (React/Vite)    │              │  (Kotlin/Android)│                    │
 │  │                  │              │                  │                    │
 │  │  • Dashboard     │              │  • Dashboard     │                    │
 │  │  • Chat UI       │              │  • Chat Screen   │                    │
@@ -459,13 +410,13 @@ FastAPI Application
 └── python-multipart     → File uploads
 ```
 
-### Mobile Dependencies
+### Mobile Dependencies (Native)
 ```
-React Native Application
-├── @react-navigation    → Navigation
-├── axios                → API calls
-├── @react-native-async-storage → Local storage
-└── react-native-vector-icons → Icons
+Android (Kotlin)
+├── Retrofit / GSON      → API networking
+├── Material 3           → Modern UI components
+├── Navigation Component → Fragment navigation
+└── Coroutines           → Async operations
 ```
 
 ### ML/AI Dependencies
@@ -544,27 +495,13 @@ ovula/
 │   │   ├── .env                        # Environment variables
 │   │   └── requirements.txt
 │   │
-│   ├── 📂 mobile/                      # React Native App
-│   │   ├── src/
-│   │   │   ├── screens/                # App screens
-│   │   │   │   ├── LoginScreen.js
-│   │   │   │   ├── RegisterScreen.js
-│   │   │   │   ├── VerifyEmailScreen.js
-│   │   │   │   ├── DashboardScreen.js
-│   │   │   │   ├── AddLogScreen.js
-│   │   │   │   ├── LogsHistoryScreen.js
-│   │   │   │   ├── CycleTrackerScreen.js
-│   │   │   │   ├── ChatScreen.js
-│   │   │   │   └── ProfileScreen.js
-│   │   │   ├── navigation/             # Navigation setup
-│   │   │   ├── contexts/               # Auth context
-│   │   │   ├── services/               # API services
-│   │   │   ├── components/             # Shared components
-│   │   │   └── styles/                 # Global styles
-│   │   ├── android/                    # Android native
-│   │   ├── ios/                        # iOS native
-│   │   ├── app.json
-│   │   └── package.json
+│   ├── 📂 mobile/                      # Native Android Application
+│   │   └── 📂 OvulaApp/                # Kotlin Android Project
+│   │       ├── 📂 app/                 # Main application module
+│   │       │   ├── 📂 src/main/java/   # Kotlin source code (MVVM)
+│   │       │   └── 📂 src/main/res/    # UI resources (XML/Layouts)
+│   │       ├── build.gradle            # Build configuration
+│   │       └── gradlew                 # Gradle wrapper
 │   │
 │   └── 📂 ml-models/                   # Machine Learning & AI
 │       ├── Modelfile                   # Primary fine-tuned Modelfile
@@ -726,10 +663,14 @@ Frontend runs at `http://localhost:3000`.
 ### 4. Run the Mobile App
 
 ```bash
-cd src/mobile
-npm install
-npx react-native run-android   # or run-ios
+cd src/mobile/OvulaApp
+# Build and install on connected device/emulator
+./gradlew installDebug
 ```
+
+> [!TIP]
+> Ensure you update the `BASE_URL` in `app/src/main/java/com/ovula/app/data/api/RetrofitClient.kt` or `build.gradle` to point to your local backend IP.
+
 
 ### 5. Set Up the LLM
 
@@ -787,11 +728,12 @@ Deploy your Ovula app to production in minutes using free cloud services!
    - Groq API: https://console.groq.com/ (free LLM API)
    - Gmail App Password: Google Account → Security → App Passwords
 
-2. **Deploy Backend to Railway**
+2. **Deploy Backend to Render or Railway**
    - Push code to GitHub
-   - Go to Railway.app → New Project → Deploy from GitHub
-   - Add PostgreSQL database
+   - Go to Render.com or Railway.app → New Project
+   - Connect your repository
    - Configure environment variables (see `.env.example`)
+
 
 3. **Deploy Frontend to Vercel**
    - Go to Vercel.com → New Project → Import from GitHub
