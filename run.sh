@@ -99,9 +99,9 @@ start_backend() {
     cd "$BACKEND_DIR"
     # shellcheck disable=SC1091
     source "$VENV_DIR/bin/activate"
-    uvicorn main:app --host 0.0.0.0 --port "$BACKEND_PORT" --reload \
-      >> "$BACKEND_LOG" 2>&1 &
-  )
+    exec uvicorn main:app --host 0.0.0.0 --port "$BACKEND_PORT" --reload \
+      >> "$BACKEND_LOG" 2>&1
+  ) &
   echo $! > "$LOG_DIR/backend.pid"
   wait_for_backend
 }
@@ -121,8 +121,8 @@ start_frontend() {
   info "Launching React dev server on port $FRONTEND_PORT..."
   (
     cd "$FRONTEND_DIR"
-    npm start >> "$FRONTEND_LOG" 2>&1 &
-  )
+    exec npm start >> "$FRONTEND_LOG" 2>&1
+  ) &
   echo $! > "$LOG_DIR/frontend.pid"
   success "Frontend starting... will be available at http://localhost:$FRONTEND_PORT"
 }
@@ -174,8 +174,8 @@ run_tests() {
   echo -e "${BOLD}  Authentication${RESET}"
   test_endpoint "Register (schema check)"       POST "/auth/register" \
     '{"email":"test@example.com","password":"Test@1234","full_name":"Test User"}' 200
-  test_endpoint "Login (schema check)"          POST "/auth/token" \
-    '{"username":"test@example.com","password":"Test@1234"}' 200
+  test_endpoint "Login (schema check)"          POST "/auth/login" \
+    '{"email":"test@example.com","password":"Test@1234"}' 200
   test_endpoint "Verify OTP (auth required)"    POST "/auth/verify-otp" \
     '{"email":"test@example.com","otp":"000000"}' 200
 
@@ -184,7 +184,7 @@ run_tests() {
   test_endpoint "Get Logs"        GET  "/logs/"       "" 401
   test_endpoint "Get Insights"    GET  "/insights/"   "" 401
   test_endpoint "Chat"            POST "/chat/"       '{"message":"hello"}' 401
-  test_endpoint "Prediction"      POST "/prediction/" '{"data":{}}' 401
+  test_endpoint "Prediction"      POST "/prediction/predict" '{"data":{}}' 401
 
   # ── Summary
   echo ""

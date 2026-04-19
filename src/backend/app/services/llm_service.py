@@ -126,7 +126,7 @@ class LLMService:
     
     def create_system_prompt(self, user_context: str = "") -> str:
         """Create system prompt for PCOS assistant"""
-        base_prompt = """You are a specialized PCOS (Polycystic Ovary Syndrome) healthcare assistant.
+        base_prompt = """You are Ovula, a warm, caring, and knowledgeable human health coach specializing in PCOS (Polycystic Ovary Syndrome). You are chatting with a friend who needs your help. NEVER introduce yourself as an AI, bot, or virtual assistant. Act completely human.
 
 ABSOLUTE RESTRICTIONS - YOU MUST FOLLOW THESE RULES:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -157,15 +157,14 @@ ALLOWED TOPICS ONLY:
 FOR ANY OFF-TOPIC QUESTION, RESPOND EXACTLY:
 "I'm specifically designed to help with PCOS and women's health questions. I cannot assist with [topic]. Is there anything about PCOS, hormones, periods, fertility, or related health topics I can help you with?"
 
-RESPONSE GUIDELINES:
-• Be warm, supportive, and empathetic
-• Provide evidence-based information
-• Be concise but thorough (2-4 paragraphs maximum)
-• Use simple, clear language
-• Focus on actionable advice
-• NEVER prescribe specific medications or dosages
-• Always encourage professional medical consultation for diagnosis and treatment
-• Include appropriate medical disclaimers
+RESPONSE GUIDELINES (ACT LIKE A HUMAN):
+• Talk as if you're a supportive, knowledgeable older sister or close friend who is a PCOS expert.
+• Use a very warm, casual, and conversational tone. Act exactly like a real human being texting a friend.
+• Show genuine empathy and emotion (e.g., "I'm so sorry you're dealing with that, it sounds really frustrating.").
+• Keep your responses natural. Do not use robotic lists or stiff academic paragraphs. Write exactly how a human texts or speaks.
+• Ask caring follow-up questions about how they are feeling to keep the conversation going naturally.
+• NEVER use markdown formatting like asterisks (* or **) or hashtags (#). The response will be read out loud via text-to-speech, so it must be plain text only.
+• Always gently encourage professional medical consultation when needed, but do it naturally (e.g., "Make sure you bring this up with your doctor next time you see them!").
 
 LANGUAGE SIMPLICITY (for better translation to everyday Urdu):
 • Use SHORT sentences (8-12 words maximum)
@@ -195,7 +194,7 @@ IMPORTANT: If a question is not clearly about PCOS or women's health, politely d
     
     def create_urdu_system_prompt(self, user_context: str = "") -> str:
         """Create system prompt for PCOS assistant with simple conversational Urdu"""
-        base_prompt = """You are a specialized PCOS healthcare assistant.
+        base_prompt = """You are Ovula, a warm, caring, and knowledgeable human health coach specializing in PCOS. You are chatting with a friend in Urdu. NEVER mention that you are an AI or bot. Act completely human.
 
 CRITICAL: Respond in SIMPLE, CONVERSATIONAL URDU (آسان اردو میں جواب دیں).
 Use everyday Urdu words that common people understand. Avoid difficult/formal words.
@@ -216,12 +215,12 @@ TOPICS (موضوعات):
 ✓ وزن کم کرنا
 ✓ ذہنی صحت
 
-RESPONSE STYLE (جواب کا انداز):
-• آسان، روزمرہ کی اردو استعمال کریں
-• چھوٹے اور سادہ جملے لکھیں
-• مشکل الفاظ سے بچیں
-• دوستانہ انداز میں بات کریں
-• 2-3 پیراگراف میں جواب دیں
+RESPONSE STYLE (جواب کا انداز - ACT LIKE A HUMAN):
+• بلکل ایک انسان کی طرح بات کریں جو ان کی پرواہ کرتا ہے۔ ایک دوست یا بڑی بہن کی طرح۔
+• ہمدردی کا اظہار کریں اور قدرتی انداز میں بات کریں، روبوٹ کی طرح نہیں۔
+• آسان، روزمرہ کی اردو استعمال کریں اور چھوٹے جملے لکھیں۔
+• جواب کے آخر میں کوئی ہمدردانہ سوال پوچھیں تاکہ بات چیت جاری رہے۔
+• NEVER use markdown formatting like asterisks (* or **) or hashtags (#). The text will be read via Text-to-Speech, so use plain text only. (کسی بھی قسم کی فارمیٹنگ جیسے * یا # استعمال نہ کریں)
 
 مثال: "PCOS ایک عام بیماری ہے جو خواتین میں ہوتی ہے۔ اس میں ماہواری بے قاعدہ ہو جاتی ہے۔"
 
@@ -239,6 +238,27 @@ IMPORTANT: Write in SIMPLE, EVERYDAY Urdu that everyone can understand easily.""
     def create_urdu_medical_disclaimer(self) -> str:
         """Medical disclaimer in Urdu"""
         return "\n\n⚠️ طبی اعلان: یہ معلومات صرف تعلیمی مقاصد کے لیے ہیں اور پیشہ ورانہ طبی مشورے، تشخیص یا علاج کا متبادل نہیں ہیں۔ ذاتی طبی رہنمائی کے لیے ہمیشہ اہل صحت کی دیکھ بھال فراہم کرنے والوں سے مشورہ کریں، خاص طور پر PCOS کے انتظام کے لیے۔"
+
+    def create_pashto_system_prompt(self, user_context: str = "") -> str:
+        """Create system prompt for PCOS assistant with Pashto support"""
+        base_prompt = """You are Ovula, a warm, caring, and knowledgeable human health coach specializing in PCOS. You are chatting with a friend in Pashto. NEVER mention that you are an AI or bot. Act completely human.
+
+CRITICAL: Respond in SIMPLE, CONVERSATIONAL PASHTO (پښتو).
+Use everyday Pashto words that common people understand. Avoid difficult/formal words.
+
+CONVERSATIONAL PERSONA (ACT LIKE A HUMAN):
+• بلکل ایک انسان کی طرح بات کریں جو ان کی پرواہ کرتا ہے۔ ایک دوست یا بڑی بہن کی طرح۔
+• ہمدردی کا اظہار کریں اور قدرتی انداز میں بات کریں، روبوٹ کی طرح نہیں۔
+• جواب کے آخر میں کوئی ہمدردانہ سوال پوچھیں تاکہ بات چیت جاری رہے۔
+• NEVER use markdown formatting like asterisks (* or **) or hashtags (#). The text will be read via Text-to-Speech, so use plain text only. (کسی بھی قسم کی فارمیٹنگ جیسے * یا # استعمال نہ کریں)
+"""
+        if user_context:
+            base_prompt += f"\n\nContext:\n{user_context}"
+        return base_prompt
+
+    def create_pashto_medical_disclaimer(self) -> str:
+        """Medical disclaimer in Pashto"""
+        return "\n\n⚠️ طبي خبرداری: دا معلومات یوازې د تعلیمي موخو لپاره دي او د مسلکي طبي مشورې، تشخیص یا درملنې بدیل نه دي. د خپل ځانګړي طبي لارښوونې لپاره تل د روغتیا پالنې متخصصینو سره مشوره وکړئ."
     
     def _is_english(self, text: str) -> bool:
         """Check if text is primarily in English (not Urdu)"""
@@ -391,31 +411,6 @@ IMPORTANT: Write in SIMPLE, EVERYDAY Urdu that everyone can understand easily.""
             return f"Error: {str(e)}"
     
     async def generate_response_huggingface_api(self, prompt: str) -> str:
-        """Generate response using HuggingFace API"""
-        try:
-            if not self.config.HUGGINGFACE_API_TOKEN:
-                return "HuggingFace API token not configured. Please set HUGGINGFACE_API_TOKEN in environment variables."
-            
-            headers = {"Authorization": f"Bearer {self.config.HUGGINGFACE_API_TOKEN}"}
-            api_url = f"https://api-inference.huggingface.co/models/{self.config.HUGGINGFACE_MODEL}"
-            
-            payload = {"inputs": prompt}
-            
-            response = requests.post(api_url, headers=headers, json=payload, timeout=30)
-            
-            if response.status_code == 200:
-                result = response.json()
-                if isinstance(result, list) and len(result) > 0:
-                    return result[0].get("generated_text", "No response generated")
-                return str(result)
-            else:
-                return f"HuggingFace API error: {response.status_code}"
-                
-        except Exception as e:
-            logger.error(f"HuggingFace API error: {e}")
-            return f"Error with HuggingFace API: {str(e)}"
-    
-    async def generate_response_huggingface_api(self, prompt: str) -> str:
         """Generate response using HuggingFace Inference API"""
         try:
             if not self.config.HUGGINGFACE_API_TOKEN:
@@ -424,21 +419,31 @@ IMPORTANT: Write in SIMPLE, EVERYDAY Urdu that everyone can understand easily.""
             headers = {"Authorization": f"Bearer {self.config.HUGGINGFACE_API_TOKEN}"}
             api_url = f"https://api-inference.huggingface.co/models/{self.config.HUGGINGFACE_MODEL}"
             
-            payload = {"inputs": prompt}
+            payload = {
+                "inputs": prompt,
+                "parameters": {
+                    "max_new_tokens": 500,
+                    "temperature": 0.7,
+                    "return_full_text": False
+                }
+            }
             
             response = requests.post(api_url, headers=headers, json=payload, timeout=30)
             
             if response.status_code == 200:
                 result = response.json()
                 if isinstance(result, list) and len(result) > 0:
-                    return result[0].get("generated_text", "No response generated")
+                    gen_text = result[0].get("generated_text", "")
+                    if "### Response:" in gen_text:
+                        return gen_text.split("### Response:")[-1].strip()
+                    return gen_text.strip()
                 return str(result)
             else:
                 return f"HuggingFace API error: {response.status_code}"
                 
         except Exception as e:
             logger.error(f"HuggingFace API error: {e}")
-            return f"Error: {str(e)}"
+            return f"Error with HuggingFace API: {str(e)}"
     
     async def generate_response_openai_api(self, prompt: str) -> str:
         """Generate response using OpenAI API or Groq (OpenAI-compatible, free)"""
@@ -547,7 +552,7 @@ IMPORTANT: Write in SIMPLE, EVERYDAY Urdu that everyone can understand easily.""
             logger.error(f"Error in LoRA generation: {e}")
             return f"Error generating response: {str(e)}"
     
-    async def generate_response(self, user_message: str, user_id: int, db: Session, model_override: Optional[str] = None, translate_to_urdu: bool = False) -> str:
+    async def generate_response(self, user_message: str, user_id: int, db: Session, model_override: Optional[str] = None, translate_to_urdu: bool = False, translate_to_pashto: bool = False) -> str:
         """Generate response based on configured model type
         
         Args:
@@ -574,6 +579,8 @@ IMPORTANT: Write in SIMPLE, EVERYDAY Urdu that everyone can understand easily.""
             # Use simple Urdu prompt if translation requested, otherwise English
             if translate_to_urdu:
                 system_prompt = self.create_urdu_system_prompt(user_context)
+            elif translate_to_pashto:
+                system_prompt = self.create_pashto_system_prompt(user_context)
             else:
                 system_prompt = self.create_system_prompt(user_context)
             
@@ -619,8 +626,8 @@ IMPORTANT: Write in SIMPLE, EVERYDAY Urdu that everyone can understand easily.""
                 response = self.generate_response_lora(contextualized_prompt)
                 
             elif current_model_type == ModelType.HUGGINGFACE_API.value:
-                # Use HuggingFace API
-                full_prompt = f"{system_prompt}\n\nUser: {user_message}\n\nAssistant:"
+                # Use HuggingFace API (Qehwa Pashto LLM uses Alpaca format)
+                full_prompt = f"Below is an instruction in Pashto or English. Write a detailed response in Pashto.\n\n### Instruction:\n{system_prompt}\n\nUser Question: {user_message}\n\n### Response:\n"
                 response = await self.generate_response_huggingface_api(full_prompt)
                 
             elif current_model_type == ModelType.OPENAI_API.value:
@@ -637,6 +644,8 @@ IMPORTANT: Write in SIMPLE, EVERYDAY Urdu that everyone can understand easily.""
             if translate_to_urdu:
                 # Don't add English disclaimer, will add Urdu one after translation
                 pass
+            elif translate_to_pashto:
+                response += self.create_pashto_medical_disclaimer()
             else:
                 response += self.create_medical_disclaimer()
             
@@ -774,8 +783,8 @@ IMPORTANT: Write in SIMPLE, EVERYDAY Urdu that everyone can understand easily.""
         models.extend([
             {
                 "id": "huggingface",
-                "name": "HuggingFace API",
-                "description": "Cloud-based HuggingFace model" + ("" if self.config.HUGGINGFACE_API_TOKEN else " (requires API token)"),
+                "name": "Qehwa Pashto LLM",
+                "description": "Pashto language model via HuggingFace API" + ("" if self.config.HUGGINGFACE_API_TOKEN else " (requires API token)"),
                 "type": ModelType.HUGGINGFACE_API.value,
                 "available": bool(self.config.HUGGINGFACE_API_TOKEN)
             },

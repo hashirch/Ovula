@@ -24,7 +24,7 @@ from schemas import (
 router = APIRouter()
 
 # Load the trained model
-MODEL_PATH = os.path.join(os.path.dirname(__file__), '..', '..', 'ml-models', 'models', 'saved', 'pcos_model.pkl')
+MODEL_PATH = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'ml-models', 'models', 'saved', 'pcos_model.pkl')
 
 def load_model():
     """Load the trained PCOS prediction model"""
@@ -153,27 +153,54 @@ async def predict_pcos(
         
         result = "PCOS" if prediction == 1 else "No PCOS"
         
+        # Calculate Risk Level
+        risk_percentage = risk_score * 100
+        if risk_percentage < 20:
+            risk_level = "Low"
+            risk_color = "#10B981" # Emerald
+        elif risk_percentage < 50:
+            risk_level = "Moderate"
+            risk_color = "#F59E0B" # Amber
+        elif risk_percentage < 80:
+            risk_level = "High"
+            risk_color = "#EF4444" # Red
+        else:
+            risk_level = "Very High"
+            risk_color = "#B91C1C" # Dark Red
+
+        # Identify Top Contributing Factors
+        contributing_factors = []
+        if profile.has_irregular_periods: contributing_factors.append("Irregular menstrual cycles")
+        if profile.is_overweight: contributing_factors.append("Higher Body Mass Index (BMI)")
+        if profile.has_acne: contributing_factors.append("Adult acne issues")
+        if profile.has_hair_loss: contributing_factors.append("Androgenic alopecia (hair thinning)")
+        if profile.hair_chin or profile.hair_cheeks or profile.hair_upper_lips: contributing_factors.append("Hirsutism (excessive hair growth)")
+        if profile.has_dark_patches: contributing_factors.append("Acanthosis nigricans (dark skin patches)")
+        
         # Save prediction to database
         db_prediction = PCOSPrediction(
             user_id=current_user.id,
             prediction=result,
             risk_score=risk_score,
             confidence=confidence,
-            model_version="v1.0",
-            notes="Prediction based on health profile"
+            model_version="v1.1",
+            notes=f"Risk Level: {risk_level}. Top factors: {', '.join(contributing_factors[:3])}"
         )
         db.add(db_prediction)
         db.commit()
         db.refresh(db_prediction)
         
-        # Generate recommendations based on risk factors
+        # Generate categorized recommendations
         recommendations = generate_recommendations(profile, result, risk_score)
         
         return {
             "id": db_prediction.id,
             "prediction": result,
-            "risk_score": risk_score,
-            "confidence": confidence,
+            "risk_score": risk_percentage,
+            "risk_level": risk_level,
+            "risk_color": risk_color,
+            "confidence": confidence * 100,
+            "contributing_factors": contributing_factors,
             "recommendations": recommendations,
             "created_at": db_prediction.created_at
         }
@@ -199,7 +226,7 @@ async def get_prediction_history(
     return predictions
 
 
-@router.get("/predictions/latest", response_model=PredictionResponse)
+@router.get("/predictions/latest", response_model=dict)
 async def get_latest_prediction(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
@@ -223,61 +250,88 @@ async def get_latest_prediction(
     
     recommendations = generate_recommendations(profile, prediction.prediction, prediction.risk_score)
     
+    # Calculate Risk Level
+    risk_percentage = prediction.risk_score * 100
+    if risk_percentage < 20:
+        risk_level = "Low"
+        risk_color = "#10B981"
+    elif risk_percentage < 50:
+        risk_level = "Moderate"
+        risk_color = "#F59E0B"
+    elif risk_percentage < 80:
+        risk_level = "High"
+        risk_color = "#EF4444"
+    else:
+        risk_level = "Very High"
+        risk_color = "#B91C1C"
+
+    contributing_factors = []
+    if profile:
+        if profile.has_irregular_periods: contributing_factors.append("Irregular menstrual cycles")
+        if profile.is_overweight: contributing_factors.append("Higher Body Mass Index (BMI)")
+        if profile.has_acne: contributing_factors.append("Adult acne issues")
+        if profile.has_hair_loss: contributing_factors.append("Androgenic alopecia (hair thinning)")
+        if profile.hair_chin or profile.hair_cheeks or profile.hair_upper_lips: contributing_factors.append("Hirsutism (excessive hair growth)")
+        if profile.has_dark_patches: contributing_factors.append("Acanthosis nigricans (dark skin patches)")
+
     return {
         "id": prediction.id,
         "prediction": prediction.prediction,
-        "risk_score": prediction.risk_score,
-        "confidence": prediction.confidence,
+        "risk_score": risk_percentage,
+        "risk_level": risk_level,
+        "risk_color": risk_color,
+        "confidence": prediction.confidence * 100,
+        "contributing_factors": contributing_factors,
         "recommendations": recommendations,
         "created_at": prediction.created_at
     }
 
 
-def generate_recommendations(profile: UserHealthProfile, prediction: str, risk_score: float) -> List[str]:
-    """Generate personalized recommendations based on health profile and prediction"""
+def generate_recommendations(profile: UserHealthProfile, prediction: str, risk_score: float) -> dict:
+    """Generate categorized personalized recommendations based on health profile and prediction"""
     
-    recommendations = []
+    medical = []
+    lifestyle = []
+    dietary = []
     
     if prediction == "PCOS" or risk_score > 0.5:
-        recommendations.append("⚕️ Consult with a gynecologist or endocrinologist for proper diagnosis and treatment plan")
+        medical.append("⚕️ Consult with a gynecologist or endocrinologist for proper diagnosis and treatment plan")
         
         if profile.is_overweight:
-            recommendations.append("🏃 Focus on gradual weight loss through balanced diet and regular exercise (even 5-10% weight loss can improve symptoms)")
+            lifestyle.append("🏃 Focus on gradual weight loss through regular exercise (even 5-10% loss helps)")
         
         if profile.has_irregular_periods:
-            recommendations.append("📅 Track your menstrual cycles to help your doctor understand your pattern")
+            lifestyle.append("📅 Track your menstrual cycles to help your doctor understand your pattern")
         
         if profile.hair_chin or profile.hair_cheeks or profile.hair_upper_lips:
-            recommendations.append("💆 Consider discussing hirsutism treatment options with your doctor (medications, laser therapy)")
+            medical.append("💆 Discuss hirsutism treatment options (medications, laser therapy)")
         
         if profile.has_acne:
-            recommendations.append("🧴 Consult a dermatologist for acne management - hormonal treatments may help")
+            medical.append("🧴 Consult a dermatologist - hormonal treatments may help with adult acne")
         
         if profile.exercise_per_week < 3:
-            recommendations.append("💪 Aim for at least 150 minutes of moderate exercise per week to improve insulin sensitivity")
+            lifestyle.append("💪 Aim for 150+ minutes of moderate exercise per week to improve insulin sensitivity")
         
         if profile.eat_outside_per_week > 3:
-            recommendations.append("🥗 Reduce eating out and focus on home-cooked meals with whole foods, lean proteins, and vegetables")
+            dietary.append("🥗 Focus on home-cooked meals with lean proteins and vegetables")
         
         if profile.always_tired:
-            recommendations.append("😴 Get your vitamin D, B12, and iron levels checked - deficiencies are common with PCOS")
+            medical.append("😴 Check Vitamin D, B12, and Iron levels - deficiencies are common in PCOS")
         
-        if profile.frequent_mood_swings:
-            recommendations.append("🧘 Consider stress management techniques like yoga, meditation, or counseling")
-        
-        recommendations.append("🍎 Follow a low-glycemic diet to help manage insulin resistance")
-        recommendations.append("💊 Ask your doctor about supplements like inositol, vitamin D, and omega-3")
+        dietary.append("🍎 Follow a low-glycemic diet (low GI) to manage insulin resistance")
+        dietary.append("💊 Ask your doctor about supplements like Inositol and Omega-3")
         
     else:
-        recommendations.append("✅ Your risk appears low, but continue maintaining healthy habits")
-        recommendations.append("📊 Keep tracking your symptoms and cycles for early detection of any changes")
+        medical.append("✅ Your risk appears low, continue maintaining healthy habits")
+        lifestyle.append("📊 Keep tracking symptoms for early detection of any changes")
         
         if profile.exercise_per_week < 3:
-            recommendations.append("💪 Maintain regular physical activity for overall health")
+            lifestyle.append("💪 Maintain regular physical activity for overall health")
         
-        if profile.eat_outside_per_week > 3:
-            recommendations.append("🥗 Focus on balanced nutrition with whole foods")
-        
-        recommendations.append("🔄 Consider re-assessment if you notice changes in your symptoms")
+        dietary.append("🥗 Focus on balanced nutrition with whole foods")
     
-    return recommendations[:8]  # Return top 8 recommendations
+    return {
+        "medical": medical[:4],
+        "lifestyle": lifestyle[:4],
+        "dietary": dietary[:4]
+    }

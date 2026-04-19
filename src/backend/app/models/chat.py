@@ -6,6 +6,7 @@ class ChatMessageCreate(BaseModel):
     message: str
     model_type: Optional[str] = None  # Allow model selection per message
     translate_to_urdu: Optional[bool] = False  # Enable Urdu translation
+    translate_to_pashto: Optional[bool] = False  # Enable Pashto output
 
 class ChatMessageResponse(BaseModel):
     id: int

@@ -12,11 +12,14 @@ const Chat = () => {
   const [selectedModel, setSelectedModel] = useState('');
   const [modelStatus, setModelStatus] = useState(null);
   const [translateToUrdu, setTranslateToUrdu] = useState(false);
+  const [translateToPashto, setTranslateToPashto] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [activeMessageId, setActiveMessageId] = useState(null);
   const messagesEndRef = useRef(null);
   const recognitionRef = useRef(null);
   const synthRef = useRef(window.speechSynthesis);
+  const audioRef = useRef(null);
 
   useEffect(() => {
     fetchChatHistory();
@@ -94,19 +97,30 @@ const Chat = () => {
   };
 
   // Text to Speech using ElevenLabs
-  const speakText = async (text) => {
+  const speakText = async (text, msgId) => {
     if (!text) return;
+
+    // If clicking the same message that's currently speaking, stop it
+    if (isSpeaking && activeMessageId === msgId) {
+      stopSpeaking();
+      return;
+    }
 
     try {
       // Stop any ongoing speech
-      synthRef.current.cancel();
+      stopSpeaking();
       setIsSpeaking(true);
+      setActiveMessageId(msgId);
+
+      // Clean markdown formatting and remove medical disclaimer before TTS
+      let cleanTextForTTS = text.split('⚠️')[0].trim();
+      cleanTextForTTS = cleanTextForTTS.replace(/[*#_`]/g, '');
 
       // Use ElevenLabs for Urdu, browser TTS for English
-      if (translateToUrdu || isUrduText(text)) {
+      if (translateToUrdu || isUrduText(cleanTextForTTS)) {
         // Call backend ElevenLabs TTS endpoint
         const response = await axios.post('/speech/tts', 
-          { text },
+          { text: cleanTextForTTS },
           { responseType: 'blob' }
         );
         
@@ -116,28 +130,31 @@ const Chat = () => {
         
         audio.onended = () => {
           setIsSpeaking(false);
+          setActiveMessageId(null);
           URL.revokeObjectURL(audioUrl);
         };
         
         audio.onerror = () => {
           setIsSpeaking(false);
+          setActiveMessageId(null);
           URL.revokeObjectURL(audioUrl);
           toast.error('Failed to play audio');
         };
         
+        audioRef.current = audio;
         await audio.play();
       } else {
         // Use browser's built-in TTS for English
-        const cleanText = text.replace(/[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F900}-\u{1F9FF}]|[\u{1FA70}-\u{1FAFF}]|[\u{FE00}-\u{FE0F}]|[\u{1F004}]|[\u{1F0CF}]|[\u{1F170}-\u{1F251}]|[✓✗✕✖✘]/gu, '');
+        const cleanText = cleanTextForTTS.replace(/[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F900}-\u{1F9FF}]|[\u{1FA70}-\u{1FAFF}]|[\u{FE00}-\u{FE0F}]|[\u{1F004}]|[\u{1F0CF}]|[\u{1F170}-\u{1F251}]|[✓✗✕✖✘]/gu, '');
 
         const utterance = new SpeechSynthesisUtterance(cleanText);
         utterance.rate = 1.0;
         utterance.pitch = 1.0;
         utterance.lang = 'en-US';
 
-        utterance.onstart = () => setIsSpeaking(true);
-        utterance.onend = () => setIsSpeaking(false);
-        utterance.onerror = () => setIsSpeaking(false);
+        utterance.onstart = () => { setIsSpeaking(true); setActiveMessageId(msgId); };
+        utterance.onend = () => { setIsSpeaking(false); setActiveMessageId(null); };
+        utterance.onerror = () => { setIsSpeaking(false); setActiveMessageId(null); };
 
         synthRef.current.speak(utterance);
       }
@@ -151,7 +168,13 @@ const Chat = () => {
   // Stop Speaking
   const stopSpeaking = () => {
     synthRef.current.cancel();
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      audioRef.current = null;
+    }
     setIsSpeaking(false);
+    setActiveMessageId(null);
   };
 
   const fetchModelStatus = async () => {
@@ -202,7 +225,8 @@ const Chat = () => {
       const response = await axios.post('/chat/', { 
         message: userMessage,
         model_type: selectedModel || undefined,
-        translate_to_urdu: translateToUrdu
+        translate_to_urdu: translateToUrdu,
+        translate_to_pashto: translateToPashto
       });
       
       setMessages(prev => {
@@ -237,7 +261,8 @@ const Chat = () => {
   };
 
   const formatMessage = (text) => {
-    return text.split('\n').map((line, i) => (
+    const textWithoutMarkdown = text.replace(/[*#_`]/g, '');
+    return textWithoutMarkdown.split('\n').map((line, i) => (
       <p key={i} className="mb-2 last:mb-0">{line}</p>
     ));
   };
@@ -290,10 +315,25 @@ const Chat = () => {
               <input
                 type="checkbox"
                 checked={translateToUrdu}
-                onChange={(e) => setTranslateToUrdu(e.target.checked)}
+                onChange={(e) => {
+                  setTranslateToUrdu(e.target.checked);
+                  if(e.target.checked) setTranslateToPashto(false);
+                }}
                 className="w-4 h-4 rounded border-slate-300 text-pink-500 focus:ring-pink-500"
               />
               <span className="text-sm font-medium text-slate-700">اردو</span>
+            </label>
+            <label className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-slate-50 cursor-pointer transition-colors border border-slate-200">
+              <input
+                type="checkbox"
+                checked={translateToPashto}
+                onChange={(e) => {
+                  setTranslateToPashto(e.target.checked);
+                  if(e.target.checked) setTranslateToUrdu(false);
+                }}
+                className="w-4 h-4 rounded border-slate-300 text-pink-500 focus:ring-pink-500"
+              />
+              <span className="text-sm font-medium text-slate-700">پښتو</span>
             </label>
             {messages.length > 0 && (
               <button 
@@ -359,28 +399,30 @@ const Chat = () => {
                   </div>
 
                   {/* AI Response */}
-                  <div className="flex gap-4 max-w-[85%]">
-                    <div className="w-10 h-10 rounded-full bg-pink-500 flex-shrink-0 flex items-center justify-center text-white shadow-lg shadow-pink-200 mt-auto">
-                      <Sparkles className="w-5 h-5" />
-                    </div>
-                    <div className={`rounded-3xl px-6 py-4 text-[15px] leading-relaxed shadow-sm bg-pink-50 text-slate-800 rounded-bl-none border border-pink-100 ${isUrduText(msg.response) ? 'text-right' : ''}`} dir={isUrduText(msg.response) ? 'rtl' : 'ltr'}>
-                      <div className="whitespace-pre-wrap">{formatMessage(msg.response)}</div>
-                      <div className="mt-3 pt-3 border-t border-pink-200 flex items-center justify-between text-xs text-slate-500">
-                        <div className="flex items-center gap-2">
-                          <span>{new Date(msg.created_at).toLocaleString()}</span>
-                          {msg.response_time && <span>({msg.response_time}s)</span>}
+                  {msg.response && (
+                    <div className="flex gap-4 max-w-[85%]">
+                      <div className="w-10 h-10 rounded-full bg-pink-500 flex-shrink-0 flex items-center justify-center text-white shadow-lg shadow-pink-200 mt-auto">
+                        <Sparkles className="w-5 h-5" />
+                      </div>
+                      <div className={`rounded-3xl px-6 py-4 text-[15px] leading-relaxed shadow-sm bg-pink-50 text-slate-800 rounded-bl-none border border-pink-100 ${isUrduText(msg.response) ? 'text-right' : ''}`} dir={isUrduText(msg.response) ? 'rtl' : 'ltr'}>
+                        <div className="whitespace-pre-wrap">{formatMessage(msg.response)}</div>
+                        <div className="mt-3 pt-3 border-t border-pink-200 flex items-center justify-between text-xs text-slate-500">
+                          <div className="flex items-center gap-2">
+                            <span>{new Date(msg.created_at).toLocaleString()}</span>
+                            {msg.response_time && <span>({msg.response_time}s)</span>}
+                          </div>
+                          <button
+                            onClick={() => speakText(msg.response, msg.id)}
+                            className={`p-1.5 rounded-full transition-colors flex items-center gap-1 ${isSpeaking && activeMessageId === msg.id ? 'bg-pink-100 text-pink-600' : 'hover:bg-pink-100 text-pink-500'}`}
+                            title={isSpeaking && activeMessageId === msg.id ? "Stop reading" : "Read aloud"}
+                          >
+                            <Volume2 className="w-4 h-4" />
+                            <span className="text-xs">{isSpeaking && activeMessageId === msg.id ? "Stop" : "Listen"}</span>
+                          </button>
                         </div>
-                        <button
-                          onClick={() => speakText(msg.response)}
-                          className="p-1.5 rounded-full hover:bg-pink-100 text-pink-500 transition-colors flex items-center gap-1"
-                          title="Read aloud"
-                        >
-                          <Volume2 className="w-4 h-4" />
-                          <span className="text-xs">Listen</span>
-                        </button>
                       </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               ))}
               

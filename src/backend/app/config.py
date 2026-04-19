@@ -37,7 +37,7 @@ class Config:
     
     # API-based models
     HUGGINGFACE_API_TOKEN = os.getenv("HUGGINGFACE_API_TOKEN", "")
-    HUGGINGFACE_MODEL = os.getenv("HUGGINGFACE_MODEL", "microsoft/DialoGPT-medium")
+    HUGGINGFACE_MODEL = os.getenv("HUGGINGFACE_MODEL", "junaid008/qehwa-pashto-llm")
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
     OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-3.5-turbo")
     GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")

@@ -168,12 +168,20 @@ class HealthProfileResponse(HealthProfileCreate):
         from_attributes = True
 
 # Prediction Schemas
+class PredictionRecommendations(BaseModel):
+    medical: List[str]
+    lifestyle: List[str]
+    dietary: List[str]
+
 class PredictionResponse(BaseModel):
     id: int
     prediction: str
     risk_score: float
+    risk_level: Optional[str] = None
+    risk_color: Optional[str] = None
     confidence: float
-    recommendations: List[str]
+    contributing_factors: Optional[List[str]] = None
+    recommendations: PredictionRecommendations
     created_at: datetime
 
 class PredictionHistoryResponse(BaseModel):
