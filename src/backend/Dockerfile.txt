@@ -2,11 +2,15 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
+# copy only requirements first (best practice)
 COPY requirements.txt .
 
+# install pip + dependencies safely
 RUN python -m pip install --upgrade pip
-RUN pip install --no-cache-dir -r requirements.txt
+RUN python -m pip install -r requirements.txt
 
+# copy rest of the code
 COPY . .
 
+# run app
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
