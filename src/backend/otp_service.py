@@ -316,7 +316,7 @@ The {self.app_name} Team
         return text_message, html_message
     
     def send_email(self, to_email: str, subject: str, text_content: str, html_content: str) -> bool:
-    try:
+        try:
         resend.Emails.send({
             "from": f"{self.app_name} <onboarding@resend.dev>",
             "to": to_email,
