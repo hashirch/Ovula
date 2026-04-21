@@ -10,10 +10,11 @@ from datetime import datetime, timedelta
 from typing import Optional
 import os
 from dotenv import load_dotenv
+import resend
 
 load_dotenv()
 
-
+resend.api_key = os.getenv("RESEND_API_KEY")
 class OTPService:
     """Handle OTP generation, storage, and email sending"""
     
@@ -315,45 +316,21 @@ The {self.app_name} Team
         return text_message, html_message
     
     def send_email(self, to_email: str, subject: str, text_content: str, html_content: str) -> bool:
-        """Send email with both text and HTML versions"""
+    try:
+        resend.Emails.send({
+            "from": f"{self.app_name} <onboarding@resend.dev>",
+            "to": to_email,
+            "subject": subject,
+            "html": html_content
+        })
+
+        print("Email sent successfully")
+        return True
+
+    except Exception as e:
+        print("Email error:", e)
+        return False
         
-        # Console backend for development
-        if self.email_backend == "console":
-            print("\n" + "="*70)
-            print("📧 EMAIL CONSOLE OUTPUT (Development Mode)")
-            print("="*70)
-            print(f"From: {self.from_email}")
-            print(f"To: {to_email}")
-            print(f"Subject: {subject}")
-            print("-"*70)
-            print(text_content)
-            print("="*70 + "\n")
-            return True  # Return True for console mode
-        
-        # SMTP backend for production
-        try:
-            # Create message
-            msg = MIMEMultipart('alternative')
-            msg['Subject'] = subject
-            msg['From'] = self.from_email
-            msg['To'] = to_email
-            
-            # Attach both versions
-            part1 = MIMEText(text_content, 'plain')
-            part2 = MIMEText(html_content, 'html')
-            msg.attach(part1)
-            msg.attach(part2)
-            
-            # Send email
-            with smtplib.SMTP(self.smtp_server, self.smtp_port) as server:
-                server.starttls()
-                server.login(self.smtp_username, self.smtp_password)
-                server.send_message(msg)
-            
-            return True
-        except Exception as e:
-            print(f"Error sending email: {e}")
-            return False
     
     def send_verification_email(self, username: str, email: str, otp_code: str) -> bool:
         """Send OTP verification email"""
