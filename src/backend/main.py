@@ -25,7 +25,10 @@ app = FastAPI(
 # CORS middleware - Allow all origins for mobile app
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins (mobile app, web, etc.)
+    allow_origins=[
+        "http://localhost:3000",
+        "https://ovula.netlify.app"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
