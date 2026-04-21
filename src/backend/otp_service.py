@@ -317,12 +317,12 @@ The {self.app_name} Team
     
     def send_email(self, to_email: str, subject: str, text_content: str, html_content: str) -> bool:
         try:
-        resend.Emails.send({
-            "from": f"{self.app_name} <onboarding@resend.dev>",
-            "to": to_email,
-            "subject": subject,
-            "html": html_content
-        })
+            resend.Emails.send({
+                "from": f"{self.app_name} <onboarding@resend.dev>",
+                "to": to_email,
+                "subject": subject,
+                "html": html_content
+            })
 
         print("Email sent successfully")
         return True
