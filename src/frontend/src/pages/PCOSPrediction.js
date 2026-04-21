@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { 
-  Activity, TrendingDown, TrendingUp, CheckCircle, Zap, Brain, 
-  Download, Search, Bell, Edit, ChevronRight, ChevronLeft, 
+  Activity, TrendingUp, Zap, Brain, 
+  Download, Bell, Edit, ChevronRight, ChevronLeft, 
   AlertCircle, Info, Clipboard, Heart, Shield, Apple
 } from 'lucide-react';
-import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, Cell, AreaChart, Area } from 'recharts';
+import { XAxis, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
 import toast from 'react-hot-toast';
 
 const PCOSPrediction = () => {

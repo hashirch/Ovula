@@ -13,9 +13,9 @@ const LogsHistory = () => {
     periodStatus: ''
   });
 
-  useEffect(() => {
-    fetchLogs();
-  }, [filters]);
+useEffect(() => {
+  fetchLogs();
+}, [fetchLogs]);
 
   const fetchLogs = async () => {
     try {
