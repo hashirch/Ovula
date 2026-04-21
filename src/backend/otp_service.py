@@ -315,14 +315,14 @@ The {self.app_name} Team
         
         return text_message, html_message
     
-    def send_email(self, to_email: str, subject: str, text_content: str, html_content: str) -> bool:
-        try:
-            resend.Emails.send({
-                "from": f"{self.app_name} <onboarding@resend.dev>",
-                "to": to_email,
-                "subject": subject,
-                "html": html_content
-            })
+def send_email(self, to_email: str, subject: str, text_content: str, html_content: str) -> bool:
+    try:
+        resend.Emails.send({
+            "from": f"{self.app_name} <onboarding@resend.dev>",
+            "to": to_email,
+            "subject": subject,
+            "html": html_content
+        })
 
         print("Email sent successfully")
         return True
@@ -330,7 +330,6 @@ The {self.app_name} Team
     except Exception as e:
         print("Email error:", e)
         return False
-        
     
     def send_verification_email(self, username: str, email: str, otp_code: str) -> bool:
         """Send OTP verification email"""
