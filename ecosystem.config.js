@@ -19,8 +19,8 @@ module.exports = {
     {
       name: "ovula-frontend",
       cwd: "/home/fyp-22p9181/ovula/frontend",
-      script: "serve",
-      args: "-s build -l 3000",
+      script: "npx",
+      args: "serve -s build -l 3000",
       env: {
         NODE_ENV: "production",
         PATH: "/home/fyp-22p9181/.nvm/versions/node/v20.20.2/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
