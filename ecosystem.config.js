@@ -30,6 +30,18 @@ module.exports = {
       out_file: "/home/fyp-22p9181/logs/frontend.out.log",
       merge_logs: true,
       autorestart: true
+    },
+    {
+      name: "ovula-ollama",
+      script: "/home/fyp-22p9181/bin/ollama",
+      args: "serve",
+      env: {
+        OLLAMA_HOST: "0.0.0.0"
+      },
+      log_date_format: "YYYY-MM-DD HH:mm Z",
+      error_file: "/home/fyp-22p9181/logs/ollama.error.log",
+      out_file: "/home/fyp-22p9181/logs/ollama.out.log",
+      autorestart: true
     }
   ]
 };
