@@ -12,6 +12,7 @@ _A Final Year Project combining machine learning, LLM fine-tuning, and a full-st
 [![Kotlin](https://img.shields.io/badge/Kotlin-1.9+-7f52ff.svg)](https://kotlinlang.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688.svg)](https://fastapi.tiangolo.com/)
 [![React](https://img.shields.io/badge/React-18+-61dafb.svg)](https://reactjs.org/)
+[![Capacitor](https://img.shields.io/badge/Capacitor-6+-119EFF.svg)](https://capacitorjs.com/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 [Overview](#-overview) • [Features](#-features) • [Tech Stack](#-tech-stack) • [Project Structure](#-project-structure) • [Quick Start](#-quick-start) • [Team](#-team)
@@ -26,7 +27,7 @@ _A Final Year Project combining machine learning, LLM fine-tuning, and a full-st
 | :--- | :--- |
 | **🏛️ University** | FAST National University of Computer and Emerging Sciences |
 | **📍 Campus** | Peshawar |
-| **📚 Project Type** | Final Year Project (FYP) — Machine Learning, NLP & Native Mobile Development |
+| **📚 Project Type** | Final Year Project (FYP) — Machine Learning, NLP & Hybrid Mobile Development |
 | **🔬 Research Area** | Domain-Specific LLM Fine-Tuning & PCOS Healthcare |
 | **👨‍🏫 Supervisor** | Shahzeb Khan |
 
@@ -42,7 +43,7 @@ _A Final Year Project combining machine learning, LLM fine-tuning, and a full-st
 
 ## 🌸 Overview
 
-Ovula is a PCOS (Polycystic Ovary Syndrome) health companion built as our Final Year Project at FAST NUCES Peshawar. The project integrates **fine-tuned LLMs** for specialized healthcare assistance with a **native Android application** and a **modernized web dashboard** for comprehensive symptom tracking, menstrual cycle management, and AI-powered risk assessment.
+Ovula is a PCOS (Polycystic Ovary Syndrome) health companion built as our Final Year Project at FAST NUCES Peshawar. The project integrates **fine-tuned LLMs** for specialized healthcare assistance with a **hybrid Android application** and a **modernized web dashboard** for comprehensive symptom tracking, menstrual cycle management, and AI-powered risk assessment.
 
 PCOS affects roughly 1 in 10 women globally. Ovula bridges the gap between general AI and specialized medical knowledge by providing a domain-fine-tuned assistant and a high-fidelity tracking system designed for long-term health management.
 
@@ -50,13 +51,13 @@ PCOS affects roughly 1 in 10 women globally. Ovula bridges the gap between gener
 
 ## ✨ Features
 
-### 📱 Native Android App (Kotlin)
+### 📱 Hybrid Android App (Capacitor)
+- **Unified Codebase** — Full feature parity with the web app using Capacitor.
+- **Mobile-Responsive UI** — Custom bottom navigation and touch-optimized components.
+- **Native Device Features** — Seamless integration with camera, storage, and network state.
+- **AI Chat Assistant** — Domain-specific chat with voice/audio recording support.
 - **High-Performance Dashboard** — Real-time cycle progress tracking and health stats.
-- **Symptom Logging** — Comprehensive daily logging (mood, sleep, weight, acne, pain levels).
-- **AI Chat Assistant** — Domain-specific chat with Urdu translation support.
-- **Insights & Analytics** — Trend analysis for mood, sleep, and physical symptoms.
-- **Diet & Nutrition** — Curated Western and Desi recipe plans for PCOS management.
-- **Secure Auth** — JWT-based authentication with EncryptedSharedPreferences.
+- **Secure Auth** — JWT-based authentication bridging web and mobile contexts.
 
 ### 💻 Modern Web Frontend (React 18)
 - **Glassmorphism UI** — Premium, high-fidelity design with smooth animations.
@@ -76,13 +77,13 @@ PCOS affects roughly 1 in 10 women globally. Ovula bridges the gap between gener
 
 ## 🛠 Tech Stack
 
-### Mobile (Native)
+### Mobile (Hybrid)
 ```
-Kotlin / Android SDK
-├── MVVM Architecture   — clean separation of logic
-├── Retrofit / OkHttp   — robust API communication
-├── Material Design 3   — modern UI components
-└── Coroutines          — asynchronous processing
+Capacitor / Android SDK
+├── Unified React Core  — Write once, deploy everywhere
+├── Capacitor Plugins   — Access to native device APIs
+├── Dynamic Media CSS   — Mobile-first layout adaptations
+└── Gradle/Android      — Native compilation and packaging
 ```
 
 ### Backend (Python)
@@ -123,8 +124,8 @@ The project follows a modern, professionally organized architecture with clear s
 ├─────────────────────────────────────────────────────────────┤
 │                                                              │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐     │
-│  │   Web App    │  │  Native App  │  │   Backend    │     │
-│  │ (React/Vite) │  │   (Kotlin)   │  │  (FastAPI)   │     │
+│  │   Web App    │  │  Mobile App  │  │   Backend    │     │
+│  │ (React/Vite) │  │  (Capacitor) │  │  (FastAPI)   │     │
 │  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘     │
 │         │                  │                  │              │
 │         └──────────────────┴──────────────────┘              │
@@ -147,10 +148,9 @@ The project follows a modern, professionally organized architecture with clear s
 
 ### Components
 
-1. **`src/frontend/`**: React web application with modernized glassmorphism design and interactive health tools.
-2. **`src/backend/`**: FastAPI server handling authentication, multi-lingual AI chat, and ML prediction logic.
-3. **`src/mobile/OvulaApp/`**: Native Android application (Kotlin) with Material 3 UI and high-performance tracking.
-4. **`src/ml-models/`**: Domain-specific LLM fine-tuning workspace and classical ML training pipeline.
+1. **`frontend/`**: React web application and Capacitor wrapper (`frontend/android`) with modernized glassmorphism design.
+2. **`backend/`**: FastAPI server handling authentication, multi-lingual AI chat, and ML prediction logic.
+3. **`ml-models/`**: Domain-specific LLM fine-tuning workspace and classical ML training pipeline.
 5. **`docs/`**: Technical documentation, UML diagrams, and high-fidelity screenshots.
 6. **`scripts/`**: Automation scripts for development, testing, and production deployment.
 
@@ -166,8 +166,8 @@ The project follows a modern, professionally organized architecture with clear s
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                              │
 │  ┌──────────────────┐              ┌──────────────────┐                    │
-│  │  Web Frontend    │              │  Native App      │                    │
-│  │  (React/Vite)    │              │  (Kotlin/Android)│                    │
+│  │  Web Frontend    │              │  Mobile App      │                    │
+│  │  (React/Vite)    │              │  (Capacitor)     │                    │
 │  │                  │              │                  │                    │
 │  │  • Dashboard     │              │  • Dashboard     │                    │
 │  │  • Chat UI       │              │  • Chat Screen   │                    │
@@ -410,13 +410,13 @@ FastAPI Application
 └── python-multipart     → File uploads
 ```
 
-### Mobile Dependencies (Native)
+### Mobile Dependencies (Hybrid)
 ```
-Android (Kotlin)
-├── Retrofit / GSON      → API networking
-├── Material 3           → Modern UI components
-├── Navigation Component → Fragment navigation
-└── Coroutines           → Async operations
+Android (Capacitor)
+├── @capacitor/core      → Native bridge API
+├── @capacitor/android   → Android platform target
+├── capacitor.config.ts  → Cross-platform configuration
+└── Gradle               → Native compilation
 ```
 
 ### ML/AI Dependencies
@@ -440,99 +440,51 @@ LLM Pipeline
 ```
 ovula/
 │
-├── 📂 src/                             # Source code
-│   │
-│   ├── 📂 frontend/                    # React Web Application
-│   │   ├── public/
-│   │   │   ├── index.html
-│   │   │   └── ovula-logo.png
-│   │   ├── src/
-│   │   │   ├── components/             # Reusable components
-│   │   │   │   └── Sidebar.js
-│   │   │   ├── contexts/               # React contexts
-│   │   │   │   └── AuthContext.js
-│   │   │   ├── pages/                  # Application pages
-│   │   │   │   ├── Login.js
-│   │   │   │   ├── Register.js
-│   │   │   │   ├── VerifyEmail.js
-│   │   │   │   ├── Dashboard.js
-│   │   │   │   ├── AddLog.js
-│   │   │   │   ├── LogsHistory.js
-│   │   │   │   ├── CycleTracker.js
-│   │   │   │   ├── Chat.js
-│   │   │   │   ├── PCOSPrediction.js
-│   │   │   │   ├── Insights.js
-│   │   │   │   └── Profile.js
-│   │   │   ├── App.js
-│   │   │   ├── index.js
-│   │   │   └── index.css
-│   │   ├── package.json
-│   │   └── tailwind.config.js
-│   │
-│   ├── 📂 backend/                     # FastAPI Backend
-│   │   ├── app/
-│   │   │   ├── models/
-│   │   │   │   └── chat.py
-│   │   │   ├── routes/
-│   │   │   ├── services/
-│   │   │   │   └── llm_service.py
-│   │   │   ├── __init__.py
-│   │   │   └── config.py
-│   │   ├── routers/
-│   │   │   ├── auth.py                 # Authentication routes
-│   │   │   ├── logs.py                 # Symptom log routes
-│   │   │   ├── prediction.py           # ML prediction routes
-│   │   │   ├── insights.py             # AI insights routes
-│   │   │   └── chat.py                 # Chat routes
-│   │   ├── main.py                     # App entry point
-│   │   ├── models.py                   # Database models
-│   │   ├── schemas.py                  # Pydantic schemas
-│   │   ├── database.py                 # DB connection
-│   │   ├── auth.py                     # Auth helpers
-│   │   ├── otp_service.py              # Email OTP logic
-│   │   ├── database_schema.sql         # SQL schema reference
-│   │   ├── pcos_tracker.db             # SQLite database
-│   │   ├── .env                        # Environment variables
-│   │   └── requirements.txt
-│   │
-│   ├── 📂 mobile/                      # Native Android Application
-│   │   └── 📂 OvulaApp/                # Kotlin Android Project
-│   │       ├── 📂 app/                 # Main application module
-│   │       │   ├── 📂 src/main/java/   # Kotlin source code (MVVM)
-│   │       │   └── 📂 src/main/res/    # UI resources (XML/Layouts)
-│   │       ├── build.gradle            # Build configuration
-│   │       └── gradlew                 # Gradle wrapper
-│   │
-│   └── 📂 ml-models/                   # Machine Learning & AI
-│       ├── Modelfile                   # Primary fine-tuned Modelfile
-│       ├── Modelfile_PCOS              # PCOS-specific tuning config
-│       ├── Modelfile_Base_PCOS         # Base model for comparison
-│       ├── llama-3.2-1b-instruct.Q8_0.gguf  # Quantized base model
-│       └── finetune_pcos_model.ipynb   # Training notebook
+├── 📂 backend/                     # Backend FastAPI application
+│   ├── 📂 app/                     # Main application package
+│   │   ├── 📂 api/                 # API routes/endpoints
+│   │   │   └── 📂 v1/              # API versioning
+│   │   ├── 📂 core/                # Core configuration, security
+│   │   ├── 📂 db/                  # Database connection, session
+│   │   ├── 📂 models/              # SQLAlchemy models
+│   │   ├── 📂 schemas/             # Pydantic schemas
+│   │   ├── 📂 services/            # Business logic / services
+│   │   └── main.py                 # App entry point
+│   ├── main.py                     # Root entry point
+│   ├── .env                        # Environment variables
+│   └── requirements.txt            # Backend dependencies
 │
-├── 📂 docs/                            # Documentation & Assets
-│   ├── ovula-logo.png
-│   ├── pcos_poster.png
-│   ├── pcos_detailed_uml.png
-│   ├── pcos_er_diagram.png
-│   ├── pcos_class_diagram.png
-│   ├── llm_workflow_detailed_diagram.png
-│   ├── prediction_workflow_detailed_diagram.png
-│   └── screenshots/                    # App screenshots
-│       ├── dashboard.png
-│       ├── chat.png
-│       ├── add-log.png
-│       ├── cycle-tracker.png
-│       ├── login.png
-│       └── register.png
+├── 📂 frontend/                    # Frontend React application
+│   ├── 📂 public/                  # Static assets
+│   ├── 📂 src/                     # React source code
+│   │   ├── 📂 components/          # Reusable components
+│   │   ├── 📂 contexts/            # Context API
+│   │   ├── 📂 pages/               # Page components
+│   │   ├── App.js                  # Main component
+│   │   └── index.js                # React entry point
+│   └── package.json                # Frontend dependencies
 │
-├── 📂 scripts/                         # Utility Scripts
-│   ├── start_backend.sh                # Backend startup script
-│   └── start_frontend.sh               # Frontend startup script
+├── 📂 mobile/                      # Mobile application (Kotlin/Android)
+│   ├── 📂 app/                     # Android app source
+│   └── build.gradle                # Gradle configuration
 │
-├── .gitignore
-├── README.md
-└── LICENSE
+├── 📂 ml-models/                   # Machine learning models and notebooks
+│   ├── pcos_model.pkl              # Saved prediction model
+│   └── finetune_pcos_model.ipynb   # Training notebook
+│
+├── 📂 docs/                        # Project documentation
+│   ├── screenshots/                # Application screenshots
+│   └── architecture/               # Design diagrams
+│
+├── 📂 scripts/                     # Deployment and utility scripts
+│   ├── run_rsync.py                # Deployment script
+│   └── start_production.sh         # Production startup script
+│
+├── .env.example                    # Template for env variables
+├── .gitignore                      # Git ignored files
+├── ecosystem.config.js             # PM2 configuration
+├── README.md                       # Project documentation
+└── LICENSE                         # MIT License
 ```
 
 ---
@@ -660,12 +612,16 @@ npm start
 
 Frontend runs at `http://localhost:3000`.
 
-### 4. Run the Mobile App
+### 4. Run the Mobile App (Capacitor)
 
 ```bash
-cd src/mobile/OvulaApp
-# Build and install on connected device/emulator
-./gradlew installDebug
+cd src/frontend
+# Ensure frontend is built first
+npm run build
+# Sync assets and run on connected device
+npx cap sync android
+export ANDROID_HOME=~/Android/Sdk
+cd android && ./gradlew assembleDebug
 ```
 
 > [!TIP]
@@ -676,7 +632,7 @@ cd src/mobile/OvulaApp
 
 ```bash
 # Pull and create the fine-tuned model
-ollama create pcos-llama -f src/ml-models/Modelfile_PCOS
+ollama create pcos-llama -f ml-models/Modelfile_PCOS
 
 # Test it
 ollama run pcos-llama "What are the early signs of PCOS?"
@@ -696,9 +652,9 @@ Three Modelfiles exist for comparison:
 
 ```bash
 # Create all three for comparison
-ollama create pcos-base -f src/ml-models/Modelfile_Base_PCOS
-ollama create pcos-v1   -f src/ml-models/Modelfile_PCOS
-ollama create pcos      -f src/ml-models/Modelfile
+ollama create pcos-base -f ml-models/Modelfile_Base_PCOS
+ollama create pcos-v1   -f ml-models/Modelfile_PCOS
+ollama create pcos      -f ml-models/Modelfile
 ```
 
 ---

@@ -18,8 +18,9 @@ echo "[1/4] Cleaning up old screen sessions..."
 screen -S ollama  -X quit 2>/dev/null || true
 screen -S backend -X quit 2>/dev/null || true
 screen -S frontend -X quit 2>/dev/null || true
-# Kill any stray ollama processes
+# Kill any stray processes
 pkill -f "ollama serve" 2>/dev/null || true
+fuser -k 8001/tcp 2>/dev/null || true
 sleep 2
 
 # ------- 2. Start Ollama -------
@@ -44,10 +45,10 @@ done
 
 # Create PCOS models (safe to re-run — won't duplicate)
 echo "Creating pcos-base model..."
-$HOME/.local/bin/ollama create pcos-base -f $OVULA_DIR/src/ml-models/Modelfile_Base_PCOS 2>&1 || echo "  (pcos-base may already exist — OK)"
+$HOME/.local/bin/ollama create pcos-base -f $OVULA_DIR/ml-models/Modelfile_Base_PCOS 2>&1 || echo "  (pcos-base may already exist — OK)"
 
 echo "Creating pcos-llama3 model..."
-$HOME/.local/bin/ollama create pcos-llama3 -f $OVULA_DIR/src/ml-models/Modelfile_PCOS 2>&1 || echo "  (pcos-llama3 may already exist — OK)"
+$HOME/.local/bin/ollama create pcos-llama3 -f $OVULA_DIR/ml-models/Modelfile_PCOS 2>&1 || echo "  (pcos-llama3 may already exist — OK)"
 
 echo "Available Ollama models:"
 $HOME/.local/bin/ollama list 2>&1
@@ -57,13 +58,13 @@ echo ""
 echo "[3/4] Starting FastAPI backend..."
 screen -dmS backend bash -c "
   export PATH=$HOME/.local/bin:$HOME/bin:\$PATH
-  cd $OVULA_DIR/src/backend
+  cd $OVULA_DIR/backend
   python3 main.py 2>&1 | tee ~/backend.log
 "
 sleep 4
 
 # Quick backend check
-if curl -s http://localhost:8000/ > /dev/null 2>&1; then
+if curl -s http://localhost:8001/ > /dev/null 2>&1; then
     echo "  ✅ Backend is responding"
 else
     echo "  ⏳ Backend starting (may take a moment)..."
@@ -76,7 +77,7 @@ screen -dmS frontend bash -c "
   export PATH=$HOME/.local/bin:$HOME/bin:\$PATH
   export NVM_DIR=$HOME/.nvm
   [ -s \$NVM_DIR/nvm.sh ] && . \$NVM_DIR/nvm.sh
-  serve -s $OVULA_DIR/src/frontend/build -l 3000 2>&1 | tee ~/frontend.log
+  serve -s $OVULA_DIR/frontend/build -l 3000 2>&1 | tee ~/frontend.log
 "
 sleep 5
 
@@ -87,8 +88,8 @@ echo "================================================"
 screen -list
 echo ""
 echo "Services should be available at:"
-echo "  Backend API:  http://121.52.146.108:8000"
-echo "  API Docs:     http://121.52.146.108:8000/docs"
+echo "  Backend API:  http://121.52.146.108:8001"
+echo "  API Docs:     http://121.52.146.108:8001/docs"
 echo "  Web Frontend: http://121.52.146.108:3000"
 echo ""
 echo "Check logs with:"

@@ -1,0 +1,351 @@
+[Hugging Face](https://huggingface.co/)
+- [Models](https://huggingface.co/models)
+- [Datasets](https://huggingface.co/datasets)
+- [Spaces](https://huggingface.co/spaces)
+- [Buckets new](https://huggingface.co/storage)
+- [Docs](https://huggingface.co/docs)
+- [Enterprise](https://huggingface.co/enterprise)
+- [Pricing](https://huggingface.co/pricing)
+-     
+- 
+- [Log In](https://huggingface.co/login)
+- [Sign Up](https://huggingface.co/join)
+[Models](https://huggingface.co/models)
+[Datasets](https://huggingface.co/datasets)
+[Spaces](https://huggingface.co/spaces)
+[Buckets new](https://huggingface.co/storage)
+[Docs](https://huggingface.co/docs)
+[Enterprise](https://huggingface.co/enterprise)
+[Pricing](https://huggingface.co/pricing)
+[Log In](https://huggingface.co/login)
+[Sign Up](https://huggingface.co/join)
+
+# https://huggingface.co/[junaid008](https://huggingface.co/junaid008) junaid008 / [qehwa-pashto-llm](https://huggingface.co/junaid008/qehwa-pashto-llm) like 12
+
+[junaid008](https://huggingface.co/junaid008)
+[qehwa-pashto-llm](https://huggingface.co/junaid008/qehwa-pashto-llm)
+[Text Generation](https://huggingface.co/models?pipeline_tag=text-generation)
+[Transformers](https://huggingface.co/models?library=transformers)
+[Safetensors](https://huggingface.co/models?library=safetensors)
+[Pashto](https://huggingface.co/models?language=ps)
+[English](https://huggingface.co/models?language=en)
+[Urdu](https://huggingface.co/models?language=ur)
+[qwen2](https://huggingface.co/models?other=qwen2)
+[pashto](https://huggingface.co/models?other=pashto)
+[peshawari](https://huggingface.co/models?other=peshawari)
+[pakistani-pashto](https://huggingface.co/models?other=pakistani-pashto)
+[causal-lm](https://huggingface.co/models?other=causal-lm)
+[sft](https://huggingface.co/models?other=sft)
+[cpt](https://huggingface.co/models?other=cpt)
+[unsloth](https://huggingface.co/models?other=unsloth)
+[trl](https://huggingface.co/models?other=trl)
+[text-generation-inference](https://huggingface.co/models?other=text-generation-inference)
+[Model card](https://huggingface.co/junaid008/qehwa-pashto-llm)
+[Files Files and versions   xet](https://huggingface.co/junaid008/qehwa-pashto-llm/tree/main)
+[Community 1](https://huggingface.co/junaid008/qehwa-pashto-llm/discussions)
+- [☕ Qehwa — Pashto's First LLM](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%98%95-qehwa--pashtos-first-llm) [🌟 Model Description](https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%8C%9F-model-description) [✨ Capabilities](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%A8-capabilities) [📊 Evaluation Results](https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%93%8A-evaluation-results) [Top Performing Categories](https://huggingface.co/junaid008/qehwa-pashto-llm#top-performing-categories)[Evaluation Methodology](https://huggingface.co/junaid008/qehwa-pashto-llm#evaluation-methodology)[💻 Installation](https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%92%BB-installation) [🚀 How to Use](https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%9A%80-how-to-use) [✅ Method 1 — Transformers (Recommended)](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%85-method-1--transformers-recommended)[✅ Method 2 — 4-bit Quantization (Low VRAM)](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%85-method-2--4-bit-quantization-low-vram)[✅ Method 3 — Unsloth (2x Faster Inference)](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%85-method-3--unsloth-2x-faster-inference)[✅ Method 4 — CPU Only (No GPU)](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%85-method-4--cpu-only-no-gpu)[✅ Method 5 — Google Colab (Free)](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%85-method-5--google-colab-free)[⚙️ Hardware Requirements](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9A%99%EF%B8%8F-hardware-requirements) [📊 Training Details](https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%93%8A-training-details) [Stage 1 — Continued Pre-Training (CPT)](https://huggingface.co/junaid008/qehwa-pashto-llm#stage-1--continued-pre-training-cpt)[Stage 2 — Supervised Fine-Tuning (SFT)](https://huggingface.co/junaid008/qehwa-pashto-llm#stage-2--supervised-fine-tuning-sft)[📚 Dataset](https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%93%9A-dataset) [CPT Dataset](https://huggingface.co/junaid008/qehwa-pashto-llm#cpt-dataset)[SFT Dataset — 126,519 pairs:](https://huggingface.co/junaid008/qehwa-pashto-llm#sft-dataset--126519-pairs)[🗣️ Example Outputs](https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%97%A3%EF%B8%8F-example-outputs) [👤 Author](https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%91%A4-author) [📜 License](https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%93%9C-license) [🤝 Citation](https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%A4%9D-citation) 
+- [🌟 Model Description](https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%8C%9F-model-description) 
+- [✨ Capabilities](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%A8-capabilities) 
+- [📊 Evaluation Results](https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%93%8A-evaluation-results) [Top Performing Categories](https://huggingface.co/junaid008/qehwa-pashto-llm#top-performing-categories)[Evaluation Methodology](https://huggingface.co/junaid008/qehwa-pashto-llm#evaluation-methodology)
+
+# https://huggingface.co/[junaid008](https://huggingface.co/junaid008) junaid008 / [qehwa-pashto-llm](https://huggingface.co/junaid008/qehwa-pashto-llm) like 12
+
+- [Top Performing Categories](https://huggingface.co/junaid008/qehwa-pashto-llm#top-performing-categories)
+- [Evaluation Methodology](https://huggingface.co/junaid008/qehwa-pashto-llm#evaluation-methodology)
+- [💻 Installation](https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%92%BB-installation) 
+- [🚀 How to Use](https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%9A%80-how-to-use) [✅ Method 1 — Transformers (Recommended)](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%85-method-1--transformers-recommended)[✅ Method 2 — 4-bit Quantization (Low VRAM)](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%85-method-2--4-bit-quantization-low-vram)[✅ Method 3 — Unsloth (2x Faster Inference)](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%85-method-3--unsloth-2x-faster-inference)[✅ Method 4 — CPU Only (No GPU)](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%85-method-4--cpu-only-no-gpu)[✅ Method 5 — Google Colab (Free)](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%85-method-5--google-colab-free)
+- [✅ Method 1 — Transformers (Recommended)](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%85-method-1--transformers-recommended)
+- [✅ Method 2 — 4-bit Quantization (Low VRAM)](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%85-method-2--4-bit-quantization-low-vram)
+- [✅ Method 3 — Unsloth (2x Faster Inference)](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%85-method-3--unsloth-2x-faster-inference)
+- [✅ Method 4 — CPU Only (No GPU)](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%85-method-4--cpu-only-no-gpu)
+- [✅ Method 5 — Google Colab (Free)](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%85-method-5--google-colab-free)
+- [⚙️ Hardware Requirements](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9A%99%EF%B8%8F-hardware-requirements) 
+- [📊 Training Details](https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%93%8A-training-details) [Stage 1 — Continued Pre-Training (CPT)](https://huggingface.co/junaid008/qehwa-pashto-llm#stage-1--continued-pre-training-cpt)[Stage 2 — Supervised Fine-Tuning (SFT)](https://huggingface.co/junaid008/qehwa-pashto-llm#stage-2--supervised-fine-tuning-sft)
+- [Stage 1 — Continued Pre-Training (CPT)](https://huggingface.co/junaid008/qehwa-pashto-llm#stage-1--continued-pre-training-cpt)
+- [Stage 2 — Supervised Fine-Tuning (SFT)](https://huggingface.co/junaid008/qehwa-pashto-llm#stage-2--supervised-fine-tuning-sft)
+- [📚 Dataset](https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%93%9A-dataset) [CPT Dataset](https://huggingface.co/junaid008/qehwa-pashto-llm#cpt-dataset)[SFT Dataset — 126,519 pairs:](https://huggingface.co/junaid008/qehwa-pashto-llm#sft-dataset--126519-pairs)
+- [CPT Dataset](https://huggingface.co/junaid008/qehwa-pashto-llm#cpt-dataset)
+- [SFT Dataset — 126,519 pairs:](https://huggingface.co/junaid008/qehwa-pashto-llm#sft-dataset--126519-pairs)
+- [🗣️ Example Outputs](https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%97%A3%EF%B8%8F-example-outputs) 
+- [👤 Author](https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%91%A4-author) 
+- [📜 License](https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%93%9C-license) 
+- [🤝 Citation](https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%A4%9D-citation) 
+[☕ Qehwa — Pashto's First LLM](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%98%95-qehwa--pashtos-first-llm)
+- [🌟 Model Description](https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%8C%9F-model-description) 
+- [✨ Capabilities](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%A8-capabilities) 
+- [📊 Evaluation Results](https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%93%8A-evaluation-results) [Top Performing Categories](https://huggingface.co/junaid008/qehwa-pashto-llm#top-performing-categories)[Evaluation Methodology](https://huggingface.co/junaid008/qehwa-pashto-llm#evaluation-methodology)
+- [Top Performing Categories](https://huggingface.co/junaid008/qehwa-pashto-llm#top-performing-categories)
+- [Evaluation Methodology](https://huggingface.co/junaid008/qehwa-pashto-llm#evaluation-methodology)
+- [💻 Installation](https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%92%BB-installation)
+
+# https://huggingface.co/[junaid008](https://huggingface.co/junaid008) junaid008 / [qehwa-pashto-llm](https://huggingface.co/junaid008/qehwa-pashto-llm) like 12
+
+- [🚀 How to Use](https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%9A%80-how-to-use) [✅ Method 1 — Transformers (Recommended)](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%85-method-1--transformers-recommended)[✅ Method 2 — 4-bit Quantization (Low VRAM)](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%85-method-2--4-bit-quantization-low-vram)[✅ Method 3 — Unsloth (2x Faster Inference)](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%85-method-3--unsloth-2x-faster-inference)[✅ Method 4 — CPU Only (No GPU)](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%85-method-4--cpu-only-no-gpu)[✅ Method 5 — Google Colab (Free)](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%85-method-5--google-colab-free)
+- [✅ Method 1 — Transformers (Recommended)](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%85-method-1--transformers-recommended)
+- [✅ Method 2 — 4-bit Quantization (Low VRAM)](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%85-method-2--4-bit-quantization-low-vram)
+- [✅ Method 3 — Unsloth (2x Faster Inference)](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%85-method-3--unsloth-2x-faster-inference)
+- [✅ Method 4 — CPU Only (No GPU)](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%85-method-4--cpu-only-no-gpu)
+- [✅ Method 5 — Google Colab (Free)](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%85-method-5--google-colab-free)
+- [⚙️ Hardware Requirements](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9A%99%EF%B8%8F-hardware-requirements) 
+- [📊 Training Details](https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%93%8A-training-details) [Stage 1 — Continued Pre-Training (CPT)](https://huggingface.co/junaid008/qehwa-pashto-llm#stage-1--continued-pre-training-cpt)[Stage 2 — Supervised Fine-Tuning (SFT)](https://huggingface.co/junaid008/qehwa-pashto-llm#stage-2--supervised-fine-tuning-sft)
+- [Stage 1 — Continued Pre-Training (CPT)](https://huggingface.co/junaid008/qehwa-pashto-llm#stage-1--continued-pre-training-cpt)
+- [Stage 2 — Supervised Fine-Tuning (SFT)](https://huggingface.co/junaid008/qehwa-pashto-llm#stage-2--supervised-fine-tuning-sft)
+- [📚 Dataset](https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%93%9A-dataset) [CPT Dataset](https://huggingface.co/junaid008/qehwa-pashto-llm#cpt-dataset)[SFT Dataset — 126,519 pairs:](https://huggingface.co/junaid008/qehwa-pashto-llm#sft-dataset--126519-pairs)
+- [CPT Dataset](https://huggingface.co/junaid008/qehwa-pashto-llm#cpt-dataset)
+- [SFT Dataset — 126,519 pairs:](https://huggingface.co/junaid008/qehwa-pashto-llm#sft-dataset--126519-pairs)
+- [🗣️ Example Outputs](https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%97%A3%EF%B8%8F-example-outputs) 
+- [👤 Author](https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%91%A4-author) 
+- [📜 License](https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%93%9C-license) 
+- [🤝 Citation](https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%A4%9D-citation) 
+[🌟 Model Description](https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%8C%9F-model-description)
+[✨ Capabilities](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%A8-capabilities)
+[📊 Evaluation Results](https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%93%8A-evaluation-results)
+- [Top Performing Categories](https://huggingface.co/junaid008/qehwa-pashto-llm#top-performing-categories)
+- [Evaluation Methodology](https://huggingface.co/junaid008/qehwa-pashto-llm#evaluation-methodology)
+[Top Performing Categories](https://huggingface.co/junaid008/qehwa-pashto-llm#top-performing-categories)
+[Evaluation Methodology](https://huggingface.co/junaid008/qehwa-pashto-llm#evaluation-methodology)
+[💻 Installation](https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%92%BB-installation)
+[🚀 How to Use](https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%9A%80-how-to-use)
+- [✅ Method 1 — Transformers (Recommended)](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%85-method-1--transformers-recommended)
+- [✅ Method 2 — 4-bit Quantization (Low VRAM)](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%85-method-2--4-bit-quantization-low-vram)
+- [✅ Method 3 — Unsloth (2x Faster Inference)](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%85-method-3--unsloth-2x-faster-inference)
+
+# https://huggingface.co/[junaid008](https://huggingface.co/junaid008) junaid008 / [qehwa-pashto-llm](https://huggingface.co/junaid008/qehwa-pashto-llm) like 12
+- [✅ Method 4 — CPU Only (No GPU)](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%85-method-4--cpu-only-no-gpu)
+- [✅ Method 5 — Google Colab (Free)](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%85-method-5--google-colab-free)
+[✅ Method 1 — Transformers (Recommended)](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%85-method-1--transformers-recommended)
+[✅ Method 2 — 4-bit Quantization (Low VRAM)](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%85-method-2--4-bit-quantization-low-vram)
+[✅ Method 3 — Unsloth (2x Faster Inference)](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%85-method-3--unsloth-2x-faster-inference)
+[✅ Method 4 — CPU Only (No GPU)](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%85-method-4--cpu-only-no-gpu)
+[✅ Method 5 — Google Colab (Free)](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%85-method-5--google-colab-free)
+[⚙️ Hardware Requirements](https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9A%99%EF%B8%8F-hardware-requirements)
+[📊 Training Details](https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%93%8A-training-details)
+- [Stage 1 — Continued Pre-Training (CPT)](https://huggingface.co/junaid008/qehwa-pashto-llm#stage-1--continued-pre-training-cpt)
+- [Stage 2 — Supervised Fine-Tuning (SFT)](https://huggingface.co/junaid008/qehwa-pashto-llm#stage-2--supervised-fine-tuning-sft)
+[Stage 1 — Continued Pre-Training (CPT)](https://huggingface.co/junaid008/qehwa-pashto-llm#stage-1--continued-pre-training-cpt)
+[Stage 2 — Supervised Fine-Tuning (SFT)](https://huggingface.co/junaid008/qehwa-pashto-llm#stage-2--supervised-fine-tuning-sft)
+[📚 Dataset](https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%93%9A-dataset)
+- [CPT Dataset](https://huggingface.co/junaid008/qehwa-pashto-llm#cpt-dataset)
+- [SFT Dataset — 126,519 pairs:](https://huggingface.co/junaid008/qehwa-pashto-llm#sft-dataset--126519-pairs)
+[CPT Dataset](https://huggingface.co/junaid008/qehwa-pashto-llm#cpt-dataset)
+[SFT Dataset — 126,519 pairs:](https://huggingface.co/junaid008/qehwa-pashto-llm#sft-dataset--126519-pairs)
+[🗣️ Example Outputs](https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%97%A3%EF%B8%8F-example-outputs)
+[👤 Author](https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%91%A4-author)
+[📜 License](https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%93%9C-license)
+[🤝 Citation](https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%A4%9D-citation)
+
+# https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%98%95-qehwa--pashtos-first-llm ☕ Qehwa — Pashto's First LLM
+The first and best Pakistani Pashto large language model — specifically trained on Peshawari dialect.
+Built by a solo developer as a free and open resource for 60+ million Pashto speakers worldwide.
+⚠️ This model performs best on Pakistani/Peshawari Pashto. Performance may be lower on Afghan Pashto dialect.
+
+## https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%8C%9F-model-description 🌟 Model Description
+Qehwa is a fully instruction-tuned Pashto language model built on top of Qwen2.5-7B. It is the result of two-stage training:
+1. Continued Pre-Training (CPT) on 3.4 million clean Pakistani Pashto documents
+2. Supervised Fine-Tuning (SFT) on 126,519 high-quality Peshawari Pashto instruction-response pairs
+This is the first dedicated Pakistani Pashto LLM — no comparable model exists publicly. It specifically targets the Peshawari/KPK dialect rather than generic or Afghan Pashto.
+This repo contains the fully merged model — ready to use with standard transformers, no additional libraries required.
+
+## https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%A8-capabilities ✨ Capabilities
+- ✅ Answers questions in pure Peshawari Pashto
+- ✅ Responds to English instructions in Pashto
+- ✅ Responds to Urdu instructions in Pashto
+- ✅ Natural Pashto conversation
+- ✅ Pashto creative writing and poetry
+- ✅ Islamic topics in Pashto
+- ✅ KPK history, culture, and geography
+- ✅ Pashtunwali traditions and ethics
+- ✅ Pashto grammar correction
+- ✅ English to Pashto translation
+- ✅ Correct Pashto-specific characters: ښ ږ ټ ډ ړ ځ
+
+## https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%93%8A-evaluation-results 📊 Evaluation Results
+Qehwa was evaluated on a custom benchmark of 150 tests across 15 categories — the first ever comprehensive Pashto LLM benchmark. Since no standard Pashto benchmark exists publicly, this evaluation was designed specifically for Pakistani Pashto.
+
+### https://huggingface.co/junaid008/qehwa-pashto-llm#top-performing-categories Top Performing Categories
+Overall Average Accuracy across all 15 benchmark categories: 85.3%
+
+### https://huggingface.co/junaid008/qehwa-pashto-llm#evaluation-methodology Evaluation Methodology
+- 150 custom Pashto prompts across 15 categories
+- Evaluated on A100 40GB GPU
+- Human reviewed outputs for fluency, accuracy and dialect correctness
+- No existing Pashto benchmark was available — this is the first Pashto LLM benchmark
+
+## https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%92%BB-installation 💻 Installation
+
+```
+pip install transformers accelerate torch
+```
+
+
+```
+pip install transformers accelerate torch
+```
+
+For faster inference:
+
+```
+pip install unsloth
+```
+
+
+```
+pip install unsloth
+```
+
+For running locally on CPU or small GPU:
+
+```
+pip install transformers accelerate bitsandbytes
+```
+
+
+```
+pip install transformers accelerate bitsandbytes
+```
+
+### https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%85-method-1--transformers-recommended ✅ Method 1 — Transformers (Recommended)
+Best for: Research, production, standard usage
+
+```
+from transformers import AutoModelForCausalLM, AutoTokenizer import torch model_name = "junaid008/qehwa-pashto-llm" tokenizer = AutoTokenizer.from_pretrained(model_name) model = AutoModelForCausalLM.from_pretrained( model_name, torch_dtype = torch.bfloat16, device_map = "auto", ) ALPACA_TEMPLATE = """Below is an instruction in Pashto or English. Write a detailed response in Pashto. ### Instruction: {} ### Response: {}""" def generate(prompt): inputs = tokenizer( ALPACA_TEMPLATE.format(prompt, ""), return_tensors = "pt", ).to("cuda") outputs = model.generate( **inputs, max_new_tokens = 500, temperature = 0.7, do_sample = True, repetition_penalty = 1.1, pad_token_id = tokenizer.eos_token_id, ) response = tokenizer.decode(outputs[0], skip_special_tokens=True) return response.split("### Response:")[-1].strip() # Pashto input print(generate("د پیښور تاریخ راته ووایه")) # English input print(generate("Tell me about Pashtunwali")) # Urdu input print(generate("پشاور کے بارے میں بتاؤ"))
+```
+
+
+```
+from transformers import AutoModelForCausalLM, AutoTokenizer import torch model_name = "junaid008/qehwa-pashto-llm" tokenizer = AutoTokenizer.from_pretrained(model_name) model = AutoModelForCausalLM.from_pretrained( model_name, torch_dtype = torch.bfloat16, device_map = "auto", ) ALPACA_TEMPLATE = """Below is an instruction in Pashto or English. Write a detailed response in Pashto. ### Instruction: {} ### Response: {}""" def generate(prompt): inputs = tokenizer( ALPACA_TEMPLATE.format(prompt, ""), return_tensors = "pt", ).to("cuda") outputs = model.generate( **inputs, max_new_tokens = 500, temperature = 0.7, do_sample = True, repetition_penalty = 1.1, pad_token_id = tokenizer.eos_token_id, ) response = tokenizer.decode(outputs[0], skip_special_tokens=True) return response.split("### Response:")[-1].strip() # Pashto input print(generate("د پیښور تاریخ راته ووایه")) # English input print(generate("Tell me about Pashtunwali")) # Urdu input print(generate("پشاور کے بارے میں بتاؤ"))
+```
+
+### https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%85-method-2--4-bit-quantization-low-vram ✅ Method 2 — 4-bit Quantization (Low VRAM)
+Best for: GPUs with 8GB VRAM or less
+
+```
+from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig import torch model_name = "junaid008/qehwa-pashto-llm" bnb_config = BitsAndBytesConfig( load_in_4bit = True, bnb_4bit_quant_type = "nf4", bnb_4bit_compute_dtype = torch.bfloat16, bnb_4bit_use_double_quant = True, ) tokenizer = AutoTokenizer.from_pretrained(model_name) model = AutoModelForCausalLM.from_pretrained( model_name, quantization_config = bnb_config, device_map = "auto", ) ALPACA_TEMPLATE = """Below is an instruction in Pashto or English. Write a detailed response in Pashto. ### Instruction: {} ### Response: {}""" def generate(prompt): inputs = tokenizer( ALPACA_TEMPLATE.format(prompt, ""), return_tensors = "pt", ).to("cuda") outputs = model.generate( **inputs, max_new_tokens = 500, temperature = 0.7, do_sample = True, repetition_penalty = 1.1, pad_token_id = tokenizer.eos_token_id, ) response = tokenizer.decode(outputs[0], skip_special_tokens=True) return response.split("### Response:")[-1].strip() print(generate("پښتونولي تشریح کړه"))
+```
+
+
+```
+from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig import torch model_name = "junaid008/qehwa-pashto-llm" bnb_config = BitsAndBytesConfig( load_in_4bit = True, bnb_4bit_quant_type = "nf4", bnb_4bit_compute_dtype = torch.bfloat16, bnb_4bit_use_double_quant = True, ) tokenizer = AutoTokenizer.from_pretrained(model_name) model = AutoModelForCausalLM.from_pretrained( model_name, quantization_config = bnb_config, device_map = "auto", ) ALPACA_TEMPLATE = """Below is an instruction in Pashto or English. Write a detailed response in Pashto. ### Instruction: {} ### Response: {}""" def generate(prompt): inputs = tokenizer( ALPACA_TEMPLATE.format(prompt, ""), return_tensors = "pt", ).to("cuda") outputs = model.generate( **inputs, max_new_tokens = 500, temperature = 0.7, do_sample = True, repetition_penalty = 1.1, pad_token_id = tokenizer.eos_token_id, ) response = tokenizer.decode(outputs[0], skip_special_tokens=True) return response.split("### Response:")[-1].strip() print(generate("پښتونولي تشریح کړه"))
+```
+
+### https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%85-method-3--unsloth-2x-faster-inference ✅ Method 3 — Unsloth (2x Faster Inference)
+Best for: Speed-optimized usage, Colab, A100/H100
+
+```
+from unsloth import FastLanguageModel model, tokenizer = FastLanguageModel.from_pretrained( model_name = "junaid008/qehwa-pashto-llm", max_seq_length = 2048, dtype = None, load_in_4bit = False, ) FastLanguageModel.for_inference(model) ALPACA_TEMPLATE = """Below is an instruction in Pashto or English. Write a detailed response in Pashto. ### Instruction: {} ### Response: {}""" import torch inputs = tokenizer( ALPACA_TEMPLATE.format("د پیښور تاریخ راته ووایه", ""), return_tensors = "pt", ).to("cuda") outputs = model.generate( **inputs, max_new_tokens = 500, temperature = 0.7, do_sample = True, repetition_penalty = 1.1, pad_token_id = tokenizer.pad_token_id, ) response = tokenizer.decode(outputs[0], skip_special_tokens=True) print(response.split("### Response:")[-1].strip())
+```
+
+
+```
+from unsloth import FastLanguageModel model, tokenizer = FastLanguageModel.from_pretrained( model_name = "junaid008/qehwa-pashto-llm", max_seq_length = 2048, dtype = None, load_in_4bit = False, ) FastLanguageModel.for_inference(model) ALPACA_TEMPLATE = """Below is an instruction in Pashto or English. Write a detailed response in Pashto. ### Instruction: {} ### Response: {}""" import torch inputs = tokenizer( ALPACA_TEMPLATE.format("د پیښور تاریخ راته ووایه", ""), return_tensors = "pt", ).to("cuda") outputs = model.generate( **inputs, max_new_tokens = 500, temperature = 0.7, do_sample = True, repetition_penalty = 1.1, pad_token_id = tokenizer.pad_token_id, ) response = tokenizer.decode(outputs[0], skip_special_tokens=True) print(response.split("### Response:")[-1].strip())
+```
+
+### https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%85-method-4--cpu-only-no-gpu ✅ Method 4 — CPU Only (No GPU)
+Best for: Testing on laptop, no GPU available (slow but works)
+
+```
+from transformers import AutoModelForCausalLM, AutoTokenizer import torch model_name = "junaid008/qehwa-pashto-llm" tokenizer = AutoTokenizer.from_pretrained(model_name) model = AutoModelForCausalLM.from_pretrained( model_name, torch_dtype = torch.float32, # float32 for CPU device_map = "cpu", ) ALPACA_TEMPLATE = """Below is an instruction in Pashto or English. Write a detailed response in Pashto. ### Instruction: {} ### Response: {}""" inputs = tokenizer( ALPACA_TEMPLATE.format("پښتو ژبه د چا ده؟", ""), return_tensors = "pt", ) outputs = model.generate( **inputs, max_new_tokens = 200, do_sample = False, # greedy for CPU speed pad_token_id = tokenizer.eos_token_id, ) response = tokenizer.decode(outputs[0], skip_special_tokens=True) print(response.split("### Response:")[-1].strip())
+```
+
+
+```
+from transformers import AutoModelForCausalLM, AutoTokenizer import torch model_name = "junaid008/qehwa-pashto-llm" tokenizer = AutoTokenizer.from_pretrained(model_name) model = AutoModelForCausalLM.from_pretrained( model_name, torch_dtype = torch.float32, # float32 for CPU device_map = "cpu", ) ALPACA_TEMPLATE = """Below is an instruction in Pashto or English. Write a detailed response in Pashto. ### Instruction: {} ### Response: {}""" inputs = tokenizer( ALPACA_TEMPLATE.format("پښتو ژبه د چا ده؟", ""), return_tensors = "pt", ) outputs = model.generate( **inputs, max_new_tokens = 200, do_sample = False, # greedy for CPU speed pad_token_id = tokenizer.eos_token_id, ) response = tokenizer.decode(outputs[0], skip_special_tokens=True) print(response.split("### Response:")[-1].strip())
+```
+
+### https://huggingface.co/junaid008/qehwa-pashto-llm#%E2%9C%85-method-5--google-colab-free ✅ Method 5 — Google Colab (Free)
+
+Best for: Trying without any local setup
+Open in Colab and run:
+
+```
+# Install !pip install transformers accelerate -q from transformers import AutoModelForCausalLM, AutoTokenizer import torch tokenizer = AutoTokenizer.from_pretrained("junaid008/qehwa-pashto-llm") model = AutoModelForCausalLM.from_pretrained( "junaid008/qehwa-pashto-llm", torch_dtype = torch.bfloat16, device_map = "auto", ) ALPACA_TEMPLATE = """Below is an instruction in Pashto or English. Write a detailed response in Pashto. ### Instruction: {} ### Response: {}""" def generate(prompt): inputs = tokenizer(ALPACA_TEMPLATE.format(prompt, ""), return_tensors="pt").to("cuda") outputs = model.generate(**inputs, max_new_tokens=500, temperature=0.7, do_sample=True, pad_token_id=tokenizer.eos_token_id) return tokenizer.decode(outputs[0], skip_special_tokens=True).split("### Response:")[-1].strip() print(generate("Tell me about Peshawar")) print(generate("پښتونولي تشریح کړه")) print(generate("پشاور کا مشہور کھانا کیا ہے؟"))
+```
+
+
+```
+# Install !pip install transformers accelerate -q from transformers import AutoModelForCausalLM, AutoTokenizer import torch tokenizer = AutoTokenizer.from_pretrained("junaid008/qehwa-pashto-llm") model = AutoModelForCausalLM.from_pretrained( "junaid008/qehwa-pashto-llm", torch_dtype = torch.bfloat16, device_map = "auto", ) ALPACA_TEMPLATE = """Below is an instruction in Pashto or English. Write a detailed response in Pashto. ### Instruction: {} ### Response: {}""" def generate(prompt): inputs = tokenizer(ALPACA_TEMPLATE.format(prompt, ""), return_tensors="pt").to("cuda") outputs = model.generate(**inputs, max_new_tokens=500, temperature=0.7, do_sample=True, pad_token_id=tokenizer.eos_token_id) return tokenizer.decode(outputs[0], skip_special_tokens=True).split("### Response:")[-1].strip() print(generate("Tell me about Peshawar")) print(generate("پښتونولي تشریح کړه")) print(generate("پشاور کا مشہور کھانا کیا ہے؟"))
+```
+
+### https://huggingface.co/junaid008/qehwa-pashto-llm#cpt-dataset CPT Dataset
+
+- 3.4 million Pakistani Pashto documents
+- Sources: news, books, religious texts, Wikipedia, web crawl
+- Custom cleaned with Pashto-specific Unicode normalization
+
+## https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%97%A3%EF%B8%8F-example-outputs 🗣️ Example Outputs
+Pashto input:
+
+```
+Prompt : د پیښور تاریخ راته ووایه Output : پیښور د نړۍ یو له تر ټولو پخوانیو ښارونو څخه دی چې تاریخ یې زرګونه کاله پخوا ته رسیږي. د دې ښار پخوانی نوم پوشکلاوتي او بیا پروشاپور و. د پیښور د بالاحصار کلا د مغلو او سکهانو د وخت یادګار دی...
+```
+
+
+```
+Prompt : د پیښور تاریخ راته ووایه Output : پیښور د نړۍ یو له تر ټولو پخوانیو ښارونو څخه دی چې تاریخ یې زرګونه کاله پخوا ته رسیږي. د دې ښار پخوانی نوم پوشکلاوتي او بیا پروشاپور و. د پیښور د بالاحصار کلا د مغلو او سکهانو د وخت یادګار دی...
+```
+
+English input:
+
+```
+Prompt : Tell me about Pashtunwali Output : پښتونولي د پښتنو د ژوند هغه لرغونی او سپېڅلی ضابطه اخلاق ده چې د دوی ټولنیز ژوند یې تنظیم کړی دی. په دې کې مېلمه پالنه، غیرت، او د کمزورو ساتنه تر ټولو لوی ارزښتونه ګڼل کېږي...
+```
+
+
+```
+Prompt : Tell me about Pashtunwali Output : پښتونولي د پښتنو د ژوند هغه لرغونی او سپېڅلی ضابطه اخلاق ده چې د دوی ټولنیز ژوند یې تنظیم کړی دی. په دې کې مېلمه پالنه، غیرت، او د کمزورو ساتنه تر ټولو لوی ارزښتونه ګڼل کېږي...
+```
+
+Urdu input:
+
+```
+Prompt : پشتونوالی کیا ہے؟ Output : پښتونولي د پښتنو د ژوند هغه لرغونی او زرین ضابطه اخلاق ده...
+```
+
+
+```
+Prompt : پشتونوالی کیا ہے؟ Output : پښتونولي د پښتنو د ژوند هغه لرغونی او زرین ضابطه اخلاق ده...
+```
+
+## https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%91%A4-author 👤 Author
+Junaid Aslam
+- HuggingFace: [junaid008](https://huggingface.co/junaid008)
+- Built independently as a contribution to Pashto NLP
+[junaid008](https://huggingface.co/junaid008)
+
+## https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%93%9C-license 📜 License
+Apache 2.0 — free to use, modify, and distribute with attribution.
+
+## https://huggingface.co/junaid008/qehwa-pashto-llm#%F0%9F%A4%9D-citation 🤝 Citation
+```
+@misc{qehwa-pashto-llm, author = {Junaid Aslam}, title = {Qehwa — Pashto's First LLM}, year = {2026}, publisher = {HuggingFace}, url = {https://huggingface.co/junaid008/qehwa-pashto-llm} }
+```
+
+
+```
+@misc{qehwa-pashto-llm, author = {Junaid Aslam}, title = {Qehwa — Pashto's First LLM}, year = {2026}, publisher = {HuggingFace}, url = {https://huggingface.co/junaid008/qehwa-pashto-llm} }
+```
+
+Files info
+[NEW](https://huggingface.co/docs/inference-providers)
+[Text Generation](https://huggingface.co/tasks/text-generation)
+[🙋 1 Ask for provider support](https://huggingface.co/spaces/huggingface/InferenceSupport/discussions/8634)
+
+## https://huggingface.co/docs/hub/model-cards#specifying-a-base-model Model tree for junaid008/qehwa-pashto-llm
+Base model
+[Qwen/Qwen2.5-7B](https://huggingface.co/Qwen/Qwen2.5-7B)
+[909](https://huggingface.co/models?other=base_model:finetune:Qwen/Qwen2.5-7B)
+[1 model](https://huggingface.co/models?other=base_model:finetune:junaid008/qehwa-pashto-llm)
+
+## Spaces using junaid008/qehwa-pashto-llm 3
+[junaid008/qehwa_spaces](https://huggingface.co/spaces/junaid008/qehwa_spaces)
+[☕ uzair0/Qehwa](https://huggingface.co/spaces/uzair0/Qehwa)
+[🏆 tayyebwazir56/pashto-llm](https://huggingface.co/spaces/tayyebwazir56/pashto-llm)
+[TOS](https://huggingface.co/terms-of-service)
+[Privacy](https://huggingface.co/privacy)
+[About](https://huggingface.co/huggingface)
+[Careers](https://apply.workable.com/huggingface/)
+[Models](https://huggingface.co/models)
+[Datasets](https://huggingface.co/datasets)
+[Spaces](https://huggingface.co/spaces)
+[Pricing](https://huggingface.co/pricing)
+[Docs](https://huggingface.co/docs)
