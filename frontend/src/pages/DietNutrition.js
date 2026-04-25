@@ -4,14 +4,10 @@ import { ChefHat, Utensils, Heart, Leaf, Globe, Star, Clock, Flame, Search, Filt
 const DietNutrition = () => {
   const [activeTab, setActiveTab] = useState('western');
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [expandedRecipes, setExpandedRecipes] = useState({});
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isFilterOpen, setIsFilterOpen] = useState(true);
 
-  const toggleRecipe = (recipeId) => {
-    setExpandedRecipes(prev => ({
-      ...prev,
-      [recipeId]: !prev[recipeId]
-    }));
-  };
 
   const westernRecipes = [
     {
@@ -91,7 +87,7 @@ const DietNutrition = () => {
       category: 'lunch',
       time: '30 min',
       calories: 350,
-      image: 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=800&q=80',
+      image: '/images/khichdi.png',
       difficulty: 'Easy',
       benefits: ['Easy Digestion', 'High Protein', 'Low GI'],
       ingredients: ['Moong dal', 'Brown rice', 'Turmeric', 'Cumin', 'Ghee', 'Vegetables'],
@@ -108,7 +104,7 @@ const DietNutrition = () => {
       category: 'dinner',
       time: '35 min',
       calories: 380,
-      image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=800&q=80',
+      image: '/images/palak_paneer.png',
       difficulty: 'Medium',
       benefits: ['Iron Rich', 'High Protein', 'Hormone Support'],
       ingredients: ['Spinach', 'Low-fat paneer', 'Onions', 'Tomatoes', 'Ginger-garlic', 'Spices'],
@@ -125,7 +121,7 @@ const DietNutrition = () => {
       category: 'breakfast',
       time: '25 min',
       calories: 320,
-      image: 'https://images.unsplash.com/photo-1628840042765-356cda07504e?w=800&q=80',
+      image: '/images/methi_paratha.png',
       difficulty: 'Medium',
       benefits: ['Blood Sugar Control', 'Fiber Rich', 'Hormone Balance'],
       ingredients: ['Whole wheat flour', 'Fresh methi leaves', 'Yogurt', 'Spices', 'Minimal oil'],
@@ -142,7 +138,7 @@ const DietNutrition = () => {
       category: 'snack',
       time: '15 min',
       calories: 250,
-      image: 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=800&q=80',
+      image: '/images/chana_chaat.png',
       difficulty: 'Easy',
       benefits: ['High Protein', 'Low GI', 'Fiber Rich'],
       ingredients: ['Boiled chickpeas', 'Onions', 'Tomatoes', 'Cucumber', 'Lemon', 'Chaat masala'],
@@ -278,9 +274,13 @@ const DietNutrition = () => {
   ];
 
   const currentRecipes = activeTab === 'western' ? westernRecipes : desiRecipes;
-  const filteredRecipes = selectedCategory === 'all' 
+  let filteredRecipes = selectedCategory === 'all' 
     ? currentRecipes 
     : currentRecipes.filter(r => r.category === selectedCategory);
+
+  if (searchQuery.trim()) {
+    filteredRecipes = filteredRecipes.filter(r => r.name.toLowerCase().includes(searchQuery.toLowerCase()));
+  }
 
   return (
     <div className="p-8 pb-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -296,13 +296,35 @@ const DietNutrition = () => {
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-pink-100 hover:bg-pink-50 transition-colors">
-            <Search className="w-4 h-4 text-slate-600" />
-            <span className="text-sm font-medium text-slate-600 hidden sm:inline">Search</span>
-          </button>
-          <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-pink-100 hover:bg-pink-50 transition-colors">
-            <Filter className="w-4 h-4 text-slate-600" />
-            <span className="text-sm font-medium text-slate-600 hidden sm:inline">Filter</span>
+          <div className="flex items-center gap-2">
+            {isSearchOpen && (
+              <input
+                type="text"
+                placeholder="Search recipes..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="px-4 py-2 rounded-xl border border-pink-200 focus:outline-none focus:ring-2 focus:ring-pink-400 text-sm w-48 transition-all"
+                autoFocus
+              />
+            )}
+            <button 
+              onClick={() => setIsSearchOpen(!isSearchOpen)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-colors ${
+                isSearchOpen ? 'bg-pink-100 text-pink-600 border border-pink-200' : 'bg-white border border-pink-100 hover:bg-pink-50 text-slate-600'
+              }`}
+            >
+              <Search className="w-4 h-4" />
+              <span className="text-sm font-medium hidden sm:inline">Search</span>
+            </button>
+          </div>
+          <button 
+            onClick={() => setIsFilterOpen(!isFilterOpen)}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-colors ${
+              isFilterOpen ? 'bg-pink-100 text-pink-600 border border-pink-200' : 'bg-white border border-pink-100 hover:bg-pink-50 text-slate-600'
+            }`}
+          >
+            <Filter className="w-4 h-4" />
+            <span className="text-sm font-medium hidden sm:inline">Filter</span>
           </button>
         </div>
       </div>
@@ -372,38 +394,46 @@ const DietNutrition = () => {
       </div>
 
       {/* Category Filter */}
-      <div className="flex items-center gap-3 mb-6 overflow-x-auto pb-2">
-        {['all', 'breakfast', 'lunch', 'dinner', 'snack'].map((category) => (
-          <button
-            key={category}
-            onClick={() => setSelectedCategory(category)}
-            className={`px-6 py-2 rounded-full font-bold text-sm whitespace-nowrap transition-all ${
-              selectedCategory === category
-                ? 'bg-pink-500 text-white shadow-lg shadow-pink-500/30'
-                : 'bg-white text-slate-600 border border-pink-100 hover:bg-pink-50'
-            }`}
-          >
-            {category.charAt(0).toUpperCase() + category.slice(1)}
-          </button>
-        ))}
-      </div>
+      {isFilterOpen && (
+        <div className="flex items-center gap-3 mb-6 overflow-x-auto pb-2 transition-all duration-300 ease-in-out">
+          {['all', 'breakfast', 'lunch', 'dinner', 'snack'].map((category) => (
+            <button
+              key={category}
+              onClick={() => setSelectedCategory(category)}
+              className={`px-6 py-2 rounded-full font-bold text-sm whitespace-nowrap transition-all ${
+                selectedCategory === category
+                  ? 'bg-pink-500 text-white shadow-lg shadow-pink-500/30'
+                  : 'bg-white text-slate-600 border border-pink-100 hover:bg-pink-50'
+              }`}
+            >
+              {category.charAt(0).toUpperCase() + category.slice(1)}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Recipes Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {filteredRecipes.map((recipe) => (
-          <RecipeCard 
-            key={`${activeTab}-${recipe.id}`}
-            recipe={recipe} 
-            isExpanded={expandedRecipes[recipe.id] || false}
-            onToggle={() => toggleRecipe(recipe.id)}
-          />
-        ))}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-start">
+        {filteredRecipes.length > 0 ? (
+          filteredRecipes.map((recipe) => (
+            <RecipeCard 
+              key={`${activeTab}-${recipe.id}`}
+              recipe={recipe} 
+            />
+          ))
+        ) : (
+          <div className="col-span-full py-12 text-center bg-white/50 rounded-3xl border border-white">
+            <Utensils className="w-12 h-12 text-pink-300 mx-auto mb-4" />
+            <h3 className="text-xl font-bold text-slate-700 mb-2">No recipes found</h3>
+            <p className="text-slate-500">Try adjusting your search or filters.</p>
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
-const RecipeCard = ({ recipe, isExpanded, onToggle }) => {
+const RecipeCard = ({ recipe }) => {
   
   return (
     <div className="glass-card rounded-3xl overflow-hidden bg-white/60 border border-white/60 hover:shadow-xl transition-all group">
@@ -444,50 +474,41 @@ const RecipeCard = ({ recipe, isExpanded, onToggle }) => {
           ))}
         </div>
 
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            console.log(`Button clicked for recipe ${recipe.id}`);
-            onToggle();
-          }}
-          className="w-full py-3 rounded-xl bg-pink-500 text-white font-bold hover:bg-pink-600 transition-colors"
-        >
-          {isExpanded ? 'Hide Recipe' : 'View Recipe'}
-        </button>
+        <div className="grid grid-rows-[0fr] opacity-0 group-hover:grid-rows-[1fr] group-hover:opacity-100 transition-all duration-500 ease-in-out">
+          <div className="overflow-hidden">
+            <div className="mt-6 pt-6 border-t border-pink-100 space-y-4">
+              <div>
+                <h4 className="font-bold text-slate-800 mb-2 flex items-center gap-2">
+                  <Utensils className="w-4 h-4 text-pink-500" />
+                  Ingredients
+                </h4>
+                <ul className="space-y-1">
+                  {recipe.ingredients.map((ingredient, index) => (
+                    <li key={index} className="text-sm text-slate-600 flex items-start gap-2">
+                      <span className="text-pink-500 mt-1">•</span>
+                      <span>{ingredient}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
 
-        {isExpanded && (
-          <div className="mt-6 pt-6 border-t border-pink-100 space-y-4">
-            <div>
-              <h4 className="font-bold text-slate-800 mb-2 flex items-center gap-2">
-                <Utensils className="w-4 h-4 text-pink-500" />
-                Ingredients
-              </h4>
-              <ul className="space-y-1">
-                {recipe.ingredients.map((ingredient, index) => (
-                  <li key={index} className="text-sm text-slate-600 flex items-start gap-2">
-                    <span className="text-pink-500 mt-1">•</span>
-                    <span>{ingredient}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-bold text-slate-800 mb-2 flex items-center gap-2">
-                <ChefHat className="w-4 h-4 text-pink-500" />
-                Instructions
-              </h4>
-              <ol className="space-y-2">
-                {recipe.instructions.map((instruction, index) => (
-                  <li key={index} className="text-sm text-slate-600 flex items-start gap-2">
-                    <span className="font-bold text-pink-500">{index + 1}.</span>
-                    <span>{instruction}</span>
-                  </li>
-                ))}
-              </ol>
+              <div>
+                <h4 className="font-bold text-slate-800 mb-2 flex items-center gap-2">
+                  <ChefHat className="w-4 h-4 text-pink-500" />
+                  Instructions
+                </h4>
+                <ol className="space-y-2">
+                  {recipe.instructions.map((instruction, index) => (
+                    <li key={index} className="text-sm text-slate-600 flex items-start gap-2">
+                      <span className="font-bold text-pink-500">{index + 1}.</span>
+                      <span>{instruction}</span>
+                    </li>
+                  ))}
+                </ol>
+              </div>
             </div>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

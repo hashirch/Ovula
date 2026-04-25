@@ -6,9 +6,8 @@ import asyncio
 import threading
 from dotenv import load_dotenv
 
-from app.db.session import engine
-from app.models.user import Base
-from app.api.v1 import auth, logs, insights, prediction, chat, speech
+from app.db.session import engine, Base
+from app.api.v1 import auth, logs, insights, prediction, chat
 from app.core.config import Config
 
 # Load environment variables
@@ -19,11 +18,14 @@ Base.metadata.create_all(bind=engine)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Warm up the LLM model in background on startup so first request is instant"""
+    """Warm up BOTH LLM models on startup so first request is instant.
+    Pins English (llama3.2) and Urdu (qalb-llm) in memory permanently.
+    """
     from app.services.llm import llm_service
     def _warmup():
         try:
-            llm_service.warmup_model()
+            # No arg = warm up both English + Urdu models
+            asyncio.run(llm_service.warmup_model())
         except Exception as e:
             print(f"[warmup] non-fatal: {e}")
     threading.Thread(target=_warmup, daemon=True).start()
@@ -46,12 +48,11 @@ app.add_middleware(
 )
 
 # Include routers
-app.include_router(auth, prefix="/auth", tags=["Authentication"])
-app.include_router(logs, prefix="/logs", tags=["Logs"])
-app.include_router(chat, prefix="/chat", tags=["AI Chat"])
-app.include_router(speech, prefix="/speech", tags=["Speech"])
-app.include_router(insights, prefix="/insights", tags=["Insights"])
-app.include_router(prediction, prefix="/prediction", tags=["PCOS Prediction"])
+app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
+app.include_router(logs.router, prefix="/logs", tags=["Logs"])
+app.include_router(chat.router, prefix="/chat", tags=["AI Chat"])
+app.include_router(insights.router, prefix="/insights", tags=["Insights"])
+app.include_router(prediction.router, prefix="/prediction", tags=["PCOS Prediction"])
 
 @app.get("/")
 async def root():

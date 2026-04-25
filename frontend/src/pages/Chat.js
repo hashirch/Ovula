@@ -11,14 +11,14 @@ const Chat = () => {
   const [availableModels, setAvailableModels] = useState([]);
   const [selectedModel, setSelectedModel] = useState('');
   const [modelStatus, setModelStatus] = useState(null);
-  const [translateToUrdu, setTranslateToUrdu] = useState(false);
-  const [translateToPashto, setTranslateToPashto] = useState(false);
+  const [useUrdu, setUseUrdu] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [activeMessageId, setActiveMessageId] = useState(null);
   const messagesEndRef = useRef(null);
   const recognitionRef = useRef(null);
   const synthRef = useRef(window.speechSynthesis);
+  const audioRef = useRef(null);
 
   useEffect(() => {
     fetchChatHistory();
@@ -40,9 +40,6 @@ const Chat = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  // Detect if text contains Urdu script
-  const containsUrdu = (text) => /[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]/.test(text);
-
   // Initialize Speech Recognition (Web Speech API)
   const initializeSpeechRecognition = () => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -56,6 +53,8 @@ const Chat = () => {
     recognition.continuous = true;
     recognition.interimResults = true;
     recognition.maxAlternatives = 1;
+    // Always use en-US so Urdu speech is transcribed as Roman Urdu
+    // (e.g. "mujhe PCOS hai" instead of "مجھے پی سی او ایس ہے")
     recognition.lang = 'en-US';
 
     let finalTranscript = '';
@@ -133,10 +132,9 @@ const Chat = () => {
       return;
     }
 
-    // Explicitly request mic permission first — this triggers the browser prompt
+    // Explicitly request mic permission first
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      // Stop the stream immediately — we just needed the permission grant
       stream.getTracks().forEach(track => track.stop());
     } catch (err) {
       console.error('Mic permission denied:', err);
@@ -149,117 +147,91 @@ const Chat = () => {
     }
 
     try {
-      // Set language based on active translation
-      if (translateToUrdu) {
-        recognitionRef.current.lang = 'ur-PK';
-      } else if (translateToPashto) {
-        recognitionRef.current.lang = 'ps-AF';
-      } else {
-        recognitionRef.current.lang = 'en-US';
-      }
+      // Reinitialize to force en-US (prevents browser from auto-detecting Urdu script)
+      initializeSpeechRecognition();
+      recognitionRef.current.lang = 'en-US';
       recognitionRef.current.start();
     } catch (error) {
-      // Already started — stop and restart
       recognitionRef.current.stop();
       setTimeout(() => {
-        try { recognitionRef.current.start(); } catch (e) { /* ignore */ }
+        try {
+          recognitionRef.current.lang = 'en-US';
+          recognitionRef.current.start();
+        } catch (e) { /* ignore */ }
       }, 200);
     }
   };
 
-  // Text-to-Speech using Web Speech API (SpeechSynthesis)
-  const speakText = (text, msgId) => {
+  // Text-to-Speech using Backend Edge TTS
+  const speakText = async (text, msgId) => {
     if (!text) return;
-    const synth = synthRef.current;
-    if (!synth) {
-      toast.error('Speech synthesis not supported');
-      return;
-    }
-
+    
     // Toggle off if same message
     if (isSpeaking && activeMessageId === msgId) {
       stopSpeaking();
       return;
     }
 
-    // Stop any current speech
     stopSpeaking();
 
     // Clean text: remove markdown, emojis, disclaimers
     let cleanText = text.split('⚠️')[0].trim();
     cleanText = cleanText.replace(/[*#_`~>]/g, '');
-    cleanText = cleanText.replace(/\[.*?\]\(.*?\)/g, ''); // remove links
-    cleanText = cleanText.replace(/[\u{1F600}-\u{1F9FF}]/gu, ''); // remove emojis
+    cleanText = cleanText.replace(/\[.*?\]\(.*?\)/g, '');
+    cleanText = cleanText.replace(/[\u{1F600}-\u{1F9FF}]/gu, '');
     cleanText = cleanText.trim();
 
     if (!cleanText) return;
 
-    // Break long text into chunks (SpeechSynthesis has a ~200 char limit on some browsers)
-    const chunks = [];
-    const sentences = cleanText.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [cleanText];
-    let currentChunk = '';
-    for (const sentence of sentences) {
-      if ((currentChunk + sentence).length > 180) {
-        if (currentChunk) chunks.push(currentChunk.trim());
-        currentChunk = sentence;
-      } else {
-        currentChunk += sentence;
-      }
-    }
-    if (currentChunk) chunks.push(currentChunk.trim());
-
-    // Detect language
-    const isUrduText = containsUrdu(cleanText);
-    const lang = isUrduText ? 'ur-PK' : 'en-US';
-
-    // Pick a good voice
-    const voices = synth.getVoices();
-    let selectedVoice = null;
-    if (isUrduText) {
-      selectedVoice = voices.find(v => v.lang.startsWith('ur')) ||
-                      voices.find(v => v.lang.startsWith('hi')) || null;
-    } else {
-      // Prefer a natural-sounding English voice
-      selectedVoice = voices.find(v => v.lang === 'en-US' && v.name.includes('Google')) ||
-                      voices.find(v => v.lang === 'en-US' && v.name.includes('Natural')) ||
-                      voices.find(v => v.lang === 'en-US' && !v.localService) ||
-                      voices.find(v => v.lang === 'en-US') ||
-                      voices.find(v => v.lang.startsWith('en')) || null;
-    }
-
     setIsSpeaking(true);
     setActiveMessageId(msgId);
-
-    // Speak chunks sequentially
-    const speakChunk = (index) => {
-      if (index >= chunks.length) {
+    
+    try {
+        const isUrduText = /[\u0600-\u06FF]/.test(cleanText);
+        const lang = isUrduText ? 'ur' : 'en';
+        
+        const response = await axios.post('/chat/tts', {
+            text: cleanText,
+            lang: lang
+        }, {
+            responseType: 'blob'
+        });
+        
+        const audioUrl = URL.createObjectURL(response.data);
+        const audio = new Audio(audioUrl);
+        audioRef.current = audio;
+        
+        audio.onended = () => {
+            setIsSpeaking(false);
+            setActiveMessageId(null);
+            URL.revokeObjectURL(audioUrl);
+        };
+        
+        audio.onerror = () => {
+            setIsSpeaking(false);
+            setActiveMessageId(null);
+            toast.error('Failed to play audio');
+            URL.revokeObjectURL(audioUrl);
+        };
+        
+        await audio.play();
+    } catch (error) {
+        console.error("TTS Error:", error);
+        toast.error("Failed to generate speech");
         setIsSpeaking(false);
         setActiveMessageId(null);
-        return;
-      }
-
-      const utterance = new SpeechSynthesisUtterance(chunks[index]);
-      utterance.lang = lang;
-      utterance.rate = 0.95;
-      utterance.pitch = 1.0;
-      if (selectedVoice) utterance.voice = selectedVoice;
-
-      utterance.onend = () => speakChunk(index + 1);
-      utterance.onerror = (e) => {
-        console.error('TTS chunk error:', e);
-        setIsSpeaking(false);
-        setActiveMessageId(null);
-      };
-
-      synth.speak(utterance);
-    };
-
-    speakChunk(0);
+    }
   };
 
   // Stop Speaking
   const stopSpeaking = () => {
-    synthRef.current.cancel();
+    if (synthRef.current) {
+      synthRef.current.cancel();
+    }
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
     setIsSpeaking(false);
     setActiveMessageId(null);
   };
@@ -315,10 +287,9 @@ const Chat = () => {
                     || axios.defaults.headers.common['Authorization']?.replace('Bearer ', '')
                     || sessionStorage.getItem('token');
 
-      // Use the same base URL that axios uses (already patched in prod build)
       const apiBase = axios.defaults.baseURL
                       ? axios.defaults.baseURL.replace(/\/$/, '')
-                      : (window.location.origin === `${window.location.protocol}//${window.location.host}` ? '' : '');
+                      : '';
 
       const res = await fetch(
         apiBase + '/chat/stream',
@@ -331,8 +302,7 @@ const Chat = () => {
           body: JSON.stringify({
             message: userMessage,
             model_type: selectedModel || undefined,
-            translate_to_urdu: translateToUrdu,
-            translate_to_pashto: translateToPashto,
+            use_urdu: useUrdu,
           }),
         }
       );
@@ -354,7 +324,7 @@ const Chat = () => {
 
         buffer += decoder.decode(value, { stream: true });
         const lines = buffer.split('\n');
-        buffer = lines.pop(); // keep incomplete line
+        buffer = lines.pop();
 
         for (const line of lines) {
           if (!line.startsWith('data: ')) continue;
@@ -362,7 +332,6 @@ const Chat = () => {
             const data = JSON.parse(line.slice(6));
             if (data.token) {
               accumulated += data.token;
-              // Update message in place as tokens stream in
               setMessages(prev =>
                 prev.map(m =>
                   m.id === tempId
@@ -378,7 +347,7 @@ const Chat = () => {
         }
       }
 
-      // Finalize the message with metadata
+      // Finalize
       setMessages(prev =>
         prev.map(m =>
           m.id === tempId
@@ -430,7 +399,6 @@ const Chat = () => {
         thinking = parts[0].replace('<think>', '').trim();
         display_text = parts[1].trim();
       } else {
-        // Still thinking (streaming)
         const parts = text.split('<think>');
         thinking = parts[1].trim();
         display_text = '';
@@ -457,16 +425,10 @@ const Chat = () => {
           </div>
         )}
         {display_text && textWithoutMarkdown.split('\n').map((line, i) => (
-          <p key={i} className="mb-2 last:mb-0">{line}</p>
+          <p key={i} className="mb-2 last:mb-0" dir={/[\u0600-\u06FF]/.test(line) ? 'rtl' : 'ltr'}>{line}</p>
         ))}
       </div>
     );
-  };
-  
-  const isUrduText = (text) => {
-    // Check if text contains Urdu characters (Unicode range U+0600 to U+06FF)
-    const urduRegex = /[\u0600-\u06FF]/;
-    return urduRegex.test(text);
   };
 
   const suggestedQuestions = [
@@ -507,30 +469,16 @@ const Chat = () => {
             </div>
           </div>
           <div className="flex gap-2">
-              <label className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-slate-50 cursor-pointer transition-colors border border-slate-200">
-                <input
-                  type="checkbox"
-                  checked={translateToUrdu}
-                  onChange={(e) => {
-                    setTranslateToUrdu(e.target.checked);
-                    if(e.target.checked) setTranslateToPashto(false);
-                  }}
-                  className="w-4 h-4 rounded border-slate-300 text-pink-500 focus:ring-pink-500"
-                />
-                <span className="text-sm font-medium text-slate-700">اردو</span>
-              </label>
-              <label className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-slate-50 cursor-pointer transition-colors border border-slate-200">
-                <input
-                  type="checkbox"
-                  checked={translateToPashto}
-                  onChange={(e) => {
-                    setTranslateToPashto(e.target.checked);
-                    if(e.target.checked) setTranslateToUrdu(false);
-                  }}
-                  className="w-4 h-4 rounded border-slate-300 text-pink-500 focus:ring-pink-500"
-                />
-                <span className="text-sm font-medium text-slate-700">پښتو</span>
-              </label>
+              <button
+                onClick={() => setUseUrdu(!useUrdu)}
+                className={`px-4 py-2.5 rounded-xl text-sm font-bold transition-all ${
+                  useUrdu 
+                    ? 'bg-emerald-500 text-white shadow-md shadow-emerald-200' 
+                    : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                }`}
+              >
+                اردو
+              </button>
               {messages.length > 0 && (
                 <button 
                   onClick={clearHistory}
@@ -594,20 +542,20 @@ const Chat = () => {
                     </div>
                   </div>
 
-                  {/* AI Response — show immediately when streaming OR when response exists */}
+                  {/* AI Response */}
                   {(msg.response || msg.isStreaming) && (
                     <div className="flex gap-4 max-w-[85%]">
                       <div className="w-10 h-10 rounded-full bg-pink-500 flex-shrink-0 flex items-center justify-center text-white shadow-lg shadow-pink-200 mt-auto">
                         <Sparkles className="w-5 h-5" />
                       </div>
-                      <div className={`rounded-3xl px-6 py-4 text-[15px] leading-relaxed shadow-sm bg-pink-50 text-slate-800 rounded-bl-none border border-pink-100 ${isUrduText(msg.response) ? 'text-right' : ''}`} dir={isUrduText(msg.response) ? 'rtl' : 'ltr'}>
+                      <div className="rounded-3xl px-6 py-4 text-[15px] leading-relaxed shadow-sm bg-pink-50 text-slate-800 rounded-bl-none border border-pink-100">
                         <div className="whitespace-pre-wrap">
                           {msg.response ? formatMessage(msg.response) : null}
                           {msg.isStreaming && (
                             <span className="inline-block w-2 h-4 bg-pink-400 ml-0.5 animate-pulse rounded-sm" />
                           )}
                         </div>
-                        {/* Only show metadata row once streaming is done */}
+                        {/* Metadata row after streaming is done */}
                         {!msg.isStreaming && (
                         <div className="mt-3 pt-3 border-t border-pink-200 flex items-center justify-between text-xs text-slate-500">
                           <div className="flex items-center gap-2">

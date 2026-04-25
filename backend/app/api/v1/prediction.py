@@ -11,7 +11,6 @@ import os
 import numpy as np
 from datetime import datetime
 
-from app.core.config import Config
 from app.db.session import get_db
 from app.core.security import get_current_user
 from app.models.user import User, UserHealthProfile, PCOSPrediction
@@ -24,7 +23,12 @@ from app.schemas.base import (
 
 router = APIRouter()
 
-MODEL_PATH = Config.ML_MODEL_PATH
+# Load the trained model — check multiple paths for local dev vs deployment
+_api_v1_dir = os.path.dirname(__file__)                        # app/api/v1
+_backend_dir = os.path.dirname(os.path.dirname(os.path.dirname(_api_v1_dir)))  # backend/
+_local_path = os.path.join(_backend_dir, '..', 'ml-models', 'models', 'saved', 'pcos_model.pkl')
+_deploy_path = os.path.join(_backend_dir, 'models', 'pcos_model.pkl')
+MODEL_PATH = _local_path if os.path.exists(_local_path) else _deploy_path
 
 
 def load_model():

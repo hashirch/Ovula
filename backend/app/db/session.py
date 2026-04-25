@@ -1,9 +1,16 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from app.core.config import Config
+import os
+from dotenv import load_dotenv
 
-DATABASE_URL = Config.DATABASE_URL
+load_dotenv()
+
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./pcos_tracker.db")
+
+# Fix for PostgreSQL URL format (postgres:// -> postgresql://)
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
 # Configure connection args based on database type
 connect_args = {}

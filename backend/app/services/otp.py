@@ -1,12 +1,12 @@
 import secrets
 import os
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
-import resend
 
 load_dotenv()
-
-resend.api_key = os.getenv("RESEND_API_KEY")
 
 
 class OTPService:
@@ -15,6 +15,11 @@ class OTPService:
     def __init__(self):
         self.app_name = os.getenv("APP_NAME", "Ovula")
         self.app_url = os.getenv("APP_URL", "http://localhost:3000")
+        self.smtp_server = os.getenv("SMTP_SERVER", "smtp.gmail.com")
+        self.smtp_port = int(os.getenv("SMTP_PORT", "587"))
+        self.smtp_username = os.getenv("SMTP_USERNAME", "")
+        self.smtp_password = os.getenv("SMTP_PASSWORD", "")
+        self.from_email = os.getenv("FROM_EMAIL", self.smtp_username)
 
     # ---------------- OTP ----------------
     @staticmethod
@@ -25,21 +30,29 @@ class OTPService:
     def get_expiry_time(minutes: int = 5):
         return datetime.utcnow() + timedelta(minutes=minutes)
 
+    @staticmethod
+    def is_otp_expired(expires_at) -> bool:
+        return datetime.utcnow() > expires_at
+
     # ---------------- EMAIL ----------------
     def send_email(self, to_email: str, subject: str, html_content: str) -> bool:
         try:
-            resend.Emails.send({
-                "from": f"{self.app_name} <onboarding@resend.dev>",
-                "to": to_email,
-                "subject": subject,
-                "html": html_content
-            })
+            msg = MIMEMultipart("alternative")
+            msg["Subject"] = subject
+            msg["From"] = f"{self.app_name} <{self.from_email}>"
+            msg["To"] = to_email
+            msg.attach(MIMEText(html_content, "html"))
 
-            print("Email sent successfully")
+            with smtplib.SMTP(self.smtp_server, self.smtp_port) as server:
+                server.starttls()
+                server.login(self.smtp_username, self.smtp_password)
+                server.sendmail(self.from_email, to_email, msg.as_string())
+
+            print(f"Email sent successfully to {to_email}")
             return True
 
         except Exception as e:
-            print("Email error:", e)
+            print(f"Email error: {e}")
             return False
 
     def send_verification_email(self, username: str, email: str, otp_code: str) -> bool:

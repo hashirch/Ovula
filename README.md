@@ -70,8 +70,8 @@ PCOS affects roughly 1 in 10 women globally. Ovula bridges the gap between gener
 - **Enhanced Prediction** — PCOS risk scoring (Low to Very High) with 21 contributing factors.
 - **Categorized Recommendations** — Medical, lifestyle, and dietary advice generated per user profile.
 - **LLM Integration** — Fine-tuned Llama 3.2 1B model specialized for PCOS domain.
-- **Multi-lingual Support** — Google Translate integration for seamless Urdu/English support.
-- **Production Ready** — Optimized for deployment on Render (Backend) and Vercel (Frontend).
+- **Native Multi-lingual Support** — Dedicated Urdu model (`qalb-llm-urdu-improved`) for natural, culturally relevant conversations.
+- **Production Optimized** — CPU-only server optimizations including model pinning (keep-alive), 8-thread parallelism, and dual-model warmup.
 
 ---
 
@@ -91,7 +91,7 @@ Capacitor / Android SDK
 FastAPI / SQLAlchemy
 ├── Pydantic V2         — high-performance validation
 ├── JWT / Passlib       — secure authentication
-├── Google Translate    — multi-lingual services
+├── Ollama Service      — dual-model inference management
 └── SQLite / PostgreSQL — flexible data storage
 ```
 
@@ -109,7 +109,8 @@ React 18 / Vite
 scikit-learn / Ollama
 ├── PCOS Prediction     — KNN, Decision Tree, Logistic Reg, Naive Bayes
 ├── LLM Fine-Tuning     — Llama 3.2 1B (Quantized Q8_0 GGUF)
-└── Domain Expertise    — PCOS-specific system prompts & datasets
+├── Urdu Optimization   — Qalb LLM (Urdu-Improved) for native NLP
+└── Production Config   — 8-thread CPU pinning & persistent warmup
 ```
 
 ---
@@ -149,10 +150,10 @@ The project follows a modern, professionally organized architecture with clear s
 ### Components
 
 1. **`frontend/`**: React web application and Capacitor wrapper (`frontend/android`) with modernized glassmorphism design.
-2. **`backend/`**: FastAPI server handling authentication, multi-lingual AI chat, and ML prediction logic.
+2. **`backend/`**: FastAPI server handling authentication, native multi-lingual AI chat, and ML prediction logic.
 3. **`ml-models/`**: Domain-specific LLM fine-tuning workspace and classical ML training pipeline.
-5. **`docs/`**: Technical documentation, UML diagrams, and high-fidelity screenshots.
-6. **`scripts/`**: Automation scripts for development, testing, and production deployment.
+4. **`docs/`**: Technical documentation, UML diagrams, and high-fidelity screenshots.
+5. **`scripts/`**: Automation scripts for development, testing, and production deployment.
 
 ---
 
@@ -224,27 +225,24 @@ The project follows a modern, professionally organized architecture with clear s
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                              │
 │  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐         │
-│  │ Auth Service     │  │ LLM Service      │  │ Translation      │         │
-│  │ (auth.py)        │  │ (llm_service.py) │  │ Service          │         │
-│  │                  │  │                  │  │(translation_     │         │
-│  │ • JWT tokens     │  │ • Model mgmt     │  │ service.py)      │         │
-│  │ • Password hash  │  │ • Prompt eng     │  │                  │         │
-│  │ • User validation│  │ • Context build  │  │ • Google         │         │
-│  └────────┬─────────┘  │ • Response gen   │  │   Translate      │         │
-│           │            │ • Off-topic det  │  │ • Preserve terms │         │
-│           │            └────────┬─────────┘  │ • Clean output   │         │
-│           │                     │            └────────┬─────────┘         │
-│           │                     │                     │                    │
+│  │ Auth Service     │  │ LLM Service      │  │ Urdu NLP Service │         │
+│  │ (auth.py)        │  │ (llm.py)         │  │ (qalb-urdu)      │         │
+│  │                  │  │                  │  │                  │         │
+│  │ • JWT tokens     │  │ • Model mgmt     │  │ • Native Urdu    │         │
+│  │ • Password hash  │  │ • Prompt eng     │  │ • RTL handling   │         │
+│  │ • User validation│  │ • Context build  │  │ • Token optimization│       │
+│  └────────┬─────────┘  │ • Response gen   │  │ • Cultural nuance│         │
+│           │            │ • Off-topic det  │  └────────┬─────────┘         │
+│           │            └────────┬─────────┘           │                    │
 │           │                     │                     │                    │
 │  ┌────────▼─────────┐  ┌────────▼─────────┐  ┌──────▼──────────┐         │
 │  │ OTP Service      │  │ Model Selector   │  │ Text Processing │         │
-│  │ (otp_service.py) │  │                  │  │                  │         │
-│  │                  │  │ • Ollama Base    │  │ • Emoji removal  │         │
-│  │ • Email sending  │  │ • Fine-tuned     │  │ • RTL detection  │         │
-│  │ • Code generation│  │ • Gemma          │  │ • Formatting     │         │
-│  │ • Verification   │  │ • Mistral        │  │                  │         │
-│  └──────────────────┘  │ • Llama2         │  └──────────────────┘         │
-│                        └──────────────────┘                                 │
+│  │ (otp.py)         │  │                  │  │                  │         │
+│  │                  │  │ • English Model  │  │ • RTL detection  │         │
+│  │ • Email sending  │  │ • Urdu Model     │  │ • Emoji filtering│         │
+│  │ • Code generation│  │ • Keep-alive -1  │  │ • Disclaimer injection│     │
+│  │ • Verification   │  │ • 8-thread CPU   │  │                  │         │
+│  └──────────────────┘  └──────────────────┘  └──────────────────┘         │
 │                                                                              │
 └─────────────────────────────────────────────────────────────────────────────┘
 
@@ -334,11 +332,11 @@ User Message → /chat/ → LLM Service
                     ↓
             ┌───────┴────────┐
             │                │
-    translate_to_urdu?   English Response
+    Use Urdu Model?      English Model
             │                │
             ↓                │
-    Translation Service      │
-    (Google Translate)       │
+    Qalb-LLM-Urdu            │
+    (Native Inference)       │
             │                │
             └────────┬───────┘
                      ↓
@@ -401,13 +399,12 @@ React Application
 FastAPI Application
 ├── fastapi              → Web framework
 ├── sqlalchemy           → ORM
-├── pydantic             → Validation
+├── pydantic             │ Validation
 ├── python-jose          → JWT
 ├── passlib              → Password hashing
-├── googletrans          → Translation
+├── httpx                → Async HTTP (Ollama)
 ├── scikit-learn         → ML models
-├── requests             → HTTP client (Ollama)
-└── python-multipart     → File uploads
+└── requests             → Sync HTTP
 ```
 
 ### Mobile Dependencies (Hybrid)
@@ -440,51 +437,49 @@ LLM Pipeline
 ```
 ovula/
 │
-├── 📂 backend/                     # Backend FastAPI application
-│   ├── 📂 app/                     # Main application package
-│   │   ├── 📂 api/                 # API routes/endpoints
-│   │   │   └── 📂 v1/              # API versioning
-│   │   ├── 📂 core/                # Core configuration, security
-│   │   ├── 📂 db/                  # Database connection, session
-│   │   ├── 📂 models/              # SQLAlchemy models
-│   │   ├── 📂 schemas/             # Pydantic schemas
-│   │   ├── 📂 services/            # Business logic / services
-│   │   └── main.py                 # App entry point
-│   ├── main.py                     # Root entry point
+├── 📂 frontend/                    # React Web Application
+│   ├── public/
+│   │   ├── index.html
+│   │   └── ovula-logo.png
+│   ├── src/
+│   │   ├── components/             # Reusable components
+│   │   ├── contexts/               # React contexts
+│   │   ├── pages/                  # Application pages
+│   │   ├── App.js
+│   │   ├── index.js
+│   │   └── index.css
+│   ├── package.json
+│   └── tailwind.config.js
+│
+├── 📂 backend/                     # FastAPI Backend
+│   ├── app/
+│   │   ├── api/                    # API routes
+│   │   ├── core/                   # Config & Security
+│   │   ├── db/                     # Database session
+│   │   ├── models/                 # SQLAlchemy models
+│   │   ├── schemas/                # Pydantic schemas
+│   │   └── services/               # LLM, OTP, etc.
+│   ├── main.py                     # App entry point
+│   ├── pcos_tracker.db             # SQLite database
 │   ├── .env                        # Environment variables
-│   └── requirements.txt            # Backend dependencies
+│   └── requirements.txt
 │
-├── 📂 frontend/                    # Frontend React application
-│   ├── 📂 public/                  # Static assets
-│   ├── 📂 src/                     # React source code
-│   │   ├── 📂 components/          # Reusable components
-│   │   ├── 📂 contexts/            # Context API
-│   │   ├── 📂 pages/               # Page components
-│   │   ├── App.js                  # Main component
-│   │   └── index.js                # React entry point
-│   └── package.json                # Frontend dependencies
+├── 📂 mobile/                      # Capacitor Mobile App
+│   ├── android/                    # Android Project
+│   └── capacitor.config.ts         # Capacitor Config
 │
-├── 📂 mobile/                      # Mobile application (Kotlin/Android)
-│   ├── 📂 app/                     # Android app source
-│   └── build.gradle                # Gradle configuration
+├── 📂 ml-models/                   # Machine Learning & AI
+│   ├── Modelfile                   # Primary fine-tuned Modelfile
+│   ├── Modelfile_PCOS              # PCOS-specific tuning config
+│   ├── llama-3.2-1b-instruct.Q8_0.gguf
+│   └── finetune_pcos_model.ipynb
 │
-├── 📂 ml-models/                   # Machine learning models and notebooks
-│   ├── pcos_model.pkl              # Saved prediction model
-│   └── finetune_pcos_model.ipynb   # Training notebook
-│
-├── 📂 docs/                        # Project documentation
-│   ├── screenshots/                # Application screenshots
-│   └── architecture/               # Design diagrams
-│
-├── 📂 scripts/                     # Deployment and utility scripts
-│   ├── run_rsync.py                # Deployment script
-│   └── start_production.sh         # Production startup script
-│
-├── .env.example                    # Template for env variables
-├── .gitignore                      # Git ignored files
-├── ecosystem.config.js             # PM2 configuration
-├── README.md                       # Project documentation
-└── LICENSE                         # MIT License
+├── 📂 docs/                        # Documentation & Assets
+├── 📂 scripts/                     # Utility Scripts
+├── .gitignore
+├── README.md
+└── LICENSE
+```
 ```
 
 ---
@@ -585,15 +580,15 @@ cd ovula
 Or manually:
 
 ```bash
-cd src/backend
+cd backend
 pip install -r requirements.txt
 # Copy .env.example to .env and fill in values
-python main.py
+python start_server.py
 ```
 
 Backend runs at `http://localhost:8000` — API docs at `http://localhost:8000/docs`.
 
-**Note:** The backend includes Urdu translation support using Google Translate (`googletrans==4.0.0rc1`).
+**Note:** The backend uses Ollama for local LLM inference. Ensure Ollama is running.
 
 ### 3. Run the Web Frontend
 
@@ -605,17 +600,17 @@ Backend runs at `http://localhost:8000` — API docs at `http://localhost:8000/d
 Or manually:
 
 ```bash
-cd src/frontend
+cd frontend
 npm install
-npm start
+npm run dev
 ```
 
-Frontend runs at `http://localhost:3000`.
+Frontend runs at `http://localhost:5173` (Vite).
 
 ### 4. Run the Mobile App (Capacitor)
 
 ```bash
-cd src/frontend
+cd frontend
 # Ensure frontend is built first
 npm run build
 # Sync assets and run on connected device

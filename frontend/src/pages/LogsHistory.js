@@ -13,11 +13,7 @@ const LogsHistory = () => {
     periodStatus: ''
   });
 
-useEffect(() => {
-  fetchLogs();
-}, [fetchLogs]);
-
-  const fetchLogs = async () => {
+  const fetchLogs = React.useCallback(async () => {
     try {
       const params = new URLSearchParams();
       if (filters.startDate) params.append('start_date', filters.startDate);
@@ -37,7 +33,11 @@ useEffect(() => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters.startDate, filters.endDate, filters.periodStatus]);
+
+  useEffect(() => {
+    fetchLogs();
+  }, [fetchLogs]);
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;

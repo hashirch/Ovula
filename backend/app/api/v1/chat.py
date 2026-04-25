@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, FileResponse
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
 from typing import List, Optional
+from pydantic import BaseModel
 import time
 import json
 import asyncio
@@ -18,7 +19,13 @@ from app.schemas.chat import (
 )
 from app.core.security import get_current_user
 from app.services.llm import llm_service
-from app.services.translation import translation_service
+from app.services.speech import speech_service
+import tempfile
+import os
+
+class TTSRequest(BaseModel):
+    text: str
+    lang: str = "ur"
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -38,15 +45,11 @@ async def send_chat_message(
             user_message=chat.message,
             user_id=current_user.id,
             db=db,
-            model_override=chat.model_type,
-            translate_to_urdu=chat.translate_to_urdu or False,
-            translate_to_pashto=chat.translate_to_pashto or False
+            use_urdu=chat.use_urdu,
         )
         
         response_time = time.time() - start_time
-        
-        # Determine which model was actually used
-        model_used = chat.model_type or llm_service.model_type
+        model_used = llm_service.urdu_model if chat.use_urdu else llm_service.model_type
         
         # Save chat to database
         db_chat = ChatMessage(
@@ -58,7 +61,6 @@ async def send_chat_message(
         db.commit()
         db.refresh(db_chat)
         
-        # Create response with additional metadata
         response = ChatMessageResponse(
             id=db_chat.id,
             message=db_chat.message,
@@ -69,7 +71,6 @@ async def send_chat_message(
         )
         
         logger.info(f"Chat response generated for user {current_user.id} in {response_time:.2f}s using {model_used}")
-        
         return response
         
     except Exception as e:
@@ -88,8 +89,8 @@ async def stream_chat_message(
 ):
     """Stream chat response token-by-token via Server-Sent Events"""
     
-    # Check off-topic before streaming
-    is_off_topic, off_topic_response = llm_service.is_off_topic(chat.message)
+    is_off_topic, off_topic_response = llm_service.is_off_topic(chat.message, chat.use_urdu)
+        
     if is_off_topic:
         async def _send_off_topic():
             payload = json.dumps({"token": off_topic_response, "done": True, "full": off_topic_response})
@@ -97,116 +98,44 @@ async def stream_chat_message(
         return StreamingResponse(_send_off_topic(), media_type="text/event-stream",
                                  headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
 
-    user_context = llm_service.get_user_context(current_user.id, db)
-    
-    # Choose correct system prompt and disclaimer based on language
-    if chat.translate_to_pashto:
-        system_prompt = llm_service.create_pashto_system_prompt(user_context)
-        disclaimer = llm_service.create_pashto_medical_disclaimer()
-    else:
-        system_prompt = llm_service.create_system_prompt(user_context)
-        disclaimer = llm_service.create_medical_disclaimer()
-    
-    # Build proper conversation message array with full history
-    chat_messages = llm_service.build_chat_messages(system_prompt, current_user.id, db, chat.message)
-        
-    model_name = llm_service.config.OLLAMA_BASE_MODEL
     start_time = time.time()
 
     async def _event_stream():
         full_response = ""
         loop = asyncio.get_event_loop()
+        token_queue = asyncio.Queue()
 
-        # If translating to Urdu, generate fully first, then translate, then stream
-        if chat.translate_to_urdu:
-            def _generate_full():
-                response = ""
+        def _produce():
+            try:
+                user_context = llm_service.get_user_context(current_user.id, db)
+                system_prompt = llm_service.create_system_prompt(user_context, chat.use_urdu)
+                chat_messages = llm_service.build_chat_messages(system_prompt, current_user.id, db, chat.message)
+                model_name = llm_service.urdu_model if chat.use_urdu else llm_service.config.OLLAMA_BASE_MODEL
                 for token in llm_service.stream_ollama_tokens(chat_messages, model_name):
-                    response += token
-                return response
-                
-            english_response = await loop.run_in_executor(None, _generate_full)
-            translated_response = translation_service.translate_to_urdu(english_response)
-            
-            if translated_response:
-                full_response = translated_response
-                disclaimer_urdu = llm_service.create_urdu_medical_disclaimer()
-                
-                # Stream the translated text in chunks to simulate streaming
-                chunk_size = 5
-                words = full_response.split(" ")
-                for i in range(0, len(words), chunk_size):
-                    chunk = " ".join(words[i:i+chunk_size]) + " "
-                    payload = json.dumps({"token": chunk, "done": False})
-                    yield f"data: {payload}\n\n"
-                    await asyncio.sleep(0.05)
-                    
-                full_response += disclaimer_urdu
-                payload = json.dumps({"token": disclaimer_urdu, "done": False})
-                yield f"data: {payload}\n\n"
-            else:
-                # Fallback if translation fails
-                full_response = english_response + disclaimer
-                payload = json.dumps({"token": full_response, "done": False})
-                yield f"data: {payload}\n\n"
-        elif chat.translate_to_pashto:
-            def _generate_full_pashto():
-                response = ""
-                for token in llm_service.stream_ollama_tokens(chat_messages, model_name):
-                    response += token
-                return response
-                
-            english_response = await loop.run_in_executor(None, _generate_full_pashto)
-            translated_response = translation_service.translate_to_pashto(english_response)
-            
-            if translated_response:
-                full_response = translated_response
-                disclaimer_pashto = llm_service.create_pashto_medical_disclaimer()
-                
-                # Stream the translated text in chunks
-                chunk_size = 5
-                words = full_response.split(" ")
-                for i in range(0, len(words), chunk_size):
-                    chunk = " ".join(words[i:i+chunk_size]) + " "
-                    payload = json.dumps({"token": chunk, "done": False})
-                    yield f"data: {payload}\n\n"
-                    await asyncio.sleep(0.05)
-                    
-                full_response += disclaimer_pashto
-                payload = json.dumps({"token": disclaimer_pashto, "done": False})
-                yield f"data: {payload}\n\n"
-            else:
-                full_response = english_response + disclaimer
-                payload = json.dumps({"token": full_response, "done": False})
-                yield f"data: {payload}\n\n"
-        else:
-            # Normal streaming (English)
-            token_queue = asyncio.Queue()
+                    loop.call_soon_threadsafe(token_queue.put_nowait, token)
+            finally:
+                loop.call_soon_threadsafe(token_queue.put_nowait, None)
 
-            def _produce():
-                try:
-                    for token in llm_service.stream_ollama_tokens(chat_messages, model_name):
-                        loop.call_soon_threadsafe(token_queue.put_nowait, token)
-                finally:
-                    loop.call_soon_threadsafe(token_queue.put_nowait, None)
+        producer = loop.run_in_executor(None, _produce)
 
-            producer = loop.run_in_executor(None, _produce)
-
-            while True:
-                token = await token_queue.get()
-                if token is None:
-                    break
-                full_response += token
-                payload = json.dumps({"token": token, "done": False})
-                yield f"data: {payload}\n\n"
-
-            await producer
-            
-            full_response += disclaimer
-            payload = json.dumps({"token": disclaimer, "done": False})
+        while True:
+            token = await token_queue.get()
+            if token is None:
+                break
+            full_response += token
+            payload = json.dumps({"token": token, "done": False})
             yield f"data: {payload}\n\n"
 
+        await producer
+        
+        # Append medical disclaimer
+        disclaimer = llm_service.create_medical_disclaimer(chat.use_urdu)
+        full_response += disclaimer
+        payload = json.dumps({"token": disclaimer, "done": False})
+        yield f"data: {payload}\n\n"
+
         response_time = round(time.time() - start_time, 2)
+        model_used = llm_service.urdu_model if chat.use_urdu else llm_service.config.OLLAMA_BASE_MODEL
 
         # Save to database
         try:
@@ -222,7 +151,7 @@ async def stream_chat_message(
                 "token": "", "done": True,
                 "id": db_chat.id,
                 "response_time": response_time,
-                "model_used": model_name
+                "model_used": model_used
             })
         except Exception as e:
             logger.error(f"Failed to save streamed chat: {e}")
@@ -246,17 +175,14 @@ async def get_chat_history(
 ):
     """Get chat history for the current user"""
     try:
-        # Get total count
         total_count = db.query(ChatMessage).filter(
             ChatMessage.user_id == current_user.id
         ).count()
         
-        # Get paginated messages
         messages = db.query(ChatMessage).filter(
             ChatMessage.user_id == current_user.id
         ).order_by(desc(ChatMessage.created_at)).offset(offset).limit(limit).all()
         
-        # Convert to response format
         message_responses = [
             ChatMessageResponse(
                 id=msg.id,
@@ -266,7 +192,6 @@ async def get_chat_history(
             ) for msg in messages
         ]
         
-        # Get model status
         model_status = llm_service.get_model_status()
         
         return ChatHistoryResponse(
@@ -316,13 +241,13 @@ async def get_model_status(
 ):
     """Get available models and current configuration"""
     try:
-        status = llm_service.get_model_status()
+        model_status = llm_service.get_model_status()
         
         return ModelStatusResponse(
-            current_model=status["current_model"],
-            available_models=status["available_models"],
-            lora_loaded=status["lora_loaded"],
-            config=status["config"]
+            current_model=model_status["current_model"],
+            available_models=model_status["available_models"],
+            lora_loaded=model_status["lora_loaded"],
+            config=model_status["config"]
         )
         
     except Exception as e:
@@ -347,7 +272,6 @@ async def test_model(
             user_message=test_message,
             user_id=current_user.id,
             db=db,
-            model_override=model_type
         )
         
         response_time = time.time() - start_time
@@ -369,3 +293,24 @@ async def test_model(
             "response_time": 0,
             "success": False
         }
+
+@router.post("/tts")
+async def generate_tts(
+    request: TTSRequest,
+    background_tasks: BackgroundTasks,
+    current_user=Depends(get_current_user),
+):
+    """Generate TTS audio using Edge TTS and return it as a file."""
+    try:
+        fd, temp_path = tempfile.mkstemp(suffix=".mp3")
+        os.close(fd)
+        
+        success = await speech_service.text_to_speech(request.text, temp_path, request.lang)
+        if not success:
+            raise HTTPException(status_code=500, detail="Failed to generate speech")
+            
+        background_tasks.add_task(os.remove, temp_path)
+        return FileResponse(temp_path, media_type="audio/mpeg")
+    except Exception as e:
+        logger.error(f"TTS endpoint error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
