@@ -36,7 +36,7 @@ _A Final Year Project combining machine learning, LLM fine-tuning, and a full-st
 | Name                     | Reg. No  | GitHub                                               |
 | ------------------------ | -------- | ---------------------------------------------------- |
 | **Muhammad Hashir**      | 22P-9181 | [@hashirch](https://github.com/hashirch)             |
-| **Laraib Shahid Abbasi** | 22P-0503 | [@Laraibshahid89](https://github.com/Laraibshahid89) |
+| **Laraib Shahid Abbasi** | 22P-0503 | [@laraibcsdev-del](https://github.com/laraibcsdev-del) |
 | **Arooba Gohar**         | 22P-9216 | [@uroobagh123](https://github.com/uroobagh123)       |
 
 ---
